@@ -2,14 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Gem Getter Pro</title>
-    <!-- Paste any external links or meta tags here, e.g., your Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&family=Gamja+Flower&family=Patrick+Hand&family=Single+Day&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
     <style>
-        body {
+        /* Add to the top of your CSS */
+
+/* Lock html/body to full viewport, no scroll */
+html, body {
+  height: 100%; /* Fallback for older browsers */
+  min-height: 100svh; /* Use svh (small viewport) on mobile to avoid bar-induced overflow */
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Disable all overflow/scroll (x and y) */
+  touch-action: pan-x; /* Allow horizontal touch (for swipes), block vertical */
+}
+
+/* Prevent pull-to-refresh/bounce on mobile */
+body {
+  overscroll-behavior-y: none; /* Block vertical overscroll */
+}
+
+/* Ensure game-container fills exactly, no extra space */
+#game-container {
+  height: 100svh; /* Match body, use svh for consistency */
+  min-height: 100svh;
+  overflow: hidden; /* Redundant but ensures no child overflow */
+}
+
+/* For sections/wrappers: Clamp heights to prevent internal overflow */
+.section, .section-image-wrapper {
+  height: 100svh; /* Switch to svh if dvh causes issues; test both */
+  max-height: 100svh;
+  overflow: hidden;
+}
+
+/* Fixed arrows: Ensure they stay visible over everything */
+.nav-button {
+  position: fixed !important; /* Override any absolute */
+  z-index: 100; /* High to stay above content */
+  /* Existing styles remain */
+}
+
+body {
 	margin: 0;
 	font-family: Arial, sans-serif;
 	min-height: 100dvh;
@@ -823,45 +861,18 @@
   align-items: center;
   padding: 0; /* Remove padding to avoid offset */
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	transform: scale(1);
 }
 .nav-button:hover {
   background-color: #555;
   box-shadow: 0 0 0.5dvh rgba(255, 255, 255, 0.3);
+	transform: scale(1.2);
 }
 #left-button {
   left: 2dvh;
 }
 #right-button {
   right: 2dvh;
-}
-.return-button {
-  position: absolute;
-  bottom: 2dvh;
-  height: 5.6dvh;
-  width: 5.6dvh;
-  font-size: 3dvh; /* Reduced from 3.4dvh */
-  line-height: 5.6dvh; /* Match button height */
-  background-color: #333;
-  color: white;
-  border: none;
-  border-radius: 1dvh;
-  cursor: pointer;
-  z-index: 20;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0; /* Remove padding */
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-.return-button:hover {
-  background-color: #555;
-  box-shadow: 0 0 0.5dvh rgba(255, 255, 255, 0.3);
-}
-#return-dig-roll-roll {
-  right: 4dvh;
-}
-#return-home-score {
-  left: 4dvh;
 }
 .hidden {
 	display: none;
@@ -1942,11 +1953,7 @@
     </style>
 </head>
 <body>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&family=Gamja+Flower&family=Patrick+Hand&family=Single+Day&display=swap" rel="stylesheet">
-
-<div id="end-game-overlay" class="end-game-overlay hidden">
+    <div id="end-game-overlay" class="end-game-overlay hidden">
 	<div id="screenshot-container" class="screenshot-container">
 		<!-- Cloned dig sheet content will be injected here via JS -->
 	</div>
@@ -1994,7 +2001,6 @@
 
 <div id="game-container">
 	<div id="roll-sheet" class="section">
-		<button id="return-dig-roll-roll" class="return-button">▶</button>
 		<div class="section-image-wrapper">
 			<img src="https://i.imgur.com/U3dEe1S.png" alt="Roll Sheet" class="section-image">
 			<div id="roll-sheet-switcher"></div>
@@ -2255,7 +2261,6 @@
 	</div>
 	<div id="scoresheet" class="section">
 		
-		<button id="return-home-score" class="return-button">◀</button>
 		<div class="section-image-wrapper">
 			<button id="finish-button" class="scoresheet-button">Finish</button>
 		<button id="screenshot-button" class="scoresheet-button off-screen">Screenshot</button>
@@ -2631,8 +2636,8 @@
 		</div>
 	</div>
 </div>
-<button id="left-button" class="nav-button" onclick="scrollToRollSheet()">◀</button>
-<button id="right-button" class="nav-button" onclick="scrollToScore()">▶</button>
+<button id="left-button" class="nav-button">◀</button>
+<button id="right-button" class="nav-button">▶</button>
 </body>
 </div>
 </div>
@@ -2640,7 +2645,7 @@
 </div>
     
     <script>
-       let currentView = 1;
+        let currentView = 1;
 let rollCounter = 0;
 let selectedCells = new Set();
 let committedCells = new Map();
@@ -4096,7 +4101,6 @@ const coordinates = {
 				{ row: 9, col: 8 },
 				{ row: 10, col: 4 },
 				{ row: 10, col: 8 }
-				
 			],
 			boulder: [],
 			row: [],
@@ -4923,7 +4927,13 @@ function playSound(soundName) {
 	if (audio) {
 		audio.currentTime = 0;
 		audio.volume =
-			soundName === "click" ? 0.3 : soundName === "pickaxe" ? 0.25 : 0.5;
+			soundName === "click"
+				? 0.4
+				: soundName === "pickaxe"
+				? 0.1
+				: soundName === "bonus"
+				? 0.25
+				: 0.5;
 		audio.play().catch((e) => console.log("Audio error:", e));
 	}
 }
@@ -4984,79 +4994,118 @@ function preloadImages() {
 			updateDigButtonState();
 		});
 }
-function scrollToRollSheet() {
-	const container = document.getElementById("game-container");
-	if (window.matchMedia("(min-aspect-ratio: 4/3)").matches) {
-		container.style.transform = "translateX(0)";
-		currentView = 0;
-	} else {
-		container.style.transform = "translateX(0)";
-		currentView = 0;
-	}
-	updateButtons();
+// Navigation Functions (Replaces all old scroll/return functions)
+function getShiftAmount() {
+  if (window.matchMedia("(min-aspect-ratio: 16/9)").matches) return 0; // No shift, all visible
+  if (window.matchMedia("(min-aspect-ratio: 4/3)").matches) return 50; // Two panels, shift by half
+  return 100; // Narrow, full viewport shift
 }
-function scrollToScore() {
-	const container = document.getElementById("game-container");
-	if (
-		window.matchMedia("(min-aspect-ratio: 4/3)").matches &&
-		currentView === 0
-	) {
-		container.style.transform = "translateX(-50vw)";
-		currentView = 1;
-	} else {
-		container.style.transform = "translateX(-200vw)";
-		currentView = 2;
-	}
-	updateButtons();
+
+function getMaxView() {
+  if (window.matchMedia("(min-aspect-ratio: 16/9)").matches) return 0; // No views beyond 0
+  if (window.matchMedia("(min-aspect-ratio: 4/3)").matches) return 1; // Views 0 (roll+dig) or 1 (dig+score)
+  return 2; // Narrow: 0 (roll), 1 (dig), 2 (score)
 }
-function returnToDigRoll() {
-	const container = document.getElementById("game-container");
-	container.style.transform = "translateX(-100vw)";
-	currentView = 1;
-	updateButtons();
+
+function scrollLeft() {
+  if (currentView > 0) {
+    currentView--;
+    const shift = getShiftAmount();
+    const container = document.getElementById("game-container");
+    container.style.transform = `translateX(-${currentView * shift}vw)`;
+    updateButtons();
+  }
 }
-function returnToHome() {
-	const container = document.getElementById("game-container");
-	container.style.transform = "translateX(-100vw)";
-	currentView = 1;
-	updateButtons();
+
+function scrollRight() {
+  const maxView = getMaxView();
+  if (currentView < maxView) {
+    currentView++;
+    const shift = getShiftAmount();
+    const container = document.getElementById("game-container");
+    container.style.transform = `translateX(-${currentView * shift}vw)`;
+    updateButtons();
+  }
 }
+
 function updateButtons() {
-	const leftButton = document.getElementById("left-button");
-	const rightButton = document.getElementById("right-button");
-	const returnDigRoll = document.getElementById("return-dig-roll-roll");
-	const returnHome = document.getElementById("return-home-score");
-	document.querySelectorAll(".nav-button").forEach((button) => {
-		if (button.id !== "left-button" && button.id !== "right-button") {
-			button.remove();
-		}
-	});
-	if (!window.matchMedia("(min-aspect-ratio: 4/3)").matches) {
-		if (currentView === 1) {
-			leftButton.classList.remove("hidden");
-			rightButton.classList.remove("hidden");
-		} else {
-			leftButton.classList.add("hidden");
-			rightButton.classList.add("hidden");
-		}
-		returnDigRoll.classList.toggle("hidden", currentView !== 0);
-		returnHome.classList.toggle("hidden", currentView !== 2);
-	} else {
-		if (currentView === 1) {
-			leftButton.classList.remove("hidden");
-			rightButton.classList.add("hidden");
-			rightButton.style.display = "none";
-			returnDigRoll.classList.add("hidden");
-			returnHome.classList.add("hidden");
-		} else if (currentView === 0) {
-			leftButton.classList.add("hidden");
-			rightButton.classList.remove("hidden");
-			rightButton.style.display = "flex";
-			returnDigRoll.classList.add("hidden");
-			returnHome.classList.add("hidden");
-		}
-	}
+  const leftButton = document.getElementById("left-button");
+  const rightButton = document.getElementById("right-button");
+
+  if (window.matchMedia("(min-aspect-ratio: 16/9)").matches) {
+    // All three visible: Hide both arrows
+    leftButton.classList.add("hidden");
+    rightButton.classList.add("hidden");
+    leftButton.style.display = "none";
+    rightButton.style.display = "none";
+  } else if (window.matchMedia("(min-aspect-ratio: 4/3)").matches) {
+    // Two panels: Show/hide with explicit display to override
+    if (currentView === 0) {
+      leftButton.classList.add("hidden");
+      leftButton.style.display = "none";
+      rightButton.classList.remove("hidden");
+      rightButton.style.display = "flex";
+    } else { // view=1
+      leftButton.classList.remove("hidden");
+      leftButton.style.display = "flex";
+      rightButton.classList.add("hidden");
+      rightButton.style.display = "none";
+    }
+  } else {
+    // Narrow: Show/hide with explicit display
+    if (currentView === 0) {
+      leftButton.classList.add("hidden");
+      leftButton.style.display = "none";
+      rightButton.classList.remove("hidden");
+      rightButton.style.display = "flex";
+    } else if (currentView === 2) {
+      leftButton.classList.remove("hidden");
+      leftButton.style.display = "flex";
+      rightButton.classList.add("hidden");
+      rightButton.style.display = "none";
+    } else { // view=1, show both
+      leftButton.classList.remove("hidden");
+      leftButton.style.display = "flex";
+      rightButton.classList.remove("hidden");
+      rightButton.style.display = "flex";
+    }
+  }
 }
+
+// Rename setInitialView to updateView (for clarity, as it's now used on resize too)
+function updateView() {
+  const container = document.getElementById("game-container");
+  const prevMaxView = getMaxView(); // Get old max before ratio check
+  let needsReset = false;
+
+  if (window.matchMedia("(min-aspect-ratio: 16/9)").matches) {
+    container.style.width = "100%";
+    currentView = 0; // Always 0, all visible
+    container.style.transform = "translateX(0)";
+    needsReset = true;
+  } else if (window.matchMedia("(min-aspect-ratio: 4/3)").matches) {
+    container.style.width = "200%";
+    if (currentView > 1) currentView = 1; // Clamp to max=1 (dig+score if was on score)
+    const shift = getShiftAmount();
+    container.style.transform = `translateX(-${currentView * shift}vw)`;
+    needsReset = prevMaxView !== 1; // Reset if ratio changed
+  } else {
+    container.style.width = "300%";
+    if (currentView > 2) currentView = 2; // Unlikely, but clamp
+    const shift = getShiftAmount();
+    container.style.transform = `translateX(-${currentView * shift}vw)`;
+    needsReset = prevMaxView !== 2; // Reset if ratio changed
+  }
+
+  updateButtons();
+  // Optional: If ratio changed significantly, force reflow for smooth transition
+  if (needsReset) {
+    container.style.transition = "none"; // Temporarily disable for instant jump
+    container.offsetHeight; // Reflow
+    container.style.transition = "transform 0.5s ease"; // Re-enable
+  }
+}
+
 const die1 = document.getElementById("die1");
 const die2 = document.getElementById("die2");
 const rollButton = document.getElementById("roll-button");
@@ -5789,240 +5838,240 @@ function hasGameState() {
 }
 
 function resetGrid() {
-    console.log("Resetting grid and all cross-off clickers");
-    const grid = document.getElementById("grid");
-    grid.querySelectorAll(".polyomino-svg").forEach((svg) => svg.remove());
-    document.querySelectorAll(".cell").forEach((cell) => {
-        cell.classList.remove("committed", "disabled", "no-pointer");
-    });
-    const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
-    console.log(
-        `Applying unclickable cells for ${currentDigSheet}:`,
-        Array.from(unclickableCells)
-    );
-    requestAnimationFrame(() => {
-        unclickableCells.forEach((index) => {
-            const cell = document.querySelector(`.cell[data-index="${index}"]`);
-            if (cell) cell.classList.add("disabled");
-        });
-        updateCellCursors();
-    });
-    committedCells.clear();
-    selectedCells.clear();
-    lockedGroups = [];
-    outlines.clear();
-    stateHistory = [];
-    document
-        .querySelectorAll(
-            ".circle-clicker, .quartz-circle-clicker, .sandstone-circle-clicker, .coal-circle-clicker, .silver-circle-clicker, .diamond-circle-clicker, .lapis-circle-clicker, .peridot-circle-clicker, .topaz-circle-clicker, .opal-circle-clicker, .amber-circle-clicker, .oil-circle-clicker, .ng-circle-clicker"
-        )
-        .forEach((clicker) => {
-            clicker.classList.remove("circled", "disabled");
-            clicker.style.opacity = "1";
-            clicker.style.pointerEvents = "auto";
-            const circle = clicker.querySelector("circle");
-            if (circle) {
-                circle.setAttribute("stroke", "black");
-                circle.setAttribute("stroke-dashoffset", "110");
-            }
-        });
-    document.querySelectorAll(".cross-off-clicker").forEach((clicker) => {
-        clicker.classList.remove("crossed-off");
-        clicker.querySelector(".line-draw")?.classList.remove("crossed-off");
-    });
-    document
-        .querySelectorAll(".oil-ng-cross-off-clicker")
-        .forEach((clicker, index) => {
-            clicker.classList.remove("crossed-off");
-            clicker.querySelector(".line-draw")?.classList.remove("crossed-off");
-            console.log(`Cleared oil/ng cross-off clicker ${index}`);
-        });
-    document.querySelectorAll(".cross-off-round").forEach((round, index) => {
-        round.classList.remove("crossed-off");
-        round.querySelector(".line-draw")?.classList.remove("crossed-off");
-        console.log(
-            `Cleared round cross-off ${index + 1} at position: top=${
-                round.style.top
-            }, left=${round.style.left}`
-        );
-    });
-    document.querySelectorAll(".peridot-score").forEach((div) => {
-        div.textContent = "";
-    });
-    document
-        .querySelectorAll(
-            "#diamond-score-readout, #silver-score-readout, #lapis-score-readout, #peridot-score-readout, #topaz-score-readout, #opal-score-readout, #amber-score-readout, #q-s-c-score-readout"
-        )
-        .forEach((readout) => {
-            readout.textContent = "";
-        });
-    const finalScoreDiv = document.getElementById("final-score");
-    if (finalScoreDiv) finalScoreDiv.textContent = "";
-    document
-        .querySelectorAll(
-            ".quartz-bonus-circle, .sandstone-bonus-circle, .coal-bonus-circle"
-        )
-        .forEach((bonus) => {
-            bonus.classList.remove("circled", "disabled");
-            bonus.style.opacity = "1";
-            const circle = bonus.querySelector("circle");
-            if (circle) {
-                circle.setAttribute("stroke", "black");
-                circle.setAttribute("stroke-dashoffset", "110");
-            }
-        });
-    document
-        .querySelectorAll(".oil-square, .oil-square-final")
-        .forEach((square) => {
-            square.style.display = "none";
-            square.classList.remove("pulsing-oil-square");
-        });
-    ngCrossoffDivs.forEach((div) => {
-        div.classList.remove("crossed-off", "clickable", "used");
-        div.style.backgroundColor = ""; // Clear inline style to default to CSS transparent
-        div.style.pointerEvents = "none";
-        div.style.opacity = "0.5";
-    });
-    ngBonusDivs.forEach((bonusDiv) => {
-        bonusDiv.style.display = "none";
-        bonusDiv.classList.remove("pulsing-ng-bonus");
-    });
-    diamondCount = 0;
-    silverCount = 0;
-    quartzCount = 0;
-    sandstoneCount = 0;
-    coalCount = 0;
-    lapisCount = 0;
-    peridotCount = 0;
-    topazCount = 0;
-    opalCount = 0;
-    amberCount = 0;
-    oilCount = 0;
-    ngCount = 0;
-    rowBonusCount = 0;
-    columnBonusCount = 0;
-    boulderBonusCount = 0;
-    rollCount = 0;
-    isFirstRoll = true;
-    quartzBonus = false;
-    sandstoneBonus = false;
-    coalBonus = false;
-    peridotScores = [0, 0, 0, 0, 0];
-    oilBonusQueue = []; // Clear oil bonus queue
-    bonusDigMode = false; // Explicitly reset bonus dig mode
-    const digButton = document.getElementById("dig-button");
-    if (digButton) {
-        digButton.classList.remove("bonus-mode", "pulsing-dig");
-        digButton.classList.add("loading");
-        digButton.style.opacity = "0.5";
-        digButton.style.pointerEvents = "none";
-        digButton.style.animation = "none"; // Prevent spin animation on new game
-        const img = digButton.querySelector("img");
-        if (img) img.src = "https://i.imgur.com/7tDYHqX.png"; // Restore default dig button image
-    }
-    const rollButton = document.getElementById("roll-button");
-    if (rollButton) {
-        rollButton.classList.remove("loading");
-        rollButton.classList.add("loaded", "pulsing-roll");
-        rollButton.style.opacity = "1";
-        rollButton.style.pointerEvents = "auto";
-    }
-    const greenImage = document.getElementById("green-image");
-    const whiteImage = document.getElementById("white-image");
-    if (greenImage) {
-        greenImage.classList.remove("show");
-        greenImage.classList.add("hide");
-        greenImage.style.bottom = "";
-        greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
-        console.log("Reset #green-image to off-screen with .hide");
-    }
-    if (whiteImage) {
-        whiteImage.classList.remove("show");
-        whiteImage.classList.add("hide");
-        whiteImage.style.bottom = "";
-        whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
-        console.log("Reset #white-image to off-screen with .hide");
-    }
-    // NEW: Reset finish/screenshot elements to initial states
-    const finishButton = document.getElementById("finish-button");
-    const screenshotButton = document.getElementById("screenshot-button");
-    const finalScoreBubble = document.getElementById("final-score-bubble");
-    const screenshotExplainer = document.getElementById("screenshot-explainer");
-    const endGameOverlay = document.getElementById("end-game-overlay");
-    if (finishButton) {
-        finishButton.style = ""; // Clear all inline styles
-        finishButton.classList.remove("off-screen"); // Ensure no hidden class
-        finishButton.style.bottom = "10cqh";
-        finishButton.style.opacity = "1";
-        finishButton.style.pointerEvents = "auto";
-    }
-    if (screenshotButton) {
-        screenshotButton.style = ""; // Clear all inline styles
-        screenshotButton.classList.add("off-screen"); // Re-apply initial hidden class
-        screenshotButton.style.bottom = "-10cqh";
-        screenshotButton.style.opacity = "0";
-        screenshotButton.style.left = "50%";
-        screenshotButton.style.transform = "translateX(-50%) scale(1.0)";
-        screenshotButton.offsetHeight; // Force reflow
-    }
-    if (finalScoreBubble) {
-        finalScoreBubble.style = ""; // Clear all inline styles
-        finalScoreBubble.classList.add("hidden-state"); // Re-apply initial hidden class
-        finalScoreBubble.style.bottom = "-10cqh";
-        finalScoreBubble.style.left = "50%";
-        finalScoreBubble.style.opacity = "0";
-        finalScoreBubble.style.pointerEvents = "none";
-        finalScoreBubble.style.transform = "translateX(-50%) scale(1.0)";
-        finalScoreBubble.textContent = "";
-        finalScoreBubble.offsetHeight; // Force reflow
-    }
-    if (screenshotExplainer) {
-        screenshotExplainer.style = ""; // Clear all inline styles
-        screenshotExplainer.classList.add("hidden-state"); // Re-apply initial hidden class
-        screenshotExplainer.style.opacity = "0";
-        screenshotExplainer.offsetHeight; // Force reflow
-    }
-    if (endGameOverlay) {
-        endGameOverlay.classList.add("hidden");
-    }
-    updateNgCrossoffState();
-    updateQuartzClickers();
-    updateSandstoneClickers();
-    updateCoalClickers();
-    updateDiamondClickers();
-    updateSilverClickers();
-    updateLapisClickers();
-    updatePeridotClickers();
-    updateTopazClickers();
-    updateOpalClickers();
-    updateAmberClickers();
-    updateOilClickers();
-    updateNgClickers();
-    updateOilNgCrossOffClickers();
-    gamePhase = "roll";
-    updateRollButtonState();
-    updateDigButtonState();
-    updateCellCursors();
-    console.log(
-        "Score sheet reset: All circle clickers cleared, stroke-dashoffset reset"
-    );
-    console.log(
-        "Diamond clickers circled:",
-        document.querySelectorAll(".diamond-circle-clicker.circled").length
-    );
-    console.log(
-        "Quartz clickers circled:",
-        document.querySelectorAll(".quartz-circle-clicker.circled").length
-    );
-    console.log(
-        "Oil clickers circled:",
-        document.querySelectorAll(".oil-circle-clicker.circled").length
-    );
-    console.log(
-        "NG clickers circled:",
-        document.querySelectorAll(".ng-circle-clicker.circled").length
-    );
-    console.log("Bonus dig mode reset:", bonusDigMode);
+	console.log("Resetting grid and all cross-off clickers");
+	const grid = document.getElementById("grid");
+	grid.querySelectorAll(".polyomino-svg").forEach((svg) => svg.remove());
+	document.querySelectorAll(".cell").forEach((cell) => {
+		cell.classList.remove("committed", "disabled", "no-pointer");
+	});
+	const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
+	console.log(
+		`Applying unclickable cells for ${currentDigSheet}:`,
+		Array.from(unclickableCells)
+	);
+	requestAnimationFrame(() => {
+		unclickableCells.forEach((index) => {
+			const cell = document.querySelector(`.cell[data-index="${index}"]`);
+			if (cell) cell.classList.add("disabled");
+		});
+		updateCellCursors();
+	});
+	committedCells.clear();
+	selectedCells.clear();
+	lockedGroups = [];
+	outlines.clear();
+	stateHistory = [];
+	document
+		.querySelectorAll(
+			".circle-clicker, .quartz-circle-clicker, .sandstone-circle-clicker, .coal-circle-clicker, .silver-circle-clicker, .diamond-circle-clicker, .lapis-circle-clicker, .peridot-circle-clicker, .topaz-circle-clicker, .opal-circle-clicker, .amber-circle-clicker, .oil-circle-clicker, .ng-circle-clicker"
+		)
+		.forEach((clicker) => {
+			clicker.classList.remove("circled", "disabled");
+			clicker.style.opacity = "1";
+			clicker.style.pointerEvents = "auto";
+			const circle = clicker.querySelector("circle");
+			if (circle) {
+				circle.setAttribute("stroke", "black");
+				circle.setAttribute("stroke-dashoffset", "110");
+			}
+		});
+	document.querySelectorAll(".cross-off-clicker").forEach((clicker) => {
+		clicker.classList.remove("crossed-off");
+		clicker.querySelector(".line-draw")?.classList.remove("crossed-off");
+	});
+	document
+		.querySelectorAll(".oil-ng-cross-off-clicker")
+		.forEach((clicker, index) => {
+			clicker.classList.remove("crossed-off");
+			clicker.querySelector(".line-draw")?.classList.remove("crossed-off");
+			console.log(`Cleared oil/ng cross-off clicker ${index}`);
+		});
+	document.querySelectorAll(".cross-off-round").forEach((round, index) => {
+		round.classList.remove("crossed-off");
+		round.querySelector(".line-draw")?.classList.remove("crossed-off");
+		console.log(
+			`Cleared round cross-off ${index + 1} at position: top=${
+				round.style.top
+			}, left=${round.style.left}`
+		);
+	});
+	document.querySelectorAll(".peridot-score").forEach((div) => {
+		div.textContent = "";
+	});
+	document
+		.querySelectorAll(
+			"#diamond-score-readout, #silver-score-readout, #lapis-score-readout, #peridot-score-readout, #topaz-score-readout, #opal-score-readout, #amber-score-readout, #q-s-c-score-readout"
+		)
+		.forEach((readout) => {
+			readout.textContent = "";
+		});
+	const finalScoreDiv = document.getElementById("final-score");
+	if (finalScoreDiv) finalScoreDiv.textContent = "";
+	document
+		.querySelectorAll(
+			".quartz-bonus-circle, .sandstone-bonus-circle, .coal-bonus-circle"
+		)
+		.forEach((bonus) => {
+			bonus.classList.remove("circled", "disabled");
+			bonus.style.opacity = "1";
+			const circle = bonus.querySelector("circle");
+			if (circle) {
+				circle.setAttribute("stroke", "black");
+				circle.setAttribute("stroke-dashoffset", "110");
+			}
+		});
+	document
+		.querySelectorAll(".oil-square, .oil-square-final")
+		.forEach((square) => {
+			square.style.display = "none";
+			square.classList.remove("pulsing-oil-square");
+		});
+	ngCrossoffDivs.forEach((div) => {
+		div.classList.remove("crossed-off", "clickable", "used");
+		div.style.backgroundColor = ""; // Clear inline style to default to CSS transparent
+		div.style.pointerEvents = "none";
+		div.style.opacity = "0.5";
+	});
+	ngBonusDivs.forEach((bonusDiv) => {
+		bonusDiv.style.display = "none";
+		bonusDiv.classList.remove("pulsing-ng-bonus");
+	});
+	diamondCount = 0;
+	silverCount = 0;
+	quartzCount = 0;
+	sandstoneCount = 0;
+	coalCount = 0;
+	lapisCount = 0;
+	peridotCount = 0;
+	topazCount = 0;
+	opalCount = 0;
+	amberCount = 0;
+	oilCount = 0;
+	ngCount = 0;
+	rowBonusCount = 0;
+	columnBonusCount = 0;
+	boulderBonusCount = 0;
+	rollCount = 0;
+	isFirstRoll = true;
+	quartzBonus = false;
+	sandstoneBonus = false;
+	coalBonus = false;
+	peridotScores = [0, 0, 0, 0, 0];
+	oilBonusQueue = []; // Clear oil bonus queue
+	bonusDigMode = false; // Explicitly reset bonus dig mode
+	const digButton = document.getElementById("dig-button");
+	if (digButton) {
+		digButton.classList.remove("bonus-mode", "pulsing-dig");
+		digButton.classList.add("loading");
+		digButton.style.opacity = "0.5";
+		digButton.style.pointerEvents = "none";
+		digButton.style.animation = "none"; // Prevent spin animation on new game
+		const img = digButton.querySelector("img");
+		if (img) img.src = "https://i.imgur.com/7tDYHqX.png"; // Restore default dig button image
+	}
+	const rollButton = document.getElementById("roll-button");
+	if (rollButton) {
+		rollButton.classList.remove("loading");
+		rollButton.classList.add("loaded", "pulsing-roll");
+		rollButton.style.opacity = "1";
+		rollButton.style.pointerEvents = "auto";
+	}
+	const greenImage = document.getElementById("green-image");
+	const whiteImage = document.getElementById("white-image");
+	if (greenImage) {
+		greenImage.classList.remove("show");
+		greenImage.classList.add("hide");
+		greenImage.style.bottom = "";
+		greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
+		console.log("Reset #green-image to off-screen with .hide");
+	}
+	if (whiteImage) {
+		whiteImage.classList.remove("show");
+		whiteImage.classList.add("hide");
+		whiteImage.style.bottom = "";
+		whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
+		console.log("Reset #white-image to off-screen with .hide");
+	}
+	// NEW: Reset finish/screenshot elements to initial states
+	const finishButton = document.getElementById("finish-button");
+	const screenshotButton = document.getElementById("screenshot-button");
+	const finalScoreBubble = document.getElementById("final-score-bubble");
+	const screenshotExplainer = document.getElementById("screenshot-explainer");
+	const endGameOverlay = document.getElementById("end-game-overlay");
+	if (finishButton) {
+		finishButton.style = ""; // Clear all inline styles
+		finishButton.classList.remove("off-screen"); // Ensure no hidden class
+		finishButton.style.bottom = "10cqh";
+		finishButton.style.opacity = "1";
+		finishButton.style.pointerEvents = "auto";
+	}
+	if (screenshotButton) {
+		screenshotButton.style = ""; // Clear all inline styles
+		screenshotButton.classList.add("off-screen"); // Re-apply initial hidden class
+		screenshotButton.style.bottom = "-10cqh";
+		screenshotButton.style.opacity = "0";
+		screenshotButton.style.left = "50%";
+		screenshotButton.style.transform = "translateX(-50%) scale(1.0)";
+		screenshotButton.offsetHeight; // Force reflow
+	}
+	if (finalScoreBubble) {
+		finalScoreBubble.style = ""; // Clear all inline styles
+		finalScoreBubble.classList.add("hidden-state"); // Re-apply initial hidden class
+		finalScoreBubble.style.bottom = "-10cqh";
+		finalScoreBubble.style.left = "50%";
+		finalScoreBubble.style.opacity = "0";
+		finalScoreBubble.style.pointerEvents = "none";
+		finalScoreBubble.style.transform = "translateX(-50%) scale(1.0)";
+		finalScoreBubble.textContent = "";
+		finalScoreBubble.offsetHeight; // Force reflow
+	}
+	if (screenshotExplainer) {
+		screenshotExplainer.style = ""; // Clear all inline styles
+		screenshotExplainer.classList.add("hidden-state"); // Re-apply initial hidden class
+		screenshotExplainer.style.opacity = "0";
+		screenshotExplainer.offsetHeight; // Force reflow
+	}
+	if (endGameOverlay) {
+		endGameOverlay.classList.add("hidden");
+	}
+	updateNgCrossoffState();
+	updateQuartzClickers();
+	updateSandstoneClickers();
+	updateCoalClickers();
+	updateDiamondClickers();
+	updateSilverClickers();
+	updateLapisClickers();
+	updatePeridotClickers();
+	updateTopazClickers();
+	updateOpalClickers();
+	updateAmberClickers();
+	updateOilClickers();
+	updateNgClickers();
+	updateOilNgCrossOffClickers();
+	gamePhase = "roll";
+	updateRollButtonState();
+	updateDigButtonState();
+	updateCellCursors();
+	console.log(
+		"Score sheet reset: All circle clickers cleared, stroke-dashoffset reset"
+	);
+	console.log(
+		"Diamond clickers circled:",
+		document.querySelectorAll(".diamond-circle-clicker.circled").length
+	);
+	console.log(
+		"Quartz clickers circled:",
+		document.querySelectorAll(".quartz-circle-clicker.circled").length
+	);
+	console.log(
+		"Oil clickers circled:",
+		document.querySelectorAll(".oil-circle-clicker.circled").length
+	);
+	console.log(
+		"NG clickers circled:",
+		document.querySelectorAll(".ng-circle-clicker.circled").length
+	);
+	console.log("Bonus dig mode reset:", bonusDigMode);
 }
 function dfs(index, group, visited, cellSet = selectedCells) {
 	if (visited.has(index) || !cellSet.has(index)) return;
@@ -6280,554 +6329,555 @@ function saveState() {
 	};
 }
 function commitPolyomino() {
-	console.log("Dig button clicked");
-	const allNewSize =
-		selectedCells.size + lockedGroups.reduce((acc, g) => acc + g.size, 0);
-	if (allNewSize === 0 || !isConnectedGraph()) return;
-	if (!bonusDigMode) {
-		stateHistory = [];
-		stateHistory.push(saveState());
-	}
-	const visited = new Set();
-	const grid = document.getElementById("grid");
-	const currentCommit = new Set();
-	const currentSvgs = [];
-	const isNarrowScreen = window.innerWidth / window.innerHeight < 4 / 3;
-	grid
-		.querySelectorAll(".selection-svg, .locked-svg")
-		.forEach((svg) => svg.remove());
-	// Collect all new groups: selected's disconnected + locked
-	const newGroups = [];
-	const selectedVisited = new Set();
-	for (let start of Array.from(selectedCells)) {
-		if (!selectedVisited.has(start)) {
-			const group = new Set();
-			dfs(start, group, selectedVisited, selectedCells);
-			if (group.size > 0) {
-				newGroups.push(group);
-			}
-		}
-	}
-	lockedGroups.forEach((g) => newGroups.push(new Set(g)));
-	// Draw committed SVG per new group (black)
-	for (let grp of newGroups) {
-		const pathData = generatePolyominoPath(grp);
-		if (pathData) {
-			const svg = createPolyominoSvg(pathData, "#000000");
-			svg.classList.add("committed-svg");
-			svg.classList.add("flash");
-			grid.appendChild(svg);
-			setTimeout(() => svg.classList.remove("flash"), 200);
-			grp.forEach((index) => {
-				const cell = document.querySelector(`.cell[data-index="${index}"]`);
-				cell.classList.add("committed");
-				committedCells.set(index, svg);
-				currentCommit.add(index);
-			});
-			currentSvgs.push(svg);
-		}
-	}
-	playSound("pickaxe");
-	const cellsArray = Array.from(
-		new Set(newGroups.flatMap((g) => Array.from(g)))
-	);
-	const elementOrder = [
-		"oil",
-		"ng",
-		"quartz",
-		"sandstone",
-		"coal",
-		"silver",
-		"diamond",
-		"lapis",
-		"peridot",
-		"topaz",
-		"opal",
-		"amber"
-	];
-	const boulderCenters = {
-		"dig-sheet-a": [
-			{ row: 2, col: 6, index: 1 },
-			{ row: 3, col: 3, index: 2 },
-			{ row: 4, col: 7, index: 3 },
-			{ row: 8, col: 7, index: 4 },
-			{ row: 9, col: 5, index: 5 }
-		],
-		"dig-sheet-b": [
-			{ row: 2, col: 7, index: 1 },
-			{ row: 3, col: 3, index: 2 },
-			{ row: 5, col: 5, index: 3 },
-			{ row: 8, col: 2, index: 4 },
-			{ row: 8, col: 6, index: 5 }
-		],
-		"dig-sheet-c": [
-			{ row: 2, col: 6, index: 1 },
-			{ row: 3, col: 3, index: 2 },
-			{ row: 5, col: 6, index: 3 },
-			{ row: 6, col: 8, index: 4 },
-			{ row: 9, col: 5, index: 5 }
-		],
-		"dig-sheet-d": [
-			{ row: 2, col: 6, index: 1 },
-			{ row: 3, col: 3, index: 2 },
-			{ row: 7, col: 4, index: 3 },
-			{ row: 7, col: 7, index: 4 },
-			{ row: 9, col: 6, index: 5 }
-		],
-		"dig-sheet-e": [
-			{ row: 2, col: 7, index: 1 },
-			{ row: 3, col: 5, index: 2 },
-			{ row: 7, col: 2, index: 3 },
-			{ row: 9, col: 3, index: 4 },
-			{ row: 9, col: 8, index: 5 }
-		],
-		"dig-sheet-f": [
-			{ row: 2, col: 3, index: 1 },
-			{ row: 3, col: 9, index: 2 },
-			{ row: 5, col: 8, index: 3 },
-			{ row: 6, col: 3, index: 4 },
-			{ row: 9, col: 5, index: 5 }
-		],
-		"dig-sheet-g": [
-			{ row: 3, col: 5, index: 1 },
-			{ row: 3, col: 7, index: 2 },
-			{ row: 5, col: 3, index: 3 },
-			{ row: 7, col: 9, index: 4 },
-			{ row: 8, col: 2, index: 5 }
-		],
-		"dig-sheet-h": [
-			{ row: 2, col: 5, index: 1 },
-			{ row: 4, col: 6, index: 2 },
-			{ row: 5, col: 4, index: 3 },
-			{ row: 8, col: 4, index: 4 },
-			{ row: 8, col: 7, index: 5 }
-		]
-	}[currentDigSheet];
-	let animationQueue = [];
-	let gridElements = [];
-	let bonusElements = [];
-	let rowBonuses = [];
-	const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
-	for (let row = 0; row < 10; row++) {
-		const rowCells = Array.from({ length: 10 }, (_, col) => row * 10 + col);
-		const clickableRowCells = rowCells.filter(
-			(index) => !unclickableCells.has(index)
-		);
-		const committedInRow = clickableRowCells.filter((index) =>
-			committedCells.has(index)
-		);
-		if (
-			committedInRow.length >= clickableRowCells.length &&
-			clickableRowCells.length > 0
-		) {
-			const rowIndex = row + 1;
-			const rowClicker = Array.from(
-				document.querySelectorAll(".row-cross-off")
-			).find(
-				(clicker) =>
-					rowPositionToIndex[clicker.style.cssText] === rowIndex ||
-					parseInt(clicker.dataset.index) + 1 === rowIndex
-			);
-			if (rowClicker && !rowClicker.classList.contains("crossed-off")) {
-				rowBonuses.push({ type: "cell-flash", indices: clickableRowCells });
-				rowBonuses.push({ type: "row", index: rowIndex });
-				if (coordinates[currentDigSheet]) {
-					for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
-						const rowConfigs = config.row?.filter((r) => r.index === rowIndex) || [];
-						rowConfigs.forEach((rowConfig) => {
-							for (let i = 0; i < rowConfig.count; i++) {
-								bonusElements.push({ type: "element", gem });
-							}
-						});
-					}
-				}
-				console.log(`Row ${rowIndex} completed, will flash cells and cross off`);
-			}
-		}
-	}
-	let columnBonuses = [];
-	for (let col = 0; col < 10; col++) {
-		const colCells = Array.from({ length: 10 }, (_, row) => row * 10 + col);
-		const clickableColCells = colCells.filter(
-			(index) => !unclickableCells.has(index)
-		);
-		const committedInCol = clickableColCells.filter((index) =>
-			committedCells.has(index)
-		);
-		if (
-			committedInCol.length >= clickableColCells.length &&
-			clickableColCells.length > 0
-		) {
-			const colIndex = col + 1;
-			const colClicker = Array.from(
-				document.querySelectorAll(".column-cross-off")
-			).find(
-				(clicker) =>
-					columnPositionToIndex[clicker.style.cssText] === colIndex ||
-					parseInt(clicker.dataset.index) + 1 === colIndex
-			);
-			if (colClicker && !colClicker.classList.contains("crossed-off")) {
-				columnBonuses.push({ type: "cell-flash", indices: clickableColCells });
-				columnBonuses.push({ type: "column", index: colIndex });
-				if (coordinates[currentDigSheet]) {
-					for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
-						const colConfigs =
-							config.column?.filter((c) => c.index === colIndex) || [];
-						colConfigs.forEach((colConfig) => {
-							for (let i = 0; i < colConfig.count; i++) {
-								bonusElements.push({ type: "element", gem });
-							}
-						});
-					}
-				}
-				console.log(`Column ${colIndex} completed, will flash cells and cross off`);
-			}
-		}
-	}
-	let boulderBonuses = [];
-	for (const { row, col, index } of boulderCenters) {
-		const neighbors = [
-			{ r: row - 1, c: col - 1 },
-			{ r: row - 1, c: col },
-			{ r: row - 1, c: col + 1 },
-			{ r: row, c: col - 1 },
-			{ r: row, c: col + 1 },
-			{ r: row + 1, c: col - 1 },
-			{ r: row + 1, c: col },
-			{ r: row + 1, c: col + 1 }
-		].filter(({ r, c }) => r >= 1 && r <= 10 && c >= 1 && c <= 10);
-		const neighborIndices = neighbors.map(({ r, c }) => (r - 1) * 10 + (c - 1));
-		if (neighborIndices.every((idx) => committedCells.has(idx))) {
-			const boulderClicker = Array.from(
-				document.querySelectorAll(".boulder-cross-off")
-			).find((clicker) => parseInt(clicker.dataset.index) + 1 === index);
-			if (boulderClicker && !boulderClicker.classList.contains("crossed-off")) {
-				boulderBonuses.push({ type: "cell-flash", indices: neighborIndices });
-				boulderBonuses.push({ type: "boulder", index });
-				if (coordinates[currentDigSheet]) {
-					for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
-						const boulderConfigs =
-							config.boulder?.filter((b) => b.index === index) || [];
-						boulderConfigs.forEach((boulderConfig) => {
-							for (let i = 0; i < boulderConfig.count; i++) {
-								bonusElements.push({ type: "element", gem });
-							}
-						});
-					}
-				}
-				console.log(`Boulder ${index} completed, will flash cells and cross off`);
-			}
-		}
-	}
-	let allElements = [];
-	let digSheetElements = [];
-	let scoreSheetElements = [];
-	let newOilCount = 0;
-	if (coordinates[currentDigSheet]) {
-		const gridCells = coordinates[currentDigSheet];
-		cellsArray.forEach((index) => {
-			const row = Math.floor(index / 10) + 1;
-			const col = (index % 10) + 1;
-			for (const [gem, config] of Object.entries(gridCells)) {
-				if (config.grid?.some((cell) => cell.row === row && cell.col === col)) {
-					allElements.push({ type: "element", gem });
-					console.log(`Found ${gem} at grid cell (${row}, ${col})`);
-				}
-			}
-		});
-	}
-	allElements.push(...bonusElements);
-	allElements.forEach((element) => {
-		if (element.type === "element" && element.gem === "oil") {
-			newOilCount++;
-		}
-	});
-	allElements.sort(
-		(a, b) => elementOrder.indexOf(a.gem) - elementOrder.indexOf(b.gem)
-	);
-	allElements.forEach((element) => {
-		if (element.gem === "oil" || element.gem === "ng") {
-			digSheetElements.push(element);
-		} else {
-			scoreSheetElements.push(element);
-		}
-	});
-	// Predict oil bonuses
-	const prevOilCount = oilCount;
-	const tempOilCount = oilCount + newOilCount;
-	const newBonuses = [];
-	if (tempOilCount >= 2 && prevOilCount < 2) newBonuses.push(0); // 2nd oil -> clicker 0
-	if (tempOilCount >= 4 && prevOilCount < 4) newBonuses.push(1); // 4th oil -> clicker 1
-	if (tempOilCount >= 5 && prevOilCount < 5) newBonuses.push(2); // 5th oil -> clicker 2
-	if (tempOilCount >= 6 && prevOilCount < 6) newBonuses.push(3); // 6th oil -> clicker 3
-	if (tempOilCount >= 7 && prevOilCount < 7) {
-		newBonuses.push(4, 4); // 7th oil -> clicker 4 (twice)
-	}
-	oilBonusQueue.push(...newBonuses); // Always append to end for FIFO order
-	console.log(
-		`Oil bonuses queued: ${newBonuses}, total queue: ${oilBonusQueue}, bonusDigMode: ${bonusDigMode}`
-	);
-	selectedCells.clear();
-	lockedGroups = [];
-	outlines.clear();
-	updatePolyominoOutline();
-	updateCellCursors();
-	updateDigButtonState();
-	let delay = 500;
-	animationQueue.push(...rowBonuses);
-	animationQueue.push(...columnBonuses);
-	animationQueue.push(...boulderBonuses);
-	if (digSheetElements.length > 0 || scoreSheetElements.length > 0) {
-		if (
-			isNarrowScreen &&
-			(rowBonuses.length > 0 ||
-				columnBonuses.length > 0 ||
-				boulderBonuses.length > 0)
-		) {
-			animationQueue.push({ type: "scroll", action: "dig" });
-		}
-		animationQueue.push(...digSheetElements);
-		if (scoreSheetElements.length > 0 && isNarrowScreen) {
-			animationQueue.push({ type: "scroll", action: "score" });
-		}
-		animationQueue.push(...scoreSheetElements);
-		if (
-			(digSheetElements.length > 0 || scoreSheetElements.length > 0) &&
-			isNarrowScreen
-		) {
-			animationQueue.push({ type: "scroll", action: "dig" });
-		}
-	}
-	// Hide current oil square before processing next bonus
-	const oilSquareMap = {
-		0: "oil-square-1",
-		1: "oil-square-2",
-		2: "oil-square-3",
-		3: "oil-square-4",
-		4: "oil-square-5"
-	};
-	if (bonusDigMode) {
-		const currentOilSquareId = oilSquareMap[oilBonusQueue[0]];
-		if (currentOilSquareId) {
-			const currentOilSquare = document.getElementById(currentOilSquareId);
-			if (currentOilSquare) {
-				currentOilSquare.style.display = "none";
-				currentOilSquare.classList.remove("pulsing-oil-square");
-			}
-		}
-	}
-	animationQueue.forEach((item, index) => {
-		setTimeout(() => {
-			if (item.type === "element") {
-				const gem = item.gem;
-				switch (gem) {
-					case "quartz":
-						quartzCount = Math.max(0, quartzCount + 1);
-						updateQuartzClickers();
-						break;
-					case "sandstone":
-						sandstoneCount = Math.max(0, sandstoneCount + 1);
-						updateSandstoneClickers();
-						break;
-					case "coal":
-						coalCount = Math.max(0, coalCount + 1);
-						updateCoalClickers();
-						break;
-					case "silver":
-						silverCount = Math.max(0, silverCount + 1);
-						updateSilverClickers();
-						break;
-					case "diamond":
-						diamondCount = Math.max(0, diamondCount + 1);
-						updateDiamondClickers();
-						break;
-					case "lapis":
-						lapisCount = Math.max(0, lapisCount + 1);
-						updateLapisClickers();
-						break;
-					case "peridot":
-						peridotCount = Math.max(0, peridotCount + 1);
-						const greenDieValue =
-							parseInt(document.getElementById("die1").getAttribute("data-value")) ||
-							0;
-						if (greenDieValue > 0) {
-							const scoreDiv = document.querySelectorAll(".peridot-score")[
-								peridotCount - 1
-							];
-							if (scoreDiv) scoreDiv.textContent = greenDieValue;
-						}
-						updatePeridotClickers();
-						break;
-					case "topaz":
-						topazCount = Math.max(0, topazCount + 1);
-						updateTopazClickers();
-						break;
-					case "opal":
-						opalCount = Math.max(0, opalCount + 1);
-						updateOpalClickers();
-						break;
-					case "amber":
-						amberCount = Math.max(0, amberCount + 1);
-						updateAmberClickers();
-						break;
-					case "oil":
-						oilCount = Math.max(0, oilCount + 1);
-						updateOilClickers();
-						break;
-					case "ng":
-						ngCount = Math.max(0, ngCount + 1);
-						updateNgClickers();
-						break;
-				}
-				console.log(
-					`Circled ${gem} (index ${index}), new ${gem}Count: ${
-						window[`${gem}Count`]
-					}`
-				);
-				playSound("circle");
-			} else if (item.type === "row") {
-				const rowIndex = item.index;
-				const rowClicker = Array.from(
-					document.querySelectorAll(".row-cross-off")
-				).find(
-					(clicker) =>
-						rowPositionToIndex[clicker.style.cssText] === rowIndex ||
-						parseInt(clicker.dataset.index) + 1 === rowIndex
-				);
-				if (rowClicker && !rowClicker.classList.contains("crossed-off")) {
-					rowClicker.classList.add("crossed-off");
-					rowBonusCount++;
-					updateOpalClickers();
-					console.log(
-						`Crossed off row ${rowIndex} (index ${index}) at ${Date.now()}ms`
-					);
-					playSound("crossOff");
-				}
-			} else if (item.type === "column") {
-				const colIndex = item.index;
-				const colClicker = Array.from(
-					document.querySelectorAll(".column-cross-off")
-				).find(
-					(clicker) =>
-						columnPositionToIndex[clicker.style.cssText] === colIndex ||
-						parseInt(clicker.dataset.index) + 1 === colIndex
-				);
-				if (colClicker && !colClicker.classList.contains("crossed-off")) {
-					colClicker.classList.add("crossed-off");
-					columnBonusCount++;
-					updateOpalClickers();
-					console.log(
-						`Crossed off column ${colIndex} (index ${index}) at ${Date.now()}ms`
-					);
-					playSound("crossOff");
-				}
-			} else if (item.type === "boulder") {
-				const boulderIndex = item.index;
-				const boulderClicker = Array.from(
-					document.querySelectorAll(".boulder-cross-off")
-				).find((clicker) => parseInt(clicker.dataset.index) + 1 === boulderIndex);
-				if (boulderClicker && !boulderClicker.classList.contains("crossed-off")) {
-					boulderClicker.classList.add("crossed-off");
-					boulderBonusCount++;
-					updateAmberClickers();
-					console.log(
-						`Crossed off boulder ${boulderIndex} (index ${index}) at ${Date.now()}ms`
-					);
-					playSound("crossOff");
-				}
-			} else if (item.type === "cell-flash") {
-				item.indices.forEach((index) => {
-					const cell = document.querySelector(`.cell[data-index="${index}"]`);
-					if (cell) {
-						cell.classList.add("cell-flash");
-						setTimeout(() => {
-							cell.classList.remove("cell-flash");
-						}, 500);
-					}
-				});
-				console.log(
-					`Flashed cells for bonus (index ${index}): ${item.indices
-						.map((idx) => `(${((idx / 10) | 0) + 1}, ${(idx % 10) + 1})`)
-						.join(", ")}`
-				);
-				playSound("bonus");
-			} else if (item.type === "scroll") {
-				if (item.action === "score") {
-					const rightButton = document.getElementById("right-button");
-					if (rightButton) {
-						rightButton.click();
-						console.log(
-							`Clicked right-button to scroll to score sheet (index ${index}) at ${Date.now()}ms`
-						);
-					}
-				} else if (item.action === "dig") {
-					const returnButton = document.getElementById("return-home-score");
-					if (returnButton) {
-						returnButton.click();
-						console.log(
-							`Clicked return-home-score to scroll to dig sheet (index ${index}) at ${Date.now()}ms`
-						);
-					}
-				}
-			}
-			updateFinalScore();
-		}, delay);
-		delay += 500;
-	});
-	// Handle bonus mode transition after animations (or immediately if none)
-	setTimeout(
-		() => {
-			console.log(
-				`Final transition: bonusDigMode=${bonusDigMode}, oilBonusQueue=${oilBonusQueue}`
-			);
-			if (bonusDigMode && oilBonusQueue.length > 0) {
-				const clickerIndex = oilBonusQueue.shift();
-				// Only cross off clicker if it's not the first of two index 4 bonuses (7th oil)
-				if (clickerIndex >= 0 && clickerIndex < oilNgCrossOffClickers.length) {
-					const clicker = oilNgCrossOffClickers[clickerIndex];
-					if (clicker && !clicker.classList.contains("crossed-off")) {
-						// For index 4 (7th oil), only cross off if the next queue item is not also 4
-						if (clickerIndex !== 4 || oilBonusQueue[0] !== 4) {
-							clicker.classList.add("crossed-off");
-							playSound("crossOff");
-							console.log(`Crossed off oil clicker ${clickerIndex}`);
-						}
-					}
-				}
-				if (oilBonusQueue.length > 0) {
-					console.log("Remaining bonuses, entering bonus dig mode");
-					enterBonusDigMode();
-				} else {
-					console.log("No remaining bonuses, exiting bonus dig mode");
-					exitBonusDigMode();
-				}
-			} else if (oilBonusQueue.length > 0 && !bonusDigMode) {
-				console.log("Queue has bonuses, entering bonus dig mode");
-				enterBonusDigMode();
-			} else {
-				console.log("No bonuses, transitioning to roll/end phase");
-				gamePhase = rollCount < 9 ? "roll" : "end";
-				updateRollButtonState();
-				updateDigButtonState();
-				updateCellCursors();
-				updateNgCrossoffState();
-			}
-			// Consume used NG-Crossoffs (lock them without reducing ngCount or uncircling)
-			ngCrossoffDivs.forEach((div) => {
-				if (
-					div.classList.contains("crossed-off") &&
-					!div.classList.contains("used")
-				) {
-					div.classList.add("used");
-					console.log(
-						`Consumed NG-Crossoff at index ${ngCrossoffDivs.indexOf(div)}`
-					);
-				}
-			});
-			updateNgCrossoffState();
-		},
-		animationQueue.length > 0 ? delay : 0
-	);
+console.log("Dig button clicked");
+const allNewSize =
+selectedCells.size + lockedGroups.reduce((acc, g) => acc + g.size, 0);
+if (allNewSize === 0 || !isConnectedGraph()) return;
+if (!bonusDigMode) {
+stateHistory = [];
+stateHistory.push(saveState());
+}
+
+// Force to dig view at start to ensure consistent starting point, without transition
+const container = document.getElementById("game-container");
+container.style.transition = "none"; // Disable transition for instant jump
+const shift = getShiftAmount();
+container.style.transform = `translateX(-${1 * shift}vw)`;
+currentView = 1;
+updateButtons();
+container.offsetHeight; // Reflow
+container.style.transition = "transform 0.5s ease"; // Re-enable transition
+
+const visited = new Set();
+const grid = document.getElementById("grid");
+const currentCommit = new Set();
+const currentSvgs = [];
+const isNarrowScreen = !window.matchMedia("(min-aspect-ratio: 4/3)").matches;
+grid
+.querySelectorAll(".selection-svg, .locked-svg")
+.forEach((svg) => svg.remove());
+// Collect all new groups: selected's disconnected + locked
+const newGroups = [];
+const selectedVisited = new Set();
+for (let start of Array.from(selectedCells)) {
+if (!selectedVisited.has(start)) {
+const group = new Set();
+dfs(start, group, selectedVisited, selectedCells);
+if (group.size > 0) {
+newGroups.push(group);
+}
+}
+}
+lockedGroups.forEach((g) => newGroups.push(new Set(g)));
+// Draw committed SVG per new group (black)
+for (let grp of newGroups) {
+const pathData = generatePolyominoPath(grp);
+if (pathData) {
+const svg = createPolyominoSvg(pathData, "#000000");
+svg.classList.add("committed-svg");
+svg.classList.add("flash");
+grid.appendChild(svg);
+setTimeout(() => svg.classList.remove("flash"), 200);
+grp.forEach((index) => {
+const cell = document.querySelector(`.cell[data-index="${index}"]`);
+cell.classList.add("committed");
+committedCells.set(index, svg);
+currentCommit.add(index);
+});
+currentSvgs.push(svg);
+}
+}
+playSound("pickaxe");
+const cellsArray = Array.from(
+new Set(newGroups.flatMap((g) => Array.from(g)))
+);
+const elementOrder = [
+"oil",
+"ng",
+"quartz",
+"sandstone",
+"coal",
+"silver",
+"diamond",
+"lapis",
+"peridot",
+"topaz",
+"opal",
+"amber"
+];
+const boulderCenters = {
+"dig-sheet-a": [
+{ row: 2, col: 6, index: 1 },
+{ row: 3, col: 3, index: 2 },
+{ row: 4, col: 7, index: 3 },
+{ row: 8, col: 7, index: 4 },
+{ row: 9, col: 5, index: 5 }
+],
+"dig-sheet-b": [
+{ row: 2, col: 7, index: 1 },
+{ row: 3, col: 3, index: 2 },
+{ row: 5, col: 5, index: 3 },
+{ row: 8, col: 2, index: 4 },
+{ row: 8, col: 6, index: 5 }
+],
+"dig-sheet-c": [
+{ row: 2, col: 6, index: 1 },
+{ row: 3, col: 3, index: 2 },
+{ row: 5, col: 6, index: 3 },
+{ row: 6, col: 8, index: 4 },
+{ row: 9, col: 5, index: 5 }
+],
+"dig-sheet-d": [
+{ row: 2, col: 6, index: 1 },
+{ row: 3, col: 3, index: 2 },
+{ row: 7, col: 4, index: 3 },
+{ row: 7, col: 7, index: 4 },
+{ row: 9, col: 6, index: 5 }
+],
+"dig-sheet-e": [
+{ row: 2, col: 7, index: 1 },
+{ row: 3, col: 5, index: 2 },
+{ row: 7, col: 2, index: 3 },
+{ row: 9, col: 3, index: 4 },
+{ row: 9, col: 8, index: 5 }
+],
+"dig-sheet-f": [
+{ row: 2, col: 3, index: 1 },
+{ row: 3, col: 9, index: 2 },
+{ row: 5, col: 8, index: 3 },
+{ row: 6, col: 3, index: 4 },
+{ row: 9, col: 5, index: 5 }
+],
+"dig-sheet-g": [
+{ row: 3, col: 5, index: 1 },
+{ row: 3, col: 7, index: 2 },
+{ row: 5, col: 3, index: 3 },
+{ row: 7, col: 9, index: 4 },
+{ row: 8, col: 2, index: 5 }
+],
+"dig-sheet-h": [
+{ row: 2, col: 5, index: 1 },
+{ row: 4, col: 6, index: 2 },
+{ row: 5, col: 4, index: 3 },
+{ row: 8, col: 4, index: 4 },
+{ row: 8, col: 7, index: 5 }
+]
+}[currentDigSheet];
+let animationQueue = [];
+let gridElements = [];
+let bonusElements = [];
+let rowBonuses = [];
+const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
+for (let row = 0; row < 10; row++) {
+const rowCells = Array.from({ length: 10 }, (_, col) => row * 10 + col);
+const clickableRowCells = rowCells.filter(
+(index) => !unclickableCells.has(index)
+);
+const committedInRow = clickableRowCells.filter((index) =>
+committedCells.has(index)
+);
+if (
+committedInRow.length >= clickableRowCells.length &&
+clickableRowCells.length > 0
+) {
+const rowIndex = row + 1;
+const rowClicker = Array.from(
+document.querySelectorAll(".row-cross-off")
+).find(
+(clicker) =>
+rowPositionToIndex[clicker.style.cssText] === rowIndex ||
+parseInt(clicker.dataset.index) + 1 === rowIndex
+);
+if (rowClicker && !rowClicker.classList.contains("crossed-off")) {
+rowBonuses.push({ type: "cell-flash", indices: clickableRowCells });
+rowBonuses.push({ type: "row", index: rowIndex });
+if (coordinates[currentDigSheet]) {
+for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
+const rowConfigs = config.row?.filter((r) => r.index === rowIndex) || [];
+rowConfigs.forEach((rowConfig) => {
+for (let i = 0; i < rowConfig.count; i++) {
+bonusElements.push({ type: "element", gem });
+}
+});
+}
+}
+console.log(`Row ${rowIndex} completed, will flash cells and cross off`);
+}
+}
+}
+let columnBonuses = [];
+for (let col = 0; col < 10; col++) {
+const colCells = Array.from({ length: 10 }, (_, row) => row * 10 + col);
+const clickableColCells = colCells.filter(
+(index) => !unclickableCells.has(index)
+);
+const committedInCol = clickableColCells.filter((index) =>
+committedCells.has(index)
+);
+if (
+committedInCol.length >= clickableColCells.length &&
+clickableColCells.length > 0
+) {
+const colIndex = col + 1;
+const colClicker = Array.from(
+document.querySelectorAll(".column-cross-off")
+).find(
+(clicker) =>
+columnPositionToIndex[clicker.style.cssText] === colIndex ||
+parseInt(clicker.dataset.index) + 1 === colIndex
+);
+if (colClicker && !colClicker.classList.contains("crossed-off")) {
+columnBonuses.push({ type: "cell-flash", indices: clickableColCells });
+columnBonuses.push({ type: "column", index: colIndex });
+if (coordinates[currentDigSheet]) {
+for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
+const colConfigs =
+config.column?.filter((c) => c.index === colIndex) || [];
+colConfigs.forEach((colConfig) => {
+for (let i = 0; i < colConfig.count; i++) {
+bonusElements.push({ type: "element", gem });
+}
+});
+}
+}
+console.log(`Column ${colIndex} completed, will flash cells and cross off`);
+}
+}
+}
+let boulderBonuses = [];
+for (const { row, col, index } of boulderCenters) {
+const neighbors = [
+{ r: row - 1, c: col - 1 },
+{ r: row - 1, c: col },
+{ r: row - 1, c: col + 1 },
+{ r: row, c: col - 1 },
+{ r: row, c: col + 1 },
+{ r: row + 1, c: col - 1 },
+{ r: row + 1, c: col },
+{ r: row + 1, c: col + 1 }
+].filter(({ r, c }) => r >= 1 && r <= 10 && c >= 1 && c <= 10);
+const neighborIndices = neighbors.map(({ r, c }) => (r - 1) * 10 + (c - 1));
+if (neighborIndices.every((idx) => committedCells.has(idx))) {
+const boulderClicker = Array.from(
+document.querySelectorAll(".boulder-cross-off")
+).find((clicker) => parseInt(clicker.dataset.index) + 1 === index);
+if (boulderClicker && !boulderClicker.classList.contains("crossed-off")) {
+boulderBonuses.push({ type: "cell-flash", indices: neighborIndices });
+boulderBonuses.push({ type: "boulder", index });
+if (coordinates[currentDigSheet]) {
+for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
+const boulderConfigs =
+config.boulder?.filter((b) => b.index === index) || [];
+boulderConfigs.forEach((boulderConfig) => {
+for (let i = 0; i < boulderConfig.count; i++) {
+bonusElements.push({ type: "element", gem });
+}
+});
+}
+}
+console.log(`Boulder ${index} completed, will flash cells and cross off`);
+}
+}
+}
+let allElements = [];
+let digSheetElements = [];
+let scoreSheetElements = [];
+let newOilCount = 0;
+if (coordinates[currentDigSheet]) {
+const gridCells = coordinates[currentDigSheet];
+cellsArray.forEach((index) => {
+const row = Math.floor(index / 10) + 1;
+const col = (index % 10) + 1;
+for (const [gem, config] of Object.entries(gridCells)) {
+if (config.grid?.some((cell) => cell.row === row && cell.col === col)) {
+allElements.push({ type: "element", gem });
+console.log(`Found ${gem} at grid cell (${row}, ${col})`);
+}
+}
+});
+}
+allElements.push(...bonusElements);
+allElements.forEach((element) => {
+if (element.type === "element" && element.gem === "oil") {
+newOilCount++;
+}
+});
+allElements.sort(
+(a, b) => elementOrder.indexOf(a.gem) - elementOrder.indexOf(b.gem)
+);
+allElements.forEach((element) => {
+if (element.gem === "oil" || element.gem === "ng") {
+digSheetElements.push(element);
+} else {
+scoreSheetElements.push(element);
+}
+});
+// Predict oil bonuses
+const prevOilCount = oilCount;
+const tempOilCount = oilCount + newOilCount;
+const newBonuses = [];
+if (tempOilCount >= 2 && prevOilCount < 2) newBonuses.push(0); // 2nd oil -> clicker 0
+if (tempOilCount >= 4 && prevOilCount < 4) newBonuses.push(1); // 4th oil -> clicker 1
+if (tempOilCount >= 5 && prevOilCount < 5) newBonuses.push(2); // 5th oil -> clicker 2
+if (tempOilCount >= 6 && prevOilCount < 6) newBonuses.push(3); // 6th oil -> clicker 3
+if (tempOilCount >= 7 && prevOilCount < 7) {
+newBonuses.push(4, 4); // 7th oil -> clicker 4 (twice)
+}
+oilBonusQueue.push(...newBonuses); // Always append to end for FIFO order
+console.log(
+`Oil bonuses queued: ${newBonuses}, total queue: ${oilBonusQueue}, bonusDigMode: ${bonusDigMode}`
+);
+selectedCells.clear();
+lockedGroups = [];
+outlines.clear();
+updatePolyominoOutline();
+updateCellCursors();
+updateDigButtonState();
+let delay = 500;
+animationQueue.push(...rowBonuses);
+animationQueue.push(...columnBonuses);
+animationQueue.push(...boulderBonuses);
+let didScrollToScore = false; // Track if we scrolled to score
+if (digSheetElements.length > 0 || scoreSheetElements.length > 0) {
+animationQueue.push(...digSheetElements);
+if (scoreSheetElements.length > 0 && isNarrowScreen) {
+animationQueue.push({ type: "scroll", action: "score" });
+didScrollToScore = true;
+}
+animationQueue.push(...scoreSheetElements);
+if (isNarrowScreen && didScrollToScore) {
+animationQueue.push({ type: "scroll", action: "dig" });
+}
+}
+// Hide current oil square before processing next bonus
+const oilSquareMap = {
+0: "oil-square-1",
+1: "oil-square-2",
+2: "oil-square-3",
+3: "oil-square-4",
+4: "oil-square-5"
+};
+if (bonusDigMode) {
+const currentOilSquareId = oilSquareMap[oilBonusQueue[0]];
+if (currentOilSquareId) {
+const currentOilSquare = document.getElementById(currentOilSquareId);
+if (currentOilSquare) {
+currentOilSquare.style.display = "none";
+currentOilSquare.classList.remove("pulsing-oil-square");
+}
+}
+}
+animationQueue.forEach((item, index) => {
+setTimeout(() => {
+if (item.type === "element") {
+const gem = item.gem;
+switch (gem) {
+case "quartz":
+quartzCount = Math.max(0, quartzCount + 1);
+updateQuartzClickers();
+break;
+case "sandstone":
+sandstoneCount = Math.max(0, sandstoneCount + 1);
+updateSandstoneClickers();
+break;
+case "coal":
+coalCount = Math.max(0, coalCount + 1);
+updateCoalClickers();
+break;
+case "silver":
+silverCount = Math.max(0, silverCount + 1);
+updateSilverClickers();
+break;
+case "diamond":
+diamondCount = Math.max(0, diamondCount + 1);
+updateDiamondClickers();
+break;
+case "lapis":
+lapisCount = Math.max(0, lapisCount + 1);
+updateLapisClickers();
+break;
+case "peridot":
+peridotCount = Math.max(0, peridotCount + 1);
+const greenDieValue =
+parseInt(document.getElementById("die1").getAttribute("data-value")) ||
+0;
+if (greenDieValue > 0) {
+const scoreDiv = document.querySelectorAll(".peridot-score")[
+peridotCount - 1
+];
+if (scoreDiv) scoreDiv.textContent = greenDieValue;
+}
+updatePeridotClickers();
+break;
+case "topaz":
+topazCount = Math.max(0, topazCount + 1);
+updateTopazClickers();
+break;
+case "opal":
+opalCount = Math.max(0, opalCount + 1);
+updateOpalClickers();
+break;
+case "amber":
+amberCount = Math.max(0, amberCount + 1);
+updateAmberClickers();
+break;
+case "oil":
+oilCount = Math.max(0, oilCount + 1);
+updateOilClickers();
+break;
+case "ng":
+ngCount = Math.max(0, ngCount + 1);
+updateNgClickers();
+break;
+}
+console.log(
+`Circled ${gem} (index ${index}), new ${gem}Count: ${
+window[`${gem}Count`]
+}`
+);
+playSound("circle");
+} else if (item.type === "row") {
+const rowIndex = item.index;
+const rowClicker = Array.from(
+document.querySelectorAll(".row-cross-off")
+).find(
+(clicker) =>
+rowPositionToIndex[clicker.style.cssText] === rowIndex ||
+parseInt(clicker.dataset.index) + 1 === rowIndex
+);
+if (rowClicker && !rowClicker.classList.contains("crossed-off")) {
+rowClicker.classList.add("crossed-off");
+rowBonusCount++;
+updateOpalClickers();
+console.log(
+`Crossed off row ${rowIndex} (index ${index}) at ${Date.now()}ms`
+);
+playSound("crossOff");
+}
+} else if (item.type === "column") {
+const colIndex = item.index;
+const colClicker = Array.from(
+document.querySelectorAll(".column-cross-off")
+).find(
+(clicker) =>
+columnPositionToIndex[clicker.style.cssText] === colIndex ||
+parseInt(clicker.dataset.index) + 1 === colIndex
+);
+if (colClicker && !colClicker.classList.contains("crossed-off")) {
+colClicker.classList.add("crossed-off");
+columnBonusCount++;
+updateOpalClickers();
+console.log(
+`Crossed off column ${colIndex} (index ${index}) at ${Date.now()}ms`
+);
+playSound("crossOff");
+}
+} else if (item.type === "boulder") {
+const boulderIndex = item.index;
+const boulderClicker = Array.from(
+document.querySelectorAll(".boulder-cross-off")
+).find((clicker) => parseInt(clicker.dataset.index) + 1 === boulderIndex);
+if (boulderClicker && !boulderClicker.classList.contains("crossed-off")) {
+boulderClicker.classList.add("crossed-off");
+boulderBonusCount++;
+updateAmberClickers();
+console.log(
+`Crossed off boulder ${boulderIndex} (index ${index}) at ${Date.now()}ms`
+);
+playSound("crossOff");
+}
+} else if (item.type === "cell-flash") {
+item.indices.forEach((index) => {
+const cell = document.querySelector(`.cell[data-index="${index}"]`);
+if (cell) {
+cell.classList.add("cell-flash");
+setTimeout(() => {
+cell.classList.remove("cell-flash");
+}, 500);
+}
+});
+console.log(
+`Flashed cells for bonus (index ${index}): ${item.indices
+.map((idx) => `(${((idx / 10) | 0) + 1}, ${(idx % 10) + 1})`)
+.join(", ")}`
+);
+playSound("bonus");
+} else if (item.type === "scroll") {
+if (item.action === "score") {
+scrollRight(); // Use scrollRight() for consistency
+console.log(
+`Scrolled to score sheet (index ${index}) at ${Date.now()}ms`
+);
+} else if (item.action === "dig") {
+scrollLeft(); // Use scrollLeft() to go back
+console.log(
+`Scrolled back to dig sheet (index ${index}) at ${Date.now()}ms`
+);
+}
+}
+updateFinalScore();
+}, delay);
+delay += 500;
+});
+// Handle bonus mode transition after animations (or immediately if none)
+setTimeout(
+() => {
+console.log(
+`Final transition: bonusDigMode=${bonusDigMode}, oilBonusQueue=${oilBonusQueue}`
+);
+if (bonusDigMode && oilBonusQueue.length > 0) {
+const clickerIndex = oilBonusQueue.shift();
+// Only cross off clicker if it's not the first of two index 4 bonuses (7th oil)
+if (clickerIndex >= 0 && clickerIndex < oilNgCrossOffClickers.length) {
+const clicker = oilNgCrossOffClickers[clickerIndex];
+if (clicker && !clicker.classList.contains("crossed-off")) {
+// For index 4 (7th oil), only cross off if the next queue item is not also 4
+if (clickerIndex !== 4 || oilBonusQueue[0] !== 4) {
+clicker.classList.add("crossed-off");
+playSound("crossOff");
+console.log(`Crossed off oil clicker ${clickerIndex}`);
+}
+}
+}
+if (oilBonusQueue.length > 0) {
+console.log("Remaining bonuses, entering bonus dig mode");
+enterBonusDigMode();
+} else {
+console.log("No remaining bonuses, exiting bonus dig mode");
+exitBonusDigMode();
+}
+} else if (oilBonusQueue.length > 0 && !bonusDigMode) {
+console.log("Queue has bonuses, entering bonus dig mode");
+enterBonusDigMode();
+} else {
+console.log("No bonuses, transitioning to roll/end phase");
+gamePhase = rollCount < 9 ? "roll" : "end";
+updateRollButtonState();
+updateDigButtonState();
+updateCellCursors();
+updateNgCrossoffState();
+}
+// Consume used NG-Crossoffs (lock them without reducing ngCount or uncircling)
+ngCrossoffDivs.forEach((div) => {
+if (
+div.classList.contains("crossed-off") &&
+!div.classList.contains("used")
+) {
+div.classList.add("used");
+console.log(
+`Consumed NG-Crossoff at index ${ngCrossoffDivs.indexOf(div)}`
+);
+}
+});
+updateNgCrossoffState();
+// Force reflow to ensure final scroll-back renders (mobile fix)
+const container = document.getElementById("game-container");
+if (container) {
+container.offsetHeight; // Trigger reflow
+}
+},
+animationQueue.length > 0 ? delay : 0
+);
 }
 function undoLastCommit() {
 	if (stateHistory.length === 0) {
@@ -6958,15 +7008,15 @@ function undoLastCommit() {
 }
 
 function seededRandom(seed) {
-  let hash = 0n; // Use BigInt for precision
-  for (let i = 0; i < seed.length; i++) {
-    hash = (hash * 31n + BigInt(seed.charCodeAt(i))) & 0x7fffffffn;
-  }
-  let x = hash;
-  return function () {
-    x = (x * 134775813n + 1n) & 0x7fffffffn;
-    return Number(x) / 2147483647; // Convert back to Number for 0-1 range
-  };
+	let hash = 0n; // Use BigInt for precision
+	for (let i = 0; i < seed.length; i++) {
+		hash = (hash * 31n + BigInt(seed.charCodeAt(i))) & 0x7fffffffn;
+	}
+	let x = hash;
+	return function () {
+		x = (x * 134775813n + 1n) & 0x7fffffffn;
+		return Number(x) / 2147483647; // Convert back to Number for 0-1 range
+	};
 }
 
 function switchDigSheet() {
@@ -7052,54 +7102,52 @@ function switchRollSheet() {
 }
 
 function startDailyChallenge() {
-  
 	const now = new Date();
-  const year = now.getFullYear();
-  const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const day = now.getDate().toString().padStart(2, '0');
-  const dailySeed = `${year}-${month}-${day}`; // Local date for seed
-  console.log("Daily Challenge Seed:", dailySeed);
-  const random = seededRandom(dailySeed);
-  const dailyDigIndex = Math.floor(random() * digSheets.length);
-  currentDigSheet = digSheets[dailyDigIndex];
-  console.log("Selected Dig Sheet:", currentDigSheet);
-  const digSheetElement = document.getElementById("dig-sheet");
-  const overlayImg = document.querySelector("#dig-sheet-overlay img");
-  digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
-  overlayImg.src = digSheetOverlayImages[currentDigSheet];
-  digSheetElement.style.display = "none";
-  digSheetElement.offsetHeight;
-  digSheetElement.style.display = "block";
-  const dailyRollIndex = Math.floor(random() * rollSheets.length);
-  currentRollSheet = rollSheets[dailyRollIndex];
-  console.log("Selected Roll Sheet:", currentRollSheet);
-  const rollSheetImg = document
-    .getElementById("roll-sheet")
-    .querySelector("img:not(#green-image img):not(#white-image img)");
-  rollSheetImg.src = rollSheetImages[currentRollSheet];
-  dailyDiceRolls.length = 0;
-  for (let i = 0; i < 9; i++) {
-    const greenRoll = Math.floor(random() * 6) + 1;
-    const whiteRoll = Math.floor(random() * 6) + 1;
-    dailyDiceRolls.push({ green: greenRoll, white: whiteRoll });
-  }
-  console.log("Daily Dice Rolls:", dailyDiceRolls);
-  rollCount = 0;
-  const boulderElements = document.querySelectorAll(".boulder-cross-off");
-  boulderElements.forEach((element, index) => {
-    const config = digSheetBoulderConfigs[currentDigSheet][index];
-    if (config) {
-      element.style.top = config.top;
-      element.style.left = config.left;
-    }
-  });
-  resetGrid();
+	const year = now.getFullYear();
+	const month = (now.getMonth() + 1).toString().padStart(2, "0");
+	const day = now.getDate().toString().padStart(2, "0");
+	const dailySeed = `${year}-${month}-${day}`; // Local date for seed
+	console.log("Daily Challenge Seed:", dailySeed);
+	const random = seededRandom(dailySeed);
+	const dailyDigIndex = Math.floor(random() * digSheets.length);
+	currentDigSheet = digSheets[dailyDigIndex];
+	console.log("Selected Dig Sheet:", currentDigSheet);
+	const digSheetElement = document.getElementById("dig-sheet");
+	const overlayImg = document.querySelector("#dig-sheet-overlay img");
+	digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+	overlayImg.src = digSheetOverlayImages[currentDigSheet];
+	digSheetElement.style.display = "none";
+	digSheetElement.offsetHeight;
+	digSheetElement.style.display = "block";
+	const dailyRollIndex = Math.floor(random() * rollSheets.length);
+	currentRollSheet = rollSheets[dailyRollIndex];
+	console.log("Selected Roll Sheet:", currentRollSheet);
+	const rollSheetImg = document
+		.getElementById("roll-sheet")
+		.querySelector("img:not(#green-image img):not(#white-image img)");
+	rollSheetImg.src = rollSheetImages[currentRollSheet];
+	dailyDiceRolls.length = 0;
+	for (let i = 0; i < 9; i++) {
+		const greenRoll = Math.floor(random() * 6) + 1;
+		const whiteRoll = Math.floor(random() * 6) + 1;
+		dailyDiceRolls.push({ green: greenRoll, white: whiteRoll });
+	}
+	console.log("Daily Dice Rolls:", dailyDiceRolls);
+	rollCount = 0;
+	const boulderElements = document.querySelectorAll(".boulder-cross-off");
+	boulderElements.forEach((element, index) => {
+		const config = digSheetBoulderConfigs[currentDigSheet][index];
+		if (config) {
+			element.style.top = config.top;
+			element.style.left = config.left;
+		}
+	});
+	resetGrid();
 	console.log("First random (dig): ", random());
-console.log("Second random (roll): ", random());
-console.log("First green roll: ", Math.floor(random() * 6) + 1);
+	console.log("Second random (roll): ", random());
+	console.log("First green roll: ", Math.floor(random() * 6) + 1);
 }
 function updateDailyChallengeTimer() {
-	
 	const now = new Date();
 	const nextMidnight = new Date(now);
 	nextMidnight.setHours(24, 0, 0, 0); // Midnight next day
@@ -7309,49 +7357,51 @@ function exitBonusDigMode() {
 }
 
 function updateDigButtonState() {
-    const digButton = document.getElementById("dig-button");
-    if (!digButton) return;
-    if (gamePhase !== "dig") {
-        digButton.classList.add("loading");
-        digButton.classList.remove("loaded", "pulsing-dig");
-        digButton.style.opacity = "0.5";
-        digButton.style.pointerEvents = "none";
-        if (bonusDigMode) {
-            digButton.classList.add("bonus-mode");
-        } else {
-            digButton.classList.remove("bonus-mode");
-        }
-        return;
-    }
-    const allNewSize =
-        selectedCells.size + lockedGroups.reduce((acc, g) => acc + g.size, 0);
-    const isValid = bonusDigMode
-        ? allNewSize === 1 && isConnectedGraph()
-        : allNewSize > 0 && isConnectedGraph() && (allNewSize === 1 || isValidPattern());
-    console.log(
-        `Dig button state: allNewSize=${allNewSize}, connected=${isConnectedGraph()}, validPattern=${isValidPattern()}, bonusDigMode=${bonusDigMode}`
-    );
-    if (isValid) {
-        digButton.classList.remove("loading");
-        digButton.classList.add("loaded", "pulsing-dig");
-        digButton.classList.remove("bonus-mode"); // Remove bonus-mode to avoid spin animation conflict
-        digButton.style.opacity = "1";
-        digButton.style.pointerEvents = "auto";
-        if (bonusDigMode) {
-            const img = digButton.querySelector("img");
-            if (img) img.src = "https://i.imgur.com/ZI42Lkq.png"; // Ensure bonus image
-        }
-    } else {
-        digButton.classList.add("loading");
-        digButton.classList.remove("loaded", "pulsing-dig");
-        if (bonusDigMode) {
-            digButton.classList.add("bonus-mode");
-        } else {
-            digButton.classList.remove("bonus-mode");
-        }
-        digButton.style.opacity = "0.5";
-        digButton.style.pointerEvents = "none";
-    }
+	const digButton = document.getElementById("dig-button");
+	if (!digButton) return;
+	if (gamePhase !== "dig") {
+		digButton.classList.add("loading");
+		digButton.classList.remove("loaded", "pulsing-dig");
+		digButton.style.opacity = "0.5";
+		digButton.style.pointerEvents = "none";
+		if (bonusDigMode) {
+			digButton.classList.add("bonus-mode");
+		} else {
+			digButton.classList.remove("bonus-mode");
+		}
+		return;
+	}
+	const allNewSize =
+		selectedCells.size + lockedGroups.reduce((acc, g) => acc + g.size, 0);
+	const isValid = bonusDigMode
+		? allNewSize === 1 && isConnectedGraph()
+		: allNewSize > 0 &&
+		  isConnectedGraph() &&
+		  (allNewSize === 1 || isValidPattern());
+	console.log(
+		`Dig button state: allNewSize=${allNewSize}, connected=${isConnectedGraph()}, validPattern=${isValidPattern()}, bonusDigMode=${bonusDigMode}`
+	);
+	if (isValid) {
+		digButton.classList.remove("loading");
+		digButton.classList.add("loaded", "pulsing-dig");
+		digButton.classList.remove("bonus-mode"); // Remove bonus-mode to avoid spin animation conflict
+		digButton.style.opacity = "1";
+		digButton.style.pointerEvents = "auto";
+		if (bonusDigMode) {
+			const img = digButton.querySelector("img");
+			if (img) img.src = "https://i.imgur.com/ZI42Lkq.png"; // Ensure bonus image
+		}
+	} else {
+		digButton.classList.add("loading");
+		digButton.classList.remove("loaded", "pulsing-dig");
+		if (bonusDigMode) {
+			digButton.classList.add("bonus-mode");
+		} else {
+			digButton.classList.remove("bonus-mode");
+		}
+		digButton.style.opacity = "0.5";
+		digButton.style.pointerEvents = "none";
+	}
 }
 document.addEventListener("DOMContentLoaded", () => {
 	preloadImages().then(() => {
@@ -7385,6 +7435,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				applyClickAnimation(undoButton);
 			});
 		}
+
+		const leftButton = document.getElementById("left-button");
+		if (leftButton) leftButton.addEventListener("click", scrollLeft);
+		const rightButton = document.getElementById("right-button");
+		if (rightButton) rightButton.addEventListener("click", scrollRight);
+
 		const digSheetSwitcher = document.getElementById("dig-sheet-switcher");
 		if (digSheetSwitcher) {
 			digSheetSwitcher.addEventListener("click", () => {
@@ -7587,11 +7643,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				const resumeButton = document.getElementById("resume-button");
 				const homeButton = document.getElementById("home-button");
 
-				
-				
-				
-				
-
 				if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
 					console.error("Error: Missing game elements", {
 						digSheetElement,
@@ -7644,287 +7695,320 @@ document.addEventListener("DOMContentLoaded", () => {
 				playSound("click");
 			});
 		}
-		
+
 		// New consolidated declarations and logic for the finish/screenshot feature
-  const finishButton = document.getElementById("finish-button");
-  const screenshotButton = document.getElementById("screenshot-button");
-  const finalScoreBubble = document.getElementById("final-score-bubble");
-const screenshotExplainer = document.getElementById("screenshot-explainer");		
+		const finishButton = document.getElementById("finish-button");
+		const screenshotButton = document.getElementById("screenshot-button");
+		const finalScoreBubble = document.getElementById("final-score-bubble");
+		const screenshotExplainer = document.getElementById("screenshot-explainer");
 
-// Updated animateCountUp with rapid "click" sound every 10ms
-function animateCountUp(targetElement, targetNumber, duration = 1000) {
-  let start = 0;
-  const step = targetNumber / (duration / 3); // ~3ms per increment (adjust for speed)
-  const startTime = performance.now();
-  let lastSoundTime = 0; // Throttle sound
+		// Updated animateCountUp with rapid "click" sound every 10ms
+		function animateCountUp(targetElement, targetNumber, duration = 1000) {
+			let start = 0;
+			const step = targetNumber / (duration / 3); // ~3ms per increment (adjust for speed)
+			const startTime = performance.now();
+			let lastSoundTime = 0; // Throttle sound
 
-  function update(time) {
-    const progress = (time - startTime) / duration;
-    const current = Math.min(Math.floor(progress * targetNumber), targetNumber);
-    targetElement.textContent = current;
+			function update(time) {
+				const progress = (time - startTime) / duration;
+				const current = Math.min(Math.floor(progress * targetNumber), targetNumber);
+				targetElement.textContent = current;
 
-    // Play "click" sound every 10ms if time has passed
-    if (time - lastSoundTime >= 50) {
-      playSound("click");
-      lastSoundTime = time;
-    }
+				// Play "click" sound every 10ms if time has passed
+				if (time - lastSoundTime >= 50) {
+					playSound("click");
+					lastSoundTime = time;
+				}
 
-    if (current < targetNumber) {
-      requestAnimationFrame(update);
-    }
-  }
+				if (current < targetNumber) {
+					requestAnimationFrame(update);
+				}
+			}
 
-  requestAnimationFrame(update);
-}
-		
-// "Finish" button logic
-if (finishButton) {
-  finishButton.addEventListener("click", () => {
-    // Duplicate sum logic for totalScore
-    let totalScore = 0;
-    totalScore += parseInt(document.getElementById("diamond-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("silver-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("lapis-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("peridot-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("topaz-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("opal-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("amber-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("q-s-c-score-readout")?.textContent) || 0;
-    if (quartzBonus) totalScore += 6;
-    if (sandstoneBonus) totalScore += 9;
-    if (coalBonus) totalScore += 13;
-    // Slide down Finish button
-    finishButton.style.animation = "slide-down 0.5s forwards";
-    // Slide up final-score-bubble and start spin/scale + count-up
-    finalScoreBubble.classList.remove("hidden-state");
-    finalScoreBubble.style.animation = "slide-up 0.5s forwards, spin-scale .75s cubic-bezier(0.8, 0, 0.2, 1.0)";
-		finalScoreBubble.style.paddingRight = ".3cqh";
-    animateCountUp(finalScoreBubble, totalScore, 1000); // 1s count-up
-    // After 1s, slide bubble right, slide up Screenshot button, fade in explainer
-    setTimeout(() => {
-      finalScoreBubble.style.animation = "slide-right 0.5s forwards";
-      // After slide-right completes, clear animation and lock visibility/position
-      setTimeout(() => {
-        finalScoreBubble.style.animation = ""; // Clear to prevent conflicts
-        finalScoreBubble.style.opacity = "1"; // Force visible
-        finalScoreBubble.style.left = "calc(50% + 21.3cqh)"; // Lock right position (center shifted 21.6dvh right)
-        finalScoreBubble.style.bottom = "8.3cqh"; // Lock vertical center alignment
-        finalScoreBubble.style.transform = "translateX(-50%)"; // Keep centered at new left
-        finalScoreBubble.classList.remove("hidden-state"); // Ensure no hidden class
-        // Fade in screenshot-explainer
-        screenshotExplainer.classList.remove("hidden-state");
-        screenshotExplainer.style.animation = "fade-in 0.5s forwards";
-      }, 500); // After slide-right 0.5s
-      screenshotButton.classList.remove("off-screen");
-      screenshotButton.style.animation = "slide-up-button 0.5s forwards"; // Button-specific slide-up
-    }, 1000 + 1000); // Wait for count-up + 1s pause
-    playSound("click");
-  });
-}
-		
-// "Screenshot" button logic (triggers your existing screenshot overlay)
-if (screenshotButton) {
-  screenshotButton.addEventListener("click", () => {
-    const digClone = digSheet.cloneNode(true);
-    digClone.id = "dig-sheet-clone";
-    // Explicit styles for container fill
-    digClone.style.position = "absolute";
-    digClone.style.top = "0";
-    digClone.style.left = "0";
-    digClone.style.width = "100%";
-    digClone.style.height = "75dvh";
-    digClone.style.overflow = "hidden";
+			requestAnimationFrame(update);
+		}
 
-    // Access nested overlay in clone
-    const nestedOverlay = digClone.querySelector("#dig-sheet-overlay");
-    if (nestedOverlay) {
-      nestedOverlay.style.width = "100%";
-      nestedOverlay.style.height = "75dvh";
-      nestedOverlay.style.pointerEvents = "none";
-    }
+		// "Finish" button logic
+		if (finishButton) {
+			finishButton.addEventListener("click", () => {
+				// Duplicate sum logic for totalScore
+				let totalScore = 0;
+				totalScore +=
+					parseInt(document.getElementById("diamond-score-readout")?.textContent) ||
+					0;
+				totalScore +=
+					parseInt(document.getElementById("silver-score-readout")?.textContent) ||
+					0;
+				totalScore +=
+					parseInt(document.getElementById("lapis-score-readout")?.textContent) || 0;
+				totalScore +=
+					parseInt(document.getElementById("peridot-score-readout")?.textContent) ||
+					0;
+				totalScore +=
+					parseInt(document.getElementById("topaz-score-readout")?.textContent) || 0;
+				totalScore +=
+					parseInt(document.getElementById("opal-score-readout")?.textContent) || 0;
+				totalScore +=
+					parseInt(document.getElementById("amber-score-readout")?.textContent) || 0;
+				totalScore +=
+					parseInt(document.getElementById("q-s-c-score-readout")?.textContent) || 0;
+				if (quartzBonus) totalScore += 6;
+				if (sandstoneBonus) totalScore += 9;
+				if (coalBonus) totalScore += 13;
+				// Slide down Finish button
+				finishButton.style.animation = "slide-down 0.5s forwards";
+				// Slide up final-score-bubble and start spin/scale + count-up
+				finalScoreBubble.classList.remove("hidden-state");
+				finalScoreBubble.style.animation =
+					"slide-up 0.5s forwards, spin-scale .75s cubic-bezier(0.8, 0, 0.2, 1.0)";
+				finalScoreBubble.style.paddingRight = ".3cqh";
+				animateCountUp(finalScoreBubble, totalScore, 1000); // 1s count-up
+				// After 1s, slide bubble right, slide up Screenshot button, fade in explainer
+				setTimeout(() => {
+					playSound("bonus");
+					finalScoreBubble.style.animation = "slide-right 0.5s forwards";
+					// After slide-right completes, clear animation and lock visibility/position
+					setTimeout(() => {
+						finalScoreBubble.style.animation = ""; // Clear to prevent conflicts
+						finalScoreBubble.style.opacity = "1"; // Force visible
+						finalScoreBubble.style.left = "calc(50% + 21.3cqh)"; // Lock right position (center shifted 21.6dvh right)
+						finalScoreBubble.style.bottom = "8.3cqh"; // Lock vertical center alignment
+						finalScoreBubble.style.transform = "translateX(-50%)"; // Keep centered at new left
+						finalScoreBubble.classList.remove("hidden-state"); // Ensure no hidden class
+						// Fade in screenshot-explainer
+						screenshotExplainer.classList.remove("hidden-state");
+						screenshotExplainer.style.animation = "fade-in 0.5s forwards";
+					}, 500); // After slide-right 0.5s
+					screenshotButton.classList.remove("off-screen");
+					screenshotButton.style.animation = "slide-up-button 0.5s forwards"; // Button-specific slide-up
+				}, 1000 + 1000); // Wait for count-up + 1s pause
+				playSound("click");
+			});
+		}
 
-    // Hide buttons/nav in the clone
-    const buttonsToHide = digClone.querySelectorAll("#home-button, #dig-button, #undo-button, .return-button, .nav-button");
-    buttonsToHide.forEach(btn => btn.style.display = "none");
+		// "Screenshot" button logic (triggers your existing screenshot overlay)
+		if (screenshotButton) {
+			screenshotButton.addEventListener("click", () => {
+				const digClone = digSheet.cloneNode(true);
+				digClone.id = "dig-sheet-clone";
+				// Explicit styles for container fill
+				digClone.style.position = "absolute";
+				digClone.style.top = "0";
+				digClone.style.left = "0";
+				digClone.style.width = "100%";
+				digClone.style.height = "75dvh";
+				digClone.style.overflow = "hidden";
 
-		// NEW: Disable and hide dig-sheet-switcher in clone (no hover/click)
-    const switcherClone = digClone.querySelector("#dig-sheet-switcher");
-    if (switcherClone) {
-      switcherClone.style.pointerEvents = "none";
-      switcherClone.style.opacity = "0"; // Or "display: none;" if you want it completely gone
-    }
-		
-    // Hide polyomino SVGs
-    const svgsToHide = digClone.querySelectorAll(".polyomino-svg");
-    svgsToHide.forEach(svg => svg.style.display = "none");
+				// Access nested overlay in clone
+				const nestedOverlay = digClone.querySelector("#dig-sheet-overlay");
+				if (nestedOverlay) {
+					nestedOverlay.style.width = "100%";
+					nestedOverlay.style.height = "75dvh";
+					nestedOverlay.style.pointerEvents = "none";
+				}
 
-    // Replace bg-image with full-res <img> for crisp raster
-    const bgImg = document.createElement("img");
-    bgImg.src = digSheetBackgroundImages[currentDigSheet];
-    bgImg.style.position = "absolute";
-    bgImg.style.top = "0";
-    bgImg.style.left = "0";
-    bgImg.style.width = "100%";
-    bgImg.style.height = "100%";
-    bgImg.style.objectFit = "contain";
-    bgImg.style.zIndex = "-1";
-    bgImg.style.pointerEvents = "none";
-    digClone.insertBefore(bgImg, digClone.firstChild);
+				// Hide buttons/nav in the clone
+				const buttonsToHide = digClone.querySelectorAll(
+					"#home-button, #dig-button, #undo-button, .return-button, .nav-button"
+				);
+				buttonsToHide.forEach((btn) => (btn.style.display = "none"));
 
-    // Clear original bg-image
-    digClone.style.backgroundImage = "none";
+				// NEW: Disable and hide dig-sheet-switcher in clone (no hover/click)
+				const switcherClone = digClone.querySelector("#dig-sheet-switcher");
+				if (switcherClone) {
+					switcherClone.style.pointerEvents = "none";
+					switcherClone.style.opacity = "0"; // Or "display: none;" if you want it completely gone
+				}
 
-    // Grid placeholder
-    const gridPlaceholder = digClone.querySelector(".grid-placeholder");
-    if (gridPlaceholder) {
-      gridPlaceholder.style.position = "absolute";
-    }
+				// Hide polyomino SVGs
+				const svgsToHide = digClone.querySelectorAll(".polyomino-svg");
+				svgsToHide.forEach((svg) => (svg.style.display = "none"));
 
-    const scoreBgDiv = document.createElement("div");
-    scoreBgDiv.id = "score-bg-div";
-    scoreBgDiv.style.position = "absolute";
-    scoreBgDiv.style.top = "77dvh"; // Change this number to move scoreBgDiv down (e.g., "80dvh" for more space, "75dvh" for no space)
-    scoreBgDiv.style.left = "9dvh";
-    scoreBgDiv.style.width = "100%";
-    scoreBgDiv.style.height = "10dvh";
-    scoreBgDiv.style.overflow = "hidden";
-		scoreBgDiv.style.alignItems = "center";
+				// Replace bg-image with full-res <img> for crisp raster
+				const bgImg = document.createElement("img");
+				bgImg.src = digSheetBackgroundImages[currentDigSheet];
+				bgImg.style.position = "absolute";
+				bgImg.style.top = "0";
+				bgImg.style.left = "0";
+				bgImg.style.width = "100%";
+				bgImg.style.height = "100%";
+				bgImg.style.objectFit = "contain";
+				bgImg.style.zIndex = "-1";
+				bgImg.style.pointerEvents = "none";
+				digClone.insertBefore(bgImg, digClone.firstChild);
 
-    // Add <img> for badge (full-width, aspect preserved, centered)
-    const scoreImg = document.createElement("img");
-    scoreImg.src = "https://i.imgur.com/DM8guQA.png";
-    scoreImg.style.position = "absolute";
-    scoreImg.style.top = "0";
-    scoreImg.style.left = "0";
-    scoreImg.style.width = "100%";
-    scoreImg.style.height = "auto";
-    scoreImg.style.objectFit = "contain";
-    scoreImg.style.objectPosition = "center";
-    scoreBgDiv.appendChild(scoreImg);
+				// Clear original bg-image
+				digClone.style.backgroundImage = "none";
 
-    // Create new scoreTextDiv from scratch (child of scoreBgDiv)
-    const scoreTextDiv = document.createElement("div");
-    scoreTextDiv.id = "score-text-div";
-    scoreTextDiv.style.position = "absolute";
-    scoreTextDiv.style.top = "0";
-    scoreTextDiv.style.left = "-.4dvh";
-    scoreTextDiv.style.width = "100%";
-    scoreTextDiv.style.height = "100%";
-    scoreTextDiv.style.display = "flex";
-    scoreTextDiv.style.justifyContent = "center";
-    scoreTextDiv.style.alignItems = "center";
-    scoreTextDiv.style.paddingTop = "0.5dvh"; // Change this number to nudge the number down (e.g., "2dvh" for more down, "0dvh" for none)
-    scoreTextDiv.style.paddingLeft = "0dvh"; // Change this number to nudge the number left (e.g., "2dvh" for more left, "0dvh" for none)
-    scoreTextDiv.style.zIndex = "40"; // High for above img
-    scoreTextDiv.style.color = "black";
-    scoreTextDiv.style.fontSize = "4dvh";
-    scoreTextDiv.style.fontFamily = '"Caveat", cursive';
-    scoreTextDiv.style.opacity = "1";
-    scoreTextDiv.style.visibility = "visible";
+				// Grid placeholder
+				const gridPlaceholder = digClone.querySelector(".grid-placeholder");
+				if (gridPlaceholder) {
+					gridPlaceholder.style.position = "absolute";
+				}
 
-    // Duplicate sum logic from updateFinalScore() for screenshot total
-    let totalScore = 0;
-    totalScore += parseInt(document.getElementById("diamond-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("silver-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("lapis-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("peridot-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("topaz-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("opal-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("amber-score-readout")?.textContent) || 0;
-    totalScore += parseInt(document.getElementById("q-s-c-score-readout")?.textContent) || 0;
-    if (quartzBonus) totalScore += 6;
-    if (sandstoneBonus) totalScore += 9;
-    if (coalBonus) totalScore += 13;
-		
-    // Set the score text from calculated total
-    scoreTextDiv.textContent = totalScore === 0 ? "" : totalScore;
+				const scoreBgDiv = document.createElement("div");
+				scoreBgDiv.id = "score-bg-div";
+				scoreBgDiv.style.position = "absolute";
+				scoreBgDiv.style.top = "77dvh"; // Change this number to move scoreBgDiv down (e.g., "80dvh" for more space, "75dvh" for no space)
+				scoreBgDiv.style.left = "9dvh";
+				scoreBgDiv.style.width = "100%";
+				scoreBgDiv.style.height = "10dvh";
+				scoreBgDiv.style.overflow = "hidden";
+				scoreBgDiv.style.alignItems = "center";
 
-    // Append to scoreBgDiv
-    scoreBgDiv.appendChild(scoreTextDiv);
-		
-		const dateDiv = document.createElement("div");
-dateDiv.style.position = "absolute";
-dateDiv.style.top = "77.5dvh"; // Same as scoreBgDiv
-dateDiv.style.left = "-5.5dvh";
-dateDiv.style.width = "50%";
-dateDiv.style.height = "10dvh";
-dateDiv.style.display = "flex";
-dateDiv.style.flexDirection = "column";
-dateDiv.style.justifyContent = "center";
-dateDiv.style.alignItems = "center";
-dateDiv.style.fontFamily = '"Caveat", cursive';
-dateDiv.style.fontSize = "3.5dvh";
-dateDiv.style.color = "black";
-dateDiv.style.textAlign = "center";
-dateDiv.style.zIndex = "50";
-dateDiv.style.pointerEvents = "none";
+				// Add <img> for badge (full-width, aspect preserved, centered)
+				const scoreImg = document.createElement("img");
+				scoreImg.src = "https://i.imgur.com/DM8guQA.png";
+				scoreImg.style.position = "absolute";
+				scoreImg.style.top = "0";
+				scoreImg.style.left = "0";
+				scoreImg.style.width = "100%";
+				scoreImg.style.height = "auto";
+				scoreImg.style.objectFit = "contain";
+				scoreImg.style.objectPosition = "center";
+				scoreBgDiv.appendChild(scoreImg);
 
-// Get current date in format "Month <br> 05 / 2025"
-		const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-		
-const now = new Date();
-const month = months[now.getMonth()];
-const day = now.getDate().toString().padStart(2, '0');
-const year = now.getFullYear();
-dateDiv.innerHTML = `${month}<br>${day} / ${year}`;
+				// Create new scoreTextDiv from scratch (child of scoreBgDiv)
+				const scoreTextDiv = document.createElement("div");
+				scoreTextDiv.id = "score-text-div";
+				scoreTextDiv.style.position = "absolute";
+				scoreTextDiv.style.top = "0";
+				scoreTextDiv.style.left = "-.4dvh";
+				scoreTextDiv.style.width = "100%";
+				scoreTextDiv.style.height = "100%";
+				scoreTextDiv.style.display = "flex";
+				scoreTextDiv.style.justifyContent = "center";
+				scoreTextDiv.style.alignItems = "center";
+				scoreTextDiv.style.paddingTop = "0.5dvh"; // Change this number to nudge the number down (e.g., "2dvh" for more down, "0dvh" for none)
+				scoreTextDiv.style.paddingLeft = "0dvh"; // Change this number to nudge the number left (e.g., "2dvh" for more left, "0dvh" for none)
+				scoreTextDiv.style.zIndex = "40"; // High for above img
+				scoreTextDiv.style.color = "black";
+				scoreTextDiv.style.fontSize = "4dvh";
+				scoreTextDiv.style.fontFamily = '"Caveat", cursive';
+				scoreTextDiv.style.opacity = "1";
+				scoreTextDiv.style.visibility = "visible";
 
-		
-		
-    // NEW: Add game logo <img> centered near top of screenshot
-    const logoImg = document.createElement("img");
-    logoImg.src = "https://i.imgur.com/H1v1du8.png";
-    logoImg.style.position = "absolute";
-    logoImg.style.top = "1.5dvh"; // Change this to nudge up/down (lower number moves up, higher moves down)
-    logoImg.style.left = "50%";
-    logoImg.style.transform = "translateX(-50%)"; // Center horizontally
-    logoImg.style.width = "17dvh"; // Change this for size (e.g., "25dvh" for larger, "15dvh" for smaller)
-    logoImg.style.height = "auto"; // Preserve aspect
-    logoImg.style.zIndex = "50"; // Above dig sheet
-    logoImg.style.pointerEvents = "none";
+				// Duplicate sum logic from updateFinalScore() for screenshot total
+				let totalScore = 0;
+				totalScore +=
+					parseInt(document.getElementById("diamond-score-readout")?.textContent) ||
+					0;
+				totalScore +=
+					parseInt(document.getElementById("silver-score-readout")?.textContent) ||
+					0;
+				totalScore +=
+					parseInt(document.getElementById("lapis-score-readout")?.textContent) || 0;
+				totalScore +=
+					parseInt(document.getElementById("peridot-score-readout")?.textContent) ||
+					0;
+				totalScore +=
+					parseInt(document.getElementById("topaz-score-readout")?.textContent) || 0;
+				totalScore +=
+					parseInt(document.getElementById("opal-score-readout")?.textContent) || 0;
+				totalScore +=
+					parseInt(document.getElementById("amber-score-readout")?.textContent) || 0;
+				totalScore +=
+					parseInt(document.getElementById("q-s-c-score-readout")?.textContent) || 0;
+				if (quartzBonus) totalScore += 6;
+				if (sandstoneBonus) totalScore += 9;
+				if (coalBonus) totalScore += 13;
 
-    // Append to container
-    screenshotContainer.innerHTML = "";
-    screenshotContainer.appendChild(digClone);
-    screenshotContainer.appendChild(logoImg); // Add logo after digClone
-		screenshotContainer.appendChild(dateDiv); // Add date on left
-    screenshotContainer.appendChild(scoreBgDiv);
+				// Set the score text from calculated total
+				scoreTextDiv.textContent = totalScore === 0 ? "" : totalScore;
 
-    // Reflow
-    screenshotContainer.offsetHeight;
+				// Append to scoreBgDiv
+				scoreBgDiv.appendChild(scoreTextDiv);
 
-    // Show overlay
-    endGameOverlay.classList.remove("hidden");
+				const dateDiv = document.createElement("div");
+				dateDiv.style.position = "absolute";
+				dateDiv.style.top = "77.5dvh"; // Same as scoreBgDiv
+				dateDiv.style.left = "-5.5dvh";
+				dateDiv.style.width = "50%";
+				dateDiv.style.height = "10dvh";
+				dateDiv.style.display = "flex";
+				dateDiv.style.flexDirection = "column";
+				dateDiv.style.justifyContent = "center";
+				dateDiv.style.alignItems = "center";
+				dateDiv.style.fontFamily = '"Caveat", cursive';
+				dateDiv.style.fontSize = "3.5dvh";
+				dateDiv.style.color = "black";
+				dateDiv.style.textAlign = "center";
+				dateDiv.style.zIndex = "50";
+				dateDiv.style.pointerEvents = "none";
 
-    playSound("click");
-  });
-}
-		
+				// Get current date in format "Month <br> 05 / 2025"
+				const months = [
+					"January",
+					"February",
+					"March",
+					"April",
+					"May",
+					"June",
+					"July",
+					"August",
+					"September",
+					"October",
+					"November",
+					"December"
+				];
+
+				const now = new Date();
+				const month = months[now.getMonth()];
+				const day = now.getDate().toString().padStart(2, "0");
+				const year = now.getFullYear();
+				dateDiv.innerHTML = `${month}<br>${day} / ${year}`;
+
+				// NEW: Add game logo <img> centered near top of screenshot
+				const logoImg = document.createElement("img");
+				logoImg.src = "https://i.imgur.com/H1v1du8.png";
+				logoImg.style.position = "absolute";
+				logoImg.style.top = "1.5dvh"; // Change this to nudge up/down (lower number moves up, higher moves down)
+				logoImg.style.left = "50%";
+				logoImg.style.transform = "translateX(-50%)"; // Center horizontally
+				logoImg.style.width = "17dvh"; // Change this for size (e.g., "25dvh" for larger, "15dvh" for smaller)
+				logoImg.style.height = "auto"; // Preserve aspect
+				logoImg.style.zIndex = "50"; // Above dig sheet
+				logoImg.style.pointerEvents = "none";
+
+				// Append to container
+				screenshotContainer.innerHTML = "";
+				screenshotContainer.appendChild(digClone);
+				screenshotContainer.appendChild(logoImg); // Add logo after digClone
+				screenshotContainer.appendChild(dateDiv); // Add date on left
+				screenshotContainer.appendChild(scoreBgDiv);
+
+				// Reflow
+				screenshotContainer.offsetHeight;
+
+				// Show overlay
+				endGameOverlay.classList.remove("hidden");
+
+				playSound("click");
+			});
+		}
+
 		// Selectors for cloning and overlay
-const digSheet = document.getElementById("dig-sheet");
-const digSheetOverlay = document.getElementById("dig-sheet-overlay");
-const finalScore = document.getElementById("final-score");
-const endGameOverlay = document.getElementById("end-game-overlay");
-const screenshotContainer = document.getElementById("screenshot-container");
+		const digSheet = document.getElementById("dig-sheet");
+		const digSheetOverlay = document.getElementById("dig-sheet-overlay");
+		const finalScore = document.getElementById("final-score");
+		const endGameOverlay = document.getElementById("end-game-overlay");
+		const screenshotContainer = document.getElementById("screenshot-container");
 
+		// Close overlay on outside click or ESC (optional UX polish)
+		if (endGameOverlay) {
+			endGameOverlay.addEventListener("click", () => {
+				endGameOverlay.classList.add("hidden");
+				screenshotContainer.innerHTML = ""; // Clean clones
+			});
+		}
 
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && !endGameOverlay.classList.contains("hidden")) {
+				endGameOverlay.classList.add("hidden");
+				screenshotContainer.innerHTML = "";
+			}
+		});
 
-
-
-// Close overlay on outside click or ESC (optional UX polish)
-if (endGameOverlay) {
-  endGameOverlay.addEventListener("click", () => {
-    endGameOverlay.classList.add("hidden");
-    screenshotContainer.innerHTML = ""; // Clean clones
-  });
-}
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !endGameOverlay.classList.contains("hidden")) {
-    endGameOverlay.classList.add("hidden");
-    screenshotContainer.innerHTML = "";
-  }
-});
-		
 		updateDailyChallengeTimer();
 		window.addEventListener("beforeunload", (event) => {
 			if (hasGameState()) {
@@ -7933,14 +8017,33 @@ document.addEventListener("keydown", (e) => {
 			}
 		});
 	});
+	updateView();
+	
+	window.addEventListener("resize", updateView);
 });
-document
-	.getElementById("return-dig-roll-roll")
-	.addEventListener("click", returnToDigRoll);
-document
-	.getElementById("return-home-score")
-	.addEventListener("click", returnToHome);
+
+updateView(); // Set starting view
+const leftButton = document.getElementById("left-button");
+if (leftButton) leftButton.addEventListener("click", scrollLeft);
+const rightButton = document.getElementById("right-button");
+if (rightButton) rightButton.addEventListener("click", scrollRight);
+
 updateButtons();
+
+const gameContainer = document.getElementById("game-container");
+if (gameContainer && typeof Hammer !== 'undefined') {
+  const hammer = new Hammer(gameContainer);
+  hammer.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL }); // Restrict to left/right swipes only
+  
+  hammer.on('swiperight', () => {
+    scrollLeft(); // Swipe right -> left button action (go left/previous)
+  });
+  
+  hammer.on('swipeleft', () => {
+    scrollRight(); // Swipe left -> right button action (go right/next)
+  });
+}
+
 const grid = document.getElementById("grid");
 for (let i = 0; i < 100; i++) {
 	const cell = document.createElement("div");
@@ -8385,7 +8488,6 @@ randomButton.addEventListener("click", () => {
 	resetGrid();
 	playSound("click");
 });
-
 
     </script>
 </body>
