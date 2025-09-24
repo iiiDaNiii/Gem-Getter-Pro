@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Gem Getter Pro</title>
+<!-- Cache-control meta tags to prevent caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&family=Gamja+Flower&family=Patrick+Hand&family=Single+Day&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
-    <meta property="og:title" content="Gem Getter Pro" />
-    <meta property="og:description" content="Rival gem enthusiasts compete to unearth the most valuable collection of gems." />
-    <meta property="og:image" content="https://gemgetter.clearlysharp.com/game-preview.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://gemgetter.clearlysharp.com" />
     <style>
         /* Add to the top of your CSS */
 
@@ -86,12 +83,12 @@ body {
   z-index: 100;
 }
 
-#free-play-button, #daily-challenge-button {
-  font-family: 'Bebas Neue', sans-serif;
+.menu-button {
+	font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.1dvh;
-  height: 8dvh;
-  width: 30dvh;
-  font-size: 4dvh;
+  height: 7dvh;
+  width: 28dvh;
+  font-size: 3.5dvh;
   background-color: #333;
   color: white;
   border: none;
@@ -100,18 +97,52 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1dvh 2dvh;
-  margin: 10px;
+  padding: .5dvh;
+  margin: 1dvh;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	text-decoration: none;
+	transform:scale(1);
 }
 
-#free-play-button:hover, #daily-challenge-button:hover {
+.menu-button-white {
+	font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.1dvh;
+  height: 7dvh;
+  width: 28dvh;
+  font-size: 3.5dvh;
+  background-color: #ededed;
+  color: black;
+  border: none;
+  border-radius: 0.5dvh;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1dvh 2dvh;
+  margin: 1dvh;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	transform:scale(1);
+}
+
+
+.menu-button:hover {
   background-color: #555;
   box-shadow: 0 0 0.5dvh rgba(255, 255, 255, 0.3);
+	transform:scale(1.1);
+}
+
+.menu-button-white:hover {
+  background-color: #f7f7f7;
+  box-shadow: 0 0 0.5dvh rgba(255, 255, 255, 0.3);
+	transform:scale(1.1);
+}
+
+#free-play-button {
+	margin-top:6dvh;
 }
 
 #game-logo {
-  margin-top:10dvh;
+  margin-top:5dvh;
 	height: 30dvh;
 }
 
@@ -129,6 +160,7 @@ body {
   width: 30dvh; /* Slightly wider to fit HH:MM:SS */
   height: 3dvh;
   opacity: 1; /* Ensure visibility */
+	margin-bottom:3dvh;
 }
 
 #resume-button {
@@ -169,7 +201,7 @@ body {
   z-index: 101;
 }
 
-#back-button {
+.back-button {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -185,11 +217,13 @@ body {
   justify-content: center;
   align-items: center;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+	transform: scale(1);
 }
 
-#back-button:hover {
+.back-button:hover {
   background-color: #555;
   box-shadow: 0 0 0.5dvh rgba(255, 255, 255, 0.3);
+	transform: scale(1.2);
 }
 
 .arrow-icon {
@@ -197,7 +231,12 @@ body {
 }
 
 .submenu-content {
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100svh;
 }
 
 .submenu-content h2 {
@@ -212,6 +251,27 @@ body {
   font-size: 4dvh;
   color: #333;
   margin: 0.5dvh 0; /* Reduced from 10px to bring text closer to buttons */
+}
+
+.video-container {
+    width: 80vw;
+    max-width: 600px;
+    margin: 2dvh auto;
+}
+
+.clearly-sharp-logo {
+    height: 25dvh;
+    margin: 2dvh auto;
+}
+
+.clearly-sharp-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5dvh;
+    color: black;
+    text-align: center;
+    max-width: 80vw;
+    margin: 2dvh auto;
+	  padding-bottom: 4dvh;
 }
 
 .dig-sheet-buttons {
@@ -290,22 +350,6 @@ body {
 #play-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
-}
-
-.menu-button {
-	width: 26dvh;
-  height: 6dvh;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 3dvh;
-  background-color: #333;
-  color: white;
-  border: none;
-  border-radius: 0.5dvh;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .section {
@@ -1960,7 +2004,7 @@ body {
     </style>
 </head>
 <body>
-    <div id="end-game-overlay" class="end-game-overlay hidden">
+  <div id="end-game-overlay" class="end-game-overlay hidden">
 	<div id="screenshot-container" class="screenshot-container">
 		<!-- Cloned dig sheet content will be injected here via JS -->
 	</div>
@@ -1971,11 +2015,14 @@ body {
 <!-- opening menu hidden-->
 <div id="opening-menu">
 	<button id="resume-button" class="menu-button" style="display: none;">Resume</button>
-	<button id="free-play-button">Free Play</button>
-	<button id="daily-challenge-button">Daily Challenge</button>
+	<button id="free-play-button" class="menu-button">Free Play</button>
+	<button id="daily-challenge-button" class="menu-button">Daily Challenge</button>
 	<div id="daily-challenge-timer"></div>
+	<button id="how-to-play-button" class="menu-button-white">How to Play</button>
+    <button id="clearly-sharp-button" class="menu-button-white">Clearly Sharp</button>
+	
 	<div id="free-play-submenu" style="display: none;">
-		<button id="back-button" class="menu-button"><span class="arrow-icon">◀</span></button>
+		<button id="back-button" class="back-button"><span class="arrow-icon">◀</span></button>
 		<div class="submenu-content">
 			<h2>Dig Sheet</h2>
 			<div class="dig-sheet-buttons">
@@ -2003,7 +2050,25 @@ body {
 			</div>
 		</div>
 	</div>
-	<img id="game-logo" src="https://i.imgur.com/5opdz7e.png" alt="Game Logo">
+	<!-- New How to Play sub-menu -->
+    <div id="how-to-play-submenu" style="display: none;">
+        <button id="back-how-to-play" class="back-button"><span class="arrow-icon">◄</span></button>
+        <div class="submenu-content">
+            <div class="video-container">
+                <iframe width="100%" height="315" src="https://www.youtube.com/embed/jX8S_dHFhEw" title="How to Play Gem Getter Pro" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- New Clearly Sharp sub-menu -->
+    <div id="clearly-sharp-submenu" style="display: none;">
+        <button id="back-clearly-sharp" class="back-button"><span class="arrow-icon">◄</span></button>
+        <div class="submenu-content">
+            <img src="https://i.imgur.com/OLU7c2s.png" alt="Clearly Sharp Logo" class="clearly-sharp-logo">
+            <p class="clearly-sharp-text">Clearly Sharp is the graphic design work of Daniel Young. Click to learn more and get help with your next logo, print, or digital design:</p>
+            <a href="https://clearlysharp.com" target="_blank" class="menu-button">Take a Look</a>
+        </div>
+    </div>
+    <img id="game-logo" src="https://i.imgur.com/5opdz7e.png" alt="Game Logo">
 </div>
 
 <div id="game-container">
@@ -7513,6 +7578,154 @@ document.addEventListener("DOMContentLoaded", () => {
 				applyClickAnimation(dailyChallengeButton);
 			});
 		}
+		
+		// New button listeners
+    const howToPlayButton = document.getElementById("how-to-play-button");
+    if (howToPlayButton) {
+        howToPlayButton.replaceWith(howToPlayButton.cloneNode(true));
+        const newHowToPlayButton = document.getElementById("how-to-play-button");
+        newHowToPlayButton.addEventListener("click", () => {
+            const howToPlaySubmenu = document.getElementById("how-to-play-submenu");
+            const mainMenuElements = [
+                document.getElementById("free-play-button"),
+                document.getElementById("daily-challenge-button"),
+                document.getElementById("how-to-play-button"),
+                document.getElementById("clearly-sharp-button"),
+                document.getElementById("daily-challenge-timer"),
+                document.getElementById("game-logo")
+            ];
+            const resumeButton = document.getElementById("resume-button");
+            if (!howToPlaySubmenu) {
+                console.error(
+                    "Error: #how-to-play-submenu not found in DOM."
+                );
+                return;
+            }
+            console.log("How to Play clicked, showing #how-to-play-submenu");
+            mainMenuElements.forEach((el) => {
+                if (el) el.style.display = "none";
+            });
+            if (resumeButton)
+                resumeButton.style.display = hasGameState() ? "block" : "none";
+            howToPlaySubmenu.style.display = "flex";
+            howToPlaySubmenu.style.visibility = "visible";
+            howToPlaySubmenu.style.opacity = "1";
+            applyClickAnimation(newHowToPlayButton);
+        });
+    }
+
+    const clearlySharpButton = document.getElementById("clearly-sharp-button");
+    if (clearlySharpButton) {
+        clearlySharpButton.replaceWith(clearlySharpButton.cloneNode(true));
+        const newClearlySharpButton = document.getElementById("clearly-sharp-button");
+        newClearlySharpButton.addEventListener("click", () => {
+            const clearlySharpSubmenu = document.getElementById("clearly-sharp-submenu");
+            const mainMenuElements = [
+                document.getElementById("free-play-button"),
+                document.getElementById("daily-challenge-button"),
+                document.getElementById("how-to-play-button"),
+                document.getElementById("clearly-sharp-button"),
+                document.getElementById("daily-challenge-timer"),
+                document.getElementById("game-logo")
+            ];
+            const resumeButton = document.getElementById("resume-button");
+            if (!clearlySharpSubmenu) {
+                console.error(
+                    "Error: #clearly-sharp-submenu not found in DOM."
+                );
+                return;
+            }
+            console.log("Clearly Sharp clicked, showing #clearly-sharp-submenu");
+            mainMenuElements.forEach((el) => {
+                if (el) el.style.display = "none";
+            });
+            if (resumeButton)
+                resumeButton.style.display = hasGameState() ? "block" : "none";
+            clearlySharpSubmenu.style.display = "flex";
+            clearlySharpSubmenu.style.visibility = "visible";
+            clearlySharpSubmenu.style.opacity = "1";
+            applyClickAnimation(newClearlySharpButton);
+        });
+    }
+		
+		const backButton = document.getElementById("back-button");
+    if (backButton) {
+        backButton.replaceWith(backButton.cloneNode(true));
+        const newBackButton = document.getElementById("back-button");
+        newBackButton.addEventListener("click", () => {
+            const freePlaySubmenu = document.getElementById("free-play-submenu");
+            const mainMenuElements = [
+                document.getElementById("free-play-button"),
+                document.getElementById("daily-challenge-button"),
+                document.getElementById("how-to-play-button"),
+                document.getElementById("clearly-sharp-button"),
+                document.getElementById("daily-challenge-timer"),
+                document.getElementById("game-logo")
+            ];
+            const resumeButton = document.getElementById("resume-button");
+            console.log("Back clicked, returning to #opening-menu");
+            freePlaySubmenu.style.display = "none";
+            mainMenuElements.forEach((el) => {
+                if (el) el.style.display = "block";
+            });
+            if (resumeButton)
+                resumeButton.style.display = hasGameState() ? "block" : "none";
+            applyClickAnimation(newBackButton);
+        });
+    }
+
+    const backHowToPlayButton = document.getElementById("back-how-to-play");
+    if (backHowToPlayButton) {
+        backHowToPlayButton.replaceWith(backHowToPlayButton.cloneNode(true));
+        const newBackHowToPlayButton = document.getElementById("back-how-to-play");
+        newBackHowToPlayButton.addEventListener("click", () => {
+            const howToPlaySubmenu = document.getElementById("how-to-play-submenu");
+            const mainMenuElements = [
+                document.getElementById("free-play-button"),
+                document.getElementById("daily-challenge-button"),
+                document.getElementById("how-to-play-button"),
+                document.getElementById("clearly-sharp-button"),
+                document.getElementById("daily-challenge-timer"),
+                document.getElementById("game-logo")
+            ];
+            const resumeButton = document.getElementById("resume-button");
+            console.log("Back clicked, returning to #opening-menu from How to Play");
+            howToPlaySubmenu.style.display = "none";
+            mainMenuElements.forEach((el) => {
+                if (el) el.style.display = "block";
+            });
+            if (resumeButton)
+                resumeButton.style.display = hasGameState() ? "block" : "none";
+            applyClickAnimation(newBackHowToPlayButton);
+        });
+    }
+
+    const backClearlySharpButton = document.getElementById("back-clearly-sharp");
+    if (backClearlySharpButton) {
+        backClearlySharpButton.replaceWith(backClearlySharpButton.cloneNode(true));
+        const newBackClearlySharpButton = document.getElementById("back-clearly-sharp");
+        newBackClearlySharpButton.addEventListener("click", () => {
+            const clearlySharpSubmenu = document.getElementById("clearly-sharp-submenu");
+            const mainMenuElements = [
+                document.getElementById("free-play-button"),
+                document.getElementById("daily-challenge-button"),
+                document.getElementById("how-to-play-button"),
+                document.getElementById("clearly-sharp-button"),
+                document.getElementById("daily-challenge-timer"),
+                document.getElementById("game-logo")
+            ];
+            const resumeButton = document.getElementById("resume-button");
+            console.log("Back clicked, returning to #opening-menu from Clearly Sharp");
+            clearlySharpSubmenu.style.display = "none";
+            mainMenuElements.forEach((el) => {
+                if (el) el.style.display = "block";
+            });
+            if (resumeButton)
+                resumeButton.style.display = hasGameState() ? "block" : "none";
+            applyClickAnimation(newBackClearlySharpButton);
+        });
+    }
+		
 		const homeButton = document.getElementById("home-button");
 		if (homeButton) {
 			homeButton.addEventListener("click", () => {
@@ -7553,6 +7766,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				applyClickAnimation(resumeButton);
 			});
 		}
+		
 		const playButton = document.getElementById("play-button");
 		if (playButton) {
 			playButton.addEventListener("click", () => {
@@ -8499,5 +8713,3 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
-
-
