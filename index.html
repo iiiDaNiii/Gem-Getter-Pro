@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">-->
     <title>Gem Getter Pro</title>
 <!-- Cache-control meta tags to prevent caching -->
@@ -2018,7 +2018,7 @@ body {
 <!-- opening menu hidden-->
 <div id="opening-menu">
 	<button id="resume-button" class="menu-button" style="display: none;">Resume</button>
-	<button id="free-play-button" class="menu-button">Free Play</button>
+	<button id="free-play-button" class="menu-button">Free Play1</button>
 	<button id="daily-challenge-button" class="menu-button">The Daily Gem</button>
 	<div id="daily-challenge-timer"></div>
 	<button id="how-to-play-button" class="menu-button-white">How to Play</button>
@@ -8243,8 +8243,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 	updateView();
 	
-	window.addEventListener("resize", updateView);
-	function setVH() {
+function setVH() {
     setTimeout(() => { // Async for reflow
       const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight) * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
@@ -8252,19 +8251,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 0);
   }
   setVH(); // Set on initial load
-  // Force slight scroll to hide address bar and trigger full height
-  setTimeout(() => {
-    window.scrollTo(0, 1);
-    setVH(); // Recalc after scroll
-  }, 100); // Delay for initial render
-  window.addEventListener('resize', setVH);
-  window.addEventListener('orientationchange', setVH);
+  // Force address bar hide with progressive scroll (handles stubborn cases)
+  function hideAddressBar() {
+    setTimeout(() => {
+      if (window.pageYOffset === 0) {
+        window.scrollTo(0, 1);
+        setTimeout(() => window.scrollTo(0, 0), 0); // Reset to top
+      }
+      setVH(); // Recalc after hide
+    }, 100);
+  }
+  hideAddressBar(); // Run on load
+  window.addEventListener('resize', () => {
+    setVH();
+    hideAddressBar();
+  });
+  window.addEventListener('orientationchange', () => {
+    setVH();
+    hideAddressBar();
+  });
   window.addEventListener('pageshow', (event) => {
-    if (event.persisted) { // bfcache restore
+    if (event.persisted) { // bfcache restore (tab reopen)
       setVH();
-      setTimeout(() => window.scrollTo(0, 1), 100); // Re-force on restore
+      hideAddressBar();
     }
   });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') { // Tab becomes active
+      setVH();
+      hideAddressBar();
+    }
+  });
+  // Listen directly to visualViewport resize (key for bar changes)
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      setVH();
+      hideAddressBar();
+    });
+  }
 });
 
 updateView(); // Set starting view
@@ -8737,6 +8761,7 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
 
 
