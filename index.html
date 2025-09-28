@@ -2005,7 +2005,8 @@ body {
 }
     </style>
 </head>
-	document.addEventListener('DOMContentLoaded', () => {
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
   function setVH() {
     setTimeout(() => { // Async to force reflow after any delayed restore
       const vh = window.innerHeight * 0.01;
@@ -2022,6 +2023,7 @@ body {
     }
   });
 });
+	</script>
 <body>
 	<div id="end-game-overlay" class="end-game-overlay hidden">
 	<div id="screenshot-container" class="screenshot-container">
@@ -2034,7 +2036,7 @@ body {
 <!-- opening menu hidden-->
 <div id="opening-menu">
 	<button id="resume-button" class="menu-button" style="display: none;">Resume</button>
-	<button id="free-play-button" class="menu-button">Free Play1</button>
+	<button id="free-play-button" class="menu-button">Free Play</button>
 	<button id="daily-challenge-button" class="menu-button">Daily Challenge</button>
 	<div id="daily-challenge-timer"></div>
 	<button id="how-to-play-button" class="menu-button-white">How to Play</button>
@@ -8732,6 +8734,7 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
 
 
