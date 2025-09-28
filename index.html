@@ -7,27 +7,18 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-	
-	<!-- Link to manifest for Android/PWA -->
-	<link rel="manifest" href="/manifest.json">
 
-	<!-- iOS-specific icon (Apple Touch Icon) -->
-	<link rel="apple-touch-icon" href="/icon-ios-touch.png">
-	
+    <!-- Link to manifest for Android/PWA -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- iOS-specific icon (Apple Touch Icon) -->
+    <link rel="apple-touch-icon" href="/icon-ios-touch.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&family=Gamja+Flower&family=Patrick+Hand&family=Single+Day&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
-	<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('SW registered:', reg))
-        .catch(err => console.error('SW registration failed:', err));
-    });
-  }
-</script>
     <style>
 
         /* Add to the top of your CSS */
@@ -2111,7 +2102,7 @@ body {
 <div id="opening-menu">
 	<button id="resume-button" class="menu-button" style="display: none;">Resume</button>
 	<button id="free-play-button" class="menu-button">Free Play</button>
-	<button id="daily-challenge-button" class="menu-button">The Daily Gem</button>
+	<button id="daily-challenge-button" class="menu-button">Daily Challenge</button>
 	<div id="daily-challenge-timer"></div>
 	<button id="how-to-play-button" class="menu-button-white">How to Play</button>
 	<button id="clearly-sharp-button" class="menu-button-white">Clearly Sharp</button>
@@ -3490,7 +3481,6 @@ let tutorialMessages = [
 ];
 let tutorialAllowedCells = []; // Per-step allowed indices (e.g., for step 3)
 let tutorialPreRolls = [{ green: 5, white: 1 }, { green: 6, white: 2 }, { green: 3, white: 6 }, { green: 2, white: 5 }, { green: 1, white: 3 }, { green: 4, white: 5 }, { green: 3, white: 4 }, { green: 1, white: 2 }, { green: 5, white: 4 }];
-
 const dailyDiceRolls = []; // Pre-computed rolls for daily challenge
 const rollSheets = ["roll-sheet-a", "roll-sheet-b"];
 const rollSheetImages = {
@@ -8054,22 +8044,19 @@ if (freePlayButton) {
         applyClickAnimation(newFreePlayButton);
     });
 }
-		
-		// Updated Daily Challenge button listener (complete block)
-const dailyChallengeButton = document.getElementById(
-"daily-challenge-button"
-);
-if (dailyChallengeButton) {
-    dailyChallengeButton.addEventListener("click", () => {
-        tutorialMode = false; // Explicitly disable tutorial mode
-        gameMode = "daily-challenge";
-        document.getElementById("opening-menu").style.display = "none";
-        const resumeButton = document.getElementById("resume-button");
-        if (resumeButton) resumeButton.style.display = "block";
-        startDailyChallenge();
-        applyClickAnimation(dailyChallengeButton);
-    });
-}
+		const dailyChallengeButton = document.getElementById(
+			"daily-challenge-button"
+		);
+		if (dailyChallengeButton) {
+			dailyChallengeButton.addEventListener("click", () => {
+				gameMode = "daily-challenge";
+				document.getElementById("opening-menu").style.display = "none";
+				const resumeButton = document.getElementById("resume-button");
+				if (resumeButton) resumeButton.style.display = "block";
+				startDailyChallenge();
+				applyClickAnimation(dailyChallengeButton);
+			});
+		}
 		
 
     // Updated Clearly Sharp button listener (complete block)
@@ -8106,38 +8093,35 @@ if (clearlySharpButton) {
     });
 }
 		
-		// Updated Back button listener for free-play submenu (complete block)
-const backButton = document.getElementById("back-button");
-if (backButton) {
-    backButton.replaceWith(backButton.cloneNode(true));
-    const newBackButton = document.getElementById("back-button");
-    newBackButton.addEventListener("click", () => {
-        const freePlaySubmenu = document.getElementById("free-play-submenu");
-        const mainMenuElements = [
-            document.getElementById("free-play-button"),
-            document.getElementById("daily-challenge-button"),
-            document.getElementById("how-to-play-button"),
-            document.getElementById("clearly-sharp-button"),
-            document.getElementById("daily-challenge-timer"),
-            document.getElementById("game-logo")
-        ];
-        const resumeButton = document.getElementById("resume-button");
-        console.log("Back clicked, returning to #opening-menu");
-        freePlaySubmenu.style.display = "none";
-        mainMenuElements.forEach((el) => {
-            if (el) el.style.display = "block";
+		const backButton = document.getElementById("back-button");
+    if (backButton) {
+        backButton.replaceWith(backButton.cloneNode(true));
+        const newBackButton = document.getElementById("back-button");
+        newBackButton.addEventListener("click", () => {
+            const freePlaySubmenu = document.getElementById("free-play-submenu");
+            const mainMenuElements = [
+                document.getElementById("free-play-button"),
+                document.getElementById("daily-challenge-button"),
+                document.getElementById("how-to-play-button"),
+                document.getElementById("clearly-sharp-button"),
+                document.getElementById("daily-challenge-timer"),
+                document.getElementById("game-logo")
+            ];
+            const resumeButton = document.getElementById("resume-button");
+            console.log("Back clicked, returning to #opening-menu");
+            freePlaySubmenu.style.display = "none";
+            mainMenuElements.forEach((el) => {
+                if (el) el.style.display = "block";
+            });
+            if (resumeButton)
+                resumeButton.style.display = hasGameState() ? "block" : "none";
+            applyClickAnimation(newBackButton);
         });
-        if (resumeButton)
-            resumeButton.style.display = hasGameState() ? "block" : "none";
-        tutorialMode = false; // Reset tutorial mode on return to menu
-        applyClickAnimation(newBackButton);
-    });
-}
+    }
 
     // Remove any old tutorialButton listener (since button is gone)
 
 // Repurpose How to Play button to start tutorial
-// Updated How to Play button listener (complete block)
 const howToPlayButton = document.getElementById("how-to-play-button");
 if (howToPlayButton) {
     howToPlayButton.replaceWith(howToPlayButton.cloneNode(true)); // Clone to clear old listeners if any
@@ -8208,62 +8192,58 @@ if (tutorialOk) {
 
 // Keep your existing tutorial-ok listener unchanged
 
-    // Updated Back button listener for clearly-sharp submenu (complete block)
-const backClearlySharpButton = document.getElementById("back-clearly-sharp");
-if (backClearlySharpButton) {
-    backClearlySharpButton.replaceWith(backClearlySharpButton.cloneNode(true));
-    const newBackClearlySharpButton = document.getElementById("back-clearly-sharp");
-    newBackClearlySharpButton.addEventListener("click", () => {
-        const clearlySharpSubmenu = document.getElementById("clearly-sharp-submenu");
-        const mainMenuElements = [
-            document.getElementById("free-play-button"),
-            document.getElementById("daily-challenge-button"),
-            document.getElementById("how-to-play-button"),
-            document.getElementById("clearly-sharp-button"),
-            document.getElementById("daily-challenge-timer"),
-            document.getElementById("game-logo")
-        ];
-        const resumeButton = document.getElementById("resume-button");
-        console.log("Back clicked, returning to #opening-menu from Clearly Sharp");
-        clearlySharpSubmenu.style.display = "none";
-        mainMenuElements.forEach((el) => {
-            if (el) el.style.display = "block";
+    const backClearlySharpButton = document.getElementById("back-clearly-sharp");
+    if (backClearlySharpButton) {
+        backClearlySharpButton.replaceWith(backClearlySharpButton.cloneNode(true));
+        const newBackClearlySharpButton = document.getElementById("back-clearly-sharp");
+        newBackClearlySharpButton.addEventListener("click", () => {
+            const clearlySharpSubmenu = document.getElementById("clearly-sharp-submenu");
+            const mainMenuElements = [
+                document.getElementById("free-play-button"),
+                document.getElementById("daily-challenge-button"),
+                document.getElementById("how-to-play-button"),
+                document.getElementById("clearly-sharp-button"),
+                document.getElementById("daily-challenge-timer"),
+                document.getElementById("game-logo")
+            ];
+            const resumeButton = document.getElementById("resume-button");
+            console.log("Back clicked, returning to #opening-menu from Clearly Sharp");
+            clearlySharpSubmenu.style.display = "none";
+            mainMenuElements.forEach((el) => {
+                if (el) el.style.display = "block";
+            });
+            if (resumeButton)
+                resumeButton.style.display = hasGameState() ? "block" : "none";
+            applyClickAnimation(newBackClearlySharpButton);
         });
-        if (resumeButton)
-            resumeButton.style.display = hasGameState() ? "block" : "none";
-        tutorialMode = false; // Reset tutorial mode on return to menu
-        applyClickAnimation(newBackClearlySharpButton);
-    });
-}
+    }
 		
-		// Updated Home button listener (complete block)
-const homeButton = document.getElementById("home-button");
-if (homeButton) {
-    homeButton.addEventListener("click", () => {
-        const openingMenu = document.getElementById("opening-menu");
-        const resumeButton = document.getElementById("resume-button");
-        if (!openingMenu) {
-            console.error("Error: #opening-menu not found in DOM.");
-            return;
-        }
-        console.log("Home clicked, showing #opening-menu");
-        openingMenu.style.display = "flex";
-        const mainMenuElements = [
-            document.getElementById("free-play-button"),
-            document.getElementById("daily-challenge-button"),
-            document.getElementById("daily-challenge-timer"),
-            document.getElementById("game-logo")
-        ];
-        mainMenuElements.forEach((el) => {
-            if (el) el.style.display = "";
-        });
-        if (resumeButton)
-            resumeButton.style.display = hasGameState() ? "block" : "none";
-        tutorialMode = false; // Reset tutorial mode on return to menu
-        playSound("click");
-        applyClickAnimation(homeButton);
-    });
-}
+		const homeButton = document.getElementById("home-button");
+		if (homeButton) {
+			homeButton.addEventListener("click", () => {
+				const openingMenu = document.getElementById("opening-menu");
+				const resumeButton = document.getElementById("resume-button");
+				if (!openingMenu) {
+					console.error("Error: #opening-menu not found in DOM.");
+					return;
+				}
+				console.log("Home clicked, showing #opening-menu");
+				openingMenu.style.display = "flex";
+				const mainMenuElements = [
+					document.getElementById("free-play-button"),
+					document.getElementById("daily-challenge-button"),
+					document.getElementById("daily-challenge-timer"),
+					document.getElementById("game-logo")
+				];
+				mainMenuElements.forEach((el) => {
+					if (el) el.style.display = "";
+				});
+				if (resumeButton)
+					resumeButton.style.display = hasGameState() ? "block" : "none";
+				playSound("click");
+				applyClickAnimation(homeButton);
+			});
+		}
 		const resumeButton = document.getElementById("resume-button");
 		if (resumeButton) {
 			resumeButton.addEventListener("click", () => {
@@ -8279,158 +8259,156 @@ if (homeButton) {
 			});
 		}
 		
-		// Updated Play button listener (complete block, for free-play start)
-const playButton = document.getElementById("play-button");
-if (playButton) {
-    playButton.addEventListener("click", () => {
-        if (selectedDigSheet && selectedRollSheet) {
-            tutorialMode = false; // Explicitly disable tutorial mode
-            gameMode = "free-play";
-            currentDigSheet = selectedDigSheet;
-            currentRollSheet = selectedRollSheet;
-            const digSheetElement = document.getElementById("dig-sheet");
-            const overlayImg = document.querySelector("#dig-sheet-overlay img");
-            const rollSheetImg = document
-                .getElementById("roll-sheet")
-                .querySelector("img:not(#green-image img):not(#white-image img)");
-            const openingMenu = document.getElementById("opening-menu");
-            const resumeButton = document.getElementById("resume-button");
-            const homeButton = document.getElementById("home-button");
-            if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
-                console.error("Error: Missing game elements", {
-                    digSheetElement,
-                    overlayImg,
-                    rollSheetImg,
-                    openingMenu
-                });
-                return;
-            }
-            console.log("Play clicked, setting sheets:", {
-                currentDigSheet,
-                currentRollSheet
-            });
-            digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
-            overlayImg.src = digSheetOverlayImages[currentDigSheet];
-            rollSheetImg.src = rollSheetImages[currentRollSheet];
-            // Set default dice images (6 for both green and white)
-            greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
-            whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
-            die1.setAttribute("data-value", "6");
-            die2.setAttribute("data-value", "6");
-            // Update boulder positions
-            const boulderElements = document.querySelectorAll(".boulder-cross-off");
-            boulderElements.forEach((element, index) => {
-                const config = digSheetBoulderConfigs[currentDigSheet][index];
-                if (config) {
-                    element.style.top = config.top;
-                    element.style.left = config.left;
-                }
-            });
-            // Hide opening menu
-            openingMenu.style.display = "none";
-            freePlaySubmenu.style.display = "none";
-            if (resumeButton) resumeButton.style.display = "block";
-            if (homeButton) {
-                homeButton.classList.remove("loading");
-                homeButton.classList.add("loaded");
-            }
-            // Force redraw
-            requestAnimationFrame(() => {
-                digSheetElement.offsetHeight;
-                rollSheetImg.offsetHeight;
-                console.log("Dig sheet and roll sheet redrawn", {
-                    digSheetBackground: digSheetElement.style.backgroundImage,
-                    overlayImage: overlayImg.src,
-                    rollSheetImage: rollSheetImg.src
-                });
-            });
-            resetGrid();
-            playSound("click");
-        }
-    });
-}
-		// Updated Random button listener (complete block, for random free-play start)
-const randomButton = document.getElementById("random-button");
-if (randomButton) {
-    randomButton.addEventListener("click", () => {
-        tutorialMode = false; // Explicitly disable tutorial mode
-        const digSheetsList = [
-            "dig-sheet-a",
-            "dig-sheet-b",
-            "dig-sheet-c",
-            "dig-sheet-d",
-            "dig-sheet-e",
-            "dig-sheet-f",
-            "dig-sheet-g",
-            "dig-sheet-h"
-        ];
-        const rollSheetsList = ["roll-sheet-a", "roll-sheet-b"];
-        selectedDigSheet =
-            digSheetsList[Math.floor(Math.random() * digSheetsList.length)];
-        currentDigSheet = selectedDigSheet;
-        selectedRollSheet =
-            rollSheetsList[Math.floor(Math.random() * rollSheetsList.length)];
-        currentRollSheet = selectedRollSheet;
-        const digSheetElement = document.getElementById("dig-sheet");
-        const overlayImg = document.querySelector("#dig-sheet-overlay img");
-        const rollSheetImg = document
-            .getElementById("roll-sheet")
-            .querySelector("img:not(#green-image img):not(#white-image img)");
-        const openingMenu = document.getElementById("opening-menu");
-        const resumeButton = document.getElementById("resume-button");
-        const homeButton = document.getElementById("home-button");
-        if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
-            console.error("Error: Missing game elements", {
-                digSheetElement,
-                overlayImg,
-                rollSheetImg,
-                openingMenu
-            });
-            return;
-        }
-        console.log("Random clicked, setting sheets:", {
-            currentDigSheet,
-            currentRollSheet
-        });
-        digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
-        overlayImg.src = digSheetOverlayImages[currentDigSheet];
-        rollSheetImg.src = rollSheetImages[currentRollSheet];
-        // Set default dice images (6 for both green and white)
-        greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
-        whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
-        die1.setAttribute("data-value", "6");
-        die2.setAttribute("data-value", "6");
-        // Update boulder positions
-        const boulderElements = document.querySelectorAll(".boulder-cross-off");
-        boulderElements.forEach((element, index) => {
-            const config = digSheetBoulderConfigs[currentDigSheet][index];
-            if (config) {
-                element.style.top = config.top;
-                element.style.left = config.left;
-            }
-        });
-        // Hide opening menu to reveal game-container (already visible underneath)
-        openingMenu.style.display = "none";
-        freePlaySubmenu.style.display = "none";
-        if (resumeButton) resumeButton.style.display = "block";
-        if (homeButton) {
-            homeButton.classList.remove("loading");
-            homeButton.classList.add("loaded");
-        }
-        // Force redraw of dig sheet and roll sheet
-        requestAnimationFrame(() => {
-            digSheetElement.offsetHeight;
-            rollSheetImg.offsetHeight;
-            console.log("Dig sheet and roll sheet redrawn", {
-                digSheetBackground: digSheetElement.style.backgroundImage,
-                overlayImage: overlayImg.src,
-                rollSheetImage: rollSheetImg.src
-            });
-        });
-        resetGrid();
-        playSound("click");
-    });
-}
+		const playButton = document.getElementById("play-button");
+		if (playButton) {
+			playButton.addEventListener("click", () => {
+				if (selectedDigSheet && selectedRollSheet) {
+					gameMode = "free-play";
+					tutorialMode = false;
+					currentDigSheet = selectedDigSheet;
+					currentRollSheet = selectedRollSheet;
+					const digSheetElement = document.getElementById("dig-sheet");
+					const overlayImg = document.querySelector("#dig-sheet-overlay img");
+					const rollSheetImg = document
+						.getElementById("roll-sheet")
+						.querySelector("img:not(#green-image img):not(#white-image img)");
+					const openingMenu = document.getElementById("opening-menu");
+					const resumeButton = document.getElementById("resume-button");
+					const homeButton = document.getElementById("home-button");
+					if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
+						console.error("Error: Missing game elements", {
+							digSheetElement,
+							overlayImg,
+							rollSheetImg,
+							openingMenu
+						});
+						return;
+					}
+					console.log("Play clicked, setting sheets:", {
+						currentDigSheet,
+						currentRollSheet
+					});
+					digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+					overlayImg.src = digSheetOverlayImages[currentDigSheet];
+					rollSheetImg.src = rollSheetImages[currentRollSheet];
+					// Set default dice images (6 for both green and white)
+					greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
+					whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
+					die1.setAttribute("data-value", "6");
+					die2.setAttribute("data-value", "6");
+					// Update boulder positions
+					const boulderElements = document.querySelectorAll(".boulder-cross-off");
+					boulderElements.forEach((element, index) => {
+						const config = digSheetBoulderConfigs[currentDigSheet][index];
+						if (config) {
+							element.style.top = config.top;
+							element.style.left = config.left;
+						}
+					});
+					// Hide opening menu
+					openingMenu.style.display = "none";
+					freePlaySubmenu.style.display = "none";
+					if (resumeButton) resumeButton.style.display = "block";
+					if (homeButton) {
+						homeButton.classList.remove("loading");
+						homeButton.classList.add("loaded");
+					}
+					// Force redraw
+					requestAnimationFrame(() => {
+						digSheetElement.offsetHeight;
+						rollSheetImg.offsetHeight;
+						console.log("Dig sheet and roll sheet redrawn", {
+							digSheetBackground: digSheetElement.style.backgroundImage,
+							overlayImage: overlayImg.src,
+							rollSheetImage: rollSheetImg.src
+						});
+					});
+					resetGrid();
+					playSound("click");
+				}
+			});
+		}
+		const randomButton = document.getElementById("random-button");
+		if (randomButton) {
+			randomButton.addEventListener("click", () => {
+				const digSheetsList = [
+					"dig-sheet-a",
+					"dig-sheet-b",
+					"dig-sheet-c",
+					"dig-sheet-d",
+					"dig-sheet-e",
+					"dig-sheet-f",
+					"dig-sheet-g",
+					"dig-sheet-h"
+				];
+				const rollSheetsList = ["roll-sheet-a", "roll-sheet-b"];
+				selectedDigSheet =
+					digSheetsList[Math.floor(Math.random() * digSheetsList.length)];
+				currentDigSheet = selectedDigSheet;
+				selectedRollSheet =
+					rollSheetsList[Math.floor(Math.random() * rollSheetsList.length)];
+				currentRollSheet = selectedRollSheet;
+				const digSheetElement = document.getElementById("dig-sheet");
+				const overlayImg = document.querySelector("#dig-sheet-overlay img");
+				const rollSheetImg = document
+					.getElementById("roll-sheet")
+					.querySelector("img:not(#green-image img):not(#white-image img)");
+				const openingMenu = document.getElementById("opening-menu");
+				const resumeButton = document.getElementById("resume-button");
+				const homeButton = document.getElementById("home-button");
+
+				if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
+					console.error("Error: Missing game elements", {
+						digSheetElement,
+						overlayImg,
+						rollSheetImg,
+						openingMenu
+					});
+					return;
+				}
+				console.log("Random clicked, setting sheets:", {
+					currentDigSheet,
+					currentRollSheet
+				});
+				digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+				overlayImg.src = digSheetOverlayImages[currentDigSheet];
+				rollSheetImg.src = rollSheetImages[currentRollSheet];
+				// Set default dice images (6 for both green and white)
+				greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
+				whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
+				die1.setAttribute("data-value", "6");
+				die2.setAttribute("data-value", "6");
+				// Update boulder positions
+				const boulderElements = document.querySelectorAll(".boulder-cross-off");
+				boulderElements.forEach((element, index) => {
+					const config = digSheetBoulderConfigs[currentDigSheet][index];
+					if (config) {
+						element.style.top = config.top;
+						element.style.left = config.left;
+					}
+				});
+				// Hide opening menu
+				openingMenu.style.display = "none";
+				freePlaySubmenu.style.display = "none";
+				if (resumeButton) resumeButton.style.display = "block";
+				if (homeButton) {
+					homeButton.classList.remove("loading");
+					homeButton.classList.add("loaded");
+				}
+				// Force redraw and then reset grid
+				requestAnimationFrame(() => {
+					digSheetElement.offsetHeight;
+					rollSheetImg.offsetHeight;
+					console.log("Dig sheet and roll sheet redrawn", {
+						digSheetBackground: digSheetElement.style.backgroundImage,
+						overlayImage: overlayImg.src,
+						rollSheetImage: rollSheetImg.src
+					});
+					resetGrid();
+				});
+				playSound("click");
+			});
+		}
 
 		// New consolidated declarations and logic for the finish/screenshot feature
 		const finishButton = document.getElementById("finish-button");
@@ -8755,52 +8733,7 @@ if (randomButton) {
 	});
 	updateView();
 	
-function setVH() {
-    setTimeout(() => { // Async for reflow
-      const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight) * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-      document.body.style.zoom = '1'; // Reset any persisted zoom
-    }, 0);
-  }
-  setVH(); // Set on initial load
-  // Force address bar hide with progressive scroll (handles stubborn cases)
-  function hideAddressBar() {
-    setTimeout(() => {
-      if (window.pageYOffset === 0) {
-        window.scrollTo(0, 1);
-        setTimeout(() => window.scrollTo(0, 0), 0); // Reset to top
-      }
-      setVH(); // Recalc after hide
-    }, 100);
-  }
-  hideAddressBar(); // Run on load
-  window.addEventListener('resize', () => {
-    setVH();
-    hideAddressBar();
-  });
-  window.addEventListener('orientationchange', () => {
-    setVH();
-    hideAddressBar();
-  });
-  window.addEventListener('pageshow', (event) => {
-    if (event.persisted) { // bfcache restore (tab reopen)
-      setVH();
-      hideAddressBar();
-    }
-  });
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') { // Tab becomes active
-      setVH();
-      hideAddressBar();
-    }
-  });
-  // Listen directly to visualViewport resize (key for bar changes)
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', () => {
-      setVH();
-      hideAddressBar();
-    });
-  }
+	window.addEventListener("resize", updateView);
 });
 
 updateView(); // Set starting view
@@ -9279,5 +9212,3 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
-
-
