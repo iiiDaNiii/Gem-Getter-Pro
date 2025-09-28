@@ -2007,19 +2007,28 @@ body {
 </head>
 	<script>
 		document.addEventListener('DOMContentLoaded', () => {
+  // Your existing code here...
+
+  // Add the fix contents here
   function setVH() {
-    setTimeout(() => { // Async to force reflow after any delayed restore
-      const vh = window.innerHeight * 0.01;
+    setTimeout(() => { // Async for reflow
+      const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight) * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
-      document.body.style.zoom = '1'; // Explicitly reset any persisted zoom
+      document.body.style.zoom = '1'; // Reset any persisted zoom
     }, 0);
   }
   setVH(); // Set on initial load
-  window.addEventListener('resize', setVH); // Update on resize/orientation
-  window.addEventListener('orientationchange', setVH); // Extra for mobile
+  // Force slight scroll to hide address bar and trigger full height
+  setTimeout(() => {
+    window.scrollTo(0, 1);
+    setVH(); // Recalc after scroll
+  }, 100); // Delay for initial render
+  window.addEventListener('resize', setVH);
+  window.addEventListener('orientationchange', setVH);
   window.addEventListener('pageshow', (event) => {
-    if (event.persisted) { // Only if from bfcache (session restore)
-      setVH(); // Force recalc on restore
+    if (event.persisted) { // bfcache restore
+      setVH();
+      setTimeout(() => window.scrollTo(0, 1), 100); // Re-force on restore
     }
   });
 });
@@ -2037,7 +2046,7 @@ body {
 <div id="opening-menu">
 	<button id="resume-button" class="menu-button" style="display: none;">Resume</button>
 	<button id="free-play-button" class="menu-button">Free Play</button>
-	<button id="daily-challenge-button" class="menu-button">Daily Challenge</button>
+	<button id="daily-challenge-button" class="menu-button">The Daily Gem</button>
 	<div id="daily-challenge-timer"></div>
 	<button id="how-to-play-button" class="menu-button-white">How to Play</button>
     <button id="clearly-sharp-button" class="menu-button-white">Clearly Sharp</button>
@@ -8734,6 +8743,7 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
 
 
