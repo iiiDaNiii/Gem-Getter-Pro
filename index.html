@@ -2,19 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>Gem Getter Pro</title>
-<!-- Cache-control meta tags to prevent caching -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
-	<meta http-equiv="Expires" content="0">
+    <meta http-equiv="Expires" content="0">
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&family=Gamja+Flower&family=Patrick+Hand&family=Single+Day&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
     <style>
+
         /* Add to the top of your CSS */
 
 /* Lock html/body to full viewport, no scroll */
@@ -2003,11 +2002,88 @@ body {
 		width: 100cqw;
 	}
 }
+
+/* Tutorial Overlay (full-panel blocker inside #dig-roll) */
+.tutorial-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 4000; /* Below card but above game elements */
+    visibility: hidden; /* Hidden initial */
+    pointer-events: none; /* Initial no block */
+}
+
+.tutorial-overlay.visible {
+    visibility: visible; /* Show when message up */
+    pointer-events: auto; /* Block clicks on underlying elements */
+}
+
+/* Tutorial Card (child of overlay) */
+.tutorial-card {
+    position: absolute; /* Position within overlay */
+    bottom: -100vh; /* Start off-screen bottom */
+    left: 50%;
+    transform: translate(-50%, 50%);
+    width: 80vw;
+    max-width: 400px;
+    height: auto; /* Adapt to content */
+    min-height: 20dvh; /* Ensure minimum size */
+    padding: 2dvh;
+    background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
+    border-radius: 1dvh;
+    box-shadow: 0 0.5dvh 1dvh rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 5000; /* Higher than overlay to be clickable */
+    opacity: 0; /* Start invisible */
+    visibility: hidden; /* Hidden initial */
+    transition: bottom 0.5s ease-in-out, opacity 0.5s ease-in-out; /* Animate slide and fade */
+}
+
+.tutorial-card.visible {
+    bottom: 50%; /* Center vertically */
+    opacity: 1; /* Fully visible */
+    visibility: visible; /* Show with animation */
+}
+
+#tutorial-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5dvh;
+    color: black;
+    margin-bottom: 2dvh;
+}
+
+#tutorial-ok {
+    width: 20dvh;
+    height: 6dvh;
+    font-size: 3dvh;
+    margin: 0 auto; /* Center horizontally */
+}
+
+/* Highlight for guided cells */
+.tutorial-highlight {
+    background-color: rgba(255, 255, 0, 0.3); /* Initial yellow tint fill */
+    animation: pulse-highlight 1s infinite;
+    filter: blur(0.5vh); /* Your added blur */
+}
+
+@keyframes pulse-highlight {
+    0% { background-color: rgba(255, 255, 0, 0.3); }
+    50% { background-color: rgba(255, 255, 0, 0.7); }
+    100% { background-color: rgba(255, 255, 0, 0.3); }
+}
+
     </style>
 </head>
-	
 <body>
-	<div id="end-game-overlay" class="end-game-overlay hidden">
+
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&family=Gamja+Flower&family=Patrick+Hand&family=Single+Day&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<div id="end-game-overlay" class="end-game-overlay hidden">
 	<div id="screenshot-container" class="screenshot-container">
 		<!-- Cloned dig sheet content will be injected here via JS -->
 	</div>
@@ -2022,10 +2098,11 @@ body {
 	<button id="daily-challenge-button" class="menu-button">The Daily Gem</button>
 	<div id="daily-challenge-timer"></div>
 	<button id="how-to-play-button" class="menu-button-white">How to Play</button>
-    <button id="clearly-sharp-button" class="menu-button-white">Clearly Sharp</button>
-	
+	<button id="clearly-sharp-button" class="menu-button-white">Clearly Sharp</button>
 	<div id="free-play-submenu" style="display: none;">
-		<button id="back-button" class="back-button"><svg xmlns="http://www.w3.org/2000/svg" height="24dvh" viewBox="0 -960 960 960" width="24dvh" fill="#FFFFFF"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg></button>
+		<button id="back-button" class="back-button"><svg xmlns="http://www.w3.org/2000/svg" height="24dvh" viewBox="0 -960 960 960" width="24dvh" fill="#FFFFFF">
+				<path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+			</svg></button>
 		<div class="submenu-content">
 			<h2>Dig Sheet</h2>
 			<div class="dig-sheet-buttons">
@@ -2053,25 +2130,18 @@ body {
 			</div>
 		</div>
 	</div>
-	<!-- New How to Play sub-menu -->
-    <div id="how-to-play-submenu" style="display: none;">
-        <button id="back-how-to-play" class="back-button"><svg xmlns="http://www.w3.org/2000/svg" height="24dvh" viewBox="0 -960 960 960" width="24dvh" fill="#FFFFFF"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg></span></button>
-        <div class="submenu-content">
-            <div class="video-container">
-                <iframe width="100%" height="315" src="https://www.youtube.com/embed/jX8S_dHFhEw" title="How to Play Gem Getter Pro" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-        </div>
-    </div>
-    <!-- New Clearly Sharp sub-menu -->
-    <div id="clearly-sharp-submenu" style="display: none;">
-        <button id="back-clearly-sharp" class="back-button"><svg xmlns="http://www.w3.org/2000/svg" height="24dvh" viewBox="0 -960 960 960" width="24dvh" fill="#FFFFFF"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg></button>
-        <div class="submenu-content">
-            <img src="https://i.imgur.com/OLU7c2s.png" alt="Clearly Sharp Logo" class="clearly-sharp-logo">
-            <p class="clearly-sharp-text">Clearly Sharp is the graphic design work of Daniel Young. Click to learn more and get help with your next logo, print, or digital design:</p>
-            <a href="https://clearlysharp.com" target="_blank" class="menu-button">Take a Look</a>
-        </div>
-    </div>
-    <img id="game-logo" src="https://i.imgur.com/5opdz7e.png" alt="Game Logo">
+	<!-- Clearly Sharp sub-menu remains unchanged -->
+	<div id="clearly-sharp-submenu" style="display: none;">
+		<button id="back-clearly-sharp" class="back-button"><svg xmlns="http://www.w3.org/2000/svg" height="24dvh" viewBox="0 -960 960 960" width="24dvh" fill="#FFFFFF">
+				<path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+			</svg></button>
+		<div class="submenu-content">
+			<img src="https://i.imgur.com/OLU7c2s.png" alt="Clearly Sharp Logo" class="clearly-sharp-logo">
+			<p class="clearly-sharp-text">Clearly Sharp is the graphic design work of Daniel Young. Click to learn more and get help with your next logo, print, or digital design:</p>
+			<a href="https://clearlysharp.com" target="_blank" class="menu-button">Check it Out</a>
+		</div>
+	</div>
+	<img id="game-logo" src="https://i.imgur.com/5opdz7e.png" alt="Game Logo">
 </div>
 
 <div id="game-container">
@@ -2333,14 +2403,20 @@ body {
 				<div class="image-container" id="white-image"></div>
 			</div>
 		</div>
+		<div id="tutorial-overlay" class="tutorial-overlay">
+        <div id="tutorial-card" class="tutorial-card">
+            <p id="tutorial-text"></p>
+            <button id="tutorial-ok" class="menu-button">OK</button>
+        </div>
+    </div>
 	</div>
 	<div id="scoresheet" class="section">
-		
+
 		<div class="section-image-wrapper">
 			<button id="finish-button" class="scoresheet-button">Finish</button>
-		<button id="screenshot-button" class="scoresheet-button off-screen">Screenshot</button>
-		<div id="final-score-bubble" class="final-score-bubble hidden"></div>
-		<div id="screenshot-explainer" class="screenshot-explainer hidden-state">spoiler-free ></div>
+			<button id="screenshot-button" class="scoresheet-button off-screen">Screenshot</button>
+			<div id="final-score-bubble" class="final-score-bubble hidden"></div>
+			<div id="screenshot-explainer" class="screenshot-explainer hidden-state">spoiler-free ></div>
 			<img src="https://i.imgur.com/GHIUilC.png" alt="Scoresheet" class="section-image">
 			<!-- Quartz Circle Clickers -->
 			<div class="quartz-circle-clicker" style="top: 10.4cqh; left: calc(50% - 16.45cqh); transform: translate(-50%, -50%);">
@@ -2711,8 +2787,13 @@ body {
 		</div>
 	</div>
 </div>
-<button id="left-button" class="nav-button"><svg xmlns="http://www.w3.org/2000/svg" height="4dvh" viewBox="0 -960 960 960" width="4dvh" fill="#FFFFFF"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg></button>
-<button id="right-button" class="nav-button"><svg xmlns="http://www.w3.org/2000/svg" height="4dvh" viewBox="0 -960 960 960" width="4dvh" fill="#FFFFFF"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></button>
+</div>
+<button id="left-button" class="nav-button"><svg xmlns="http://www.w3.org/2000/svg" height="4dvh" viewBox="0 -960 960 960" width="4dvh" fill="#FFFFFF">
+		<path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+	</svg></button>
+<button id="right-button" class="nav-button"><svg xmlns="http://www.w3.org/2000/svg" height="4dvh" viewBox="0 -960 960 960" width="4dvh" fill="#FFFFFF">
+		<path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z" />
+	</svg></button>
 </body>
 </div>
 </div>
@@ -2720,6 +2801,7 @@ body {
 </div>
     
     <script>
+
         let currentView = 1;
 let rollCounter = 0;
 let selectedCells = new Set();
@@ -3365,6 +3447,34 @@ const digPatterns = {
 };
 let currentRollSheet = "roll-sheet-a";
 let gameMode = "free-play"; // Default to free-play
+
+let tutorialMode = false;
+let tutorialStep = 0;
+let tutorialMessages = [
+    "Welcome to Gem Getter Pro! Let's get you up to speed with how things work around here.",
+    "There are 9 rounds in a game of Gem Getter Pro. You begin each round by rolling the dice. Ready to roll?",
+    "Your dice roll reveals two or more possible dig patterns you can dig in your mine.",
+    "Let's dig the green 5 pattern. Your first dig needs to touch the top row of the mine (just like real life!). Tap all the highlighted grid squares to create this dig pattern.",
+    "Great job. Now you're ready to dig. Push the dig button to commit your dig to the grid!",
+    "Cool, you collected some gems! Let's roll the dice again and dig some more!",
+	"Dig patterns can be rotated or flipped however you like. Lets try it out on that green 6!",
+    "You just got a bonus by digging all the way around that boulder. Nice work! Let's roll again.",
+	"Some dig patterns let you dig multiple small shapes. Let's try out that white 6.",
+    "First, let's tap to build the smaller shape",
+    "Great, now tap within your shape again to lock it and prevent it from expanding further.",
+    "Nice lock! Now we can select the other piece of the pattern. Go ahead and punch that in. Then tap the dig button.",
+    "We've nearly reached the bottom! Roll again, and let's keep digging!",
+	"Let's bust another boulder to collect that oil and natural gas! Dig the green 2 pattern.",
+"You've collected enough oil for a bonus dig! Tap and dig another square.",
+	"You dug out an entire row and got a bonus. So satisfying! Let's roll again.",
+"You have a natural gas available. Tap the natural gas bonus to dig any pattern from the roll sheet (you don't have to dig the green 1 or the white 3).",
+"Now you can dig any pattern available on the roll sheet. Instead of using the green 1, let's dig another green 2!",
+	"Awesome. You're raking in the gems now! Go ahead and finish the last 4 rounds on your own. Each element has different scoring criteria, so keep an eye on your score sheet. Happy digging!",
+	"You did it! Tap the finish button on the score sheet to see your final score."
+];
+let tutorialAllowedCells = []; // Per-step allowed indices (e.g., for step 3)
+let tutorialPreRolls = [{ green: 5, white: 1 }, { green: 6, white: 2 }, { green: 3, white: 6 }, { green: 2, white: 5 }, { green: 1, white: 3 }, { green: 4, white: 5 }, { green: 3, white: 4 }, { green: 1, white: 2 }, { green: 5, white: 4 }];
+
 const dailyDiceRolls = []; // Pre-computed rolls for daily challenge
 const rollSheets = ["roll-sheet-a", "roll-sheet-b"];
 const rollSheetImages = {
@@ -5228,64 +5338,85 @@ const imageMap = {
 	}
 };
 function rollDice() {
-	if (!isReady) return;
-	const soundKey = isFirstRoll ? "diceRollFirst" : "diceRollSubsequent";
-	console.log("Playing sound:", soundKey);
-	playSound(soundKey);
-	isFirstRoll = false;
-	function animateRoll(timestamp) {
-		if (!startTime) startTime = timestamp;
-		const progress = (timestamp - startTime) / 500;
-		if (progress <= 1) {
-			die1.classList.add("jumping");
-			if (progress >= 0.2) die2.classList.add("jumping");
-			requestAnimationFrame(animateRoll);
-		} else {
-			die1.classList.remove("jumping");
-			die2.classList.remove("jumping");
-			let value1, value2;
-			if (gameMode === "daily-challenge") {
-				if (rollCount >= 9) return;
-				({ green: value1, white: value2 } = dailyDiceRolls[rollCount]);
-			} else {
-				value1 = Math.floor(Math.random() * 6) + 1;
-				value2 = Math.floor(Math.random() * 6) + 1;
-			}
-			rollCount++;
-			die1.setAttribute("data-value", value1);
-			die2.setAttribute("data-value", value2);
-			console.log(
-				`Roll result: green=${value1}, white=${value2}, rollCount=${rollCount}, rollSheet=${currentRollSheet}`
-			);
-			const sinkAndShow = (imageContainer, newImageSrc) => {
-				imageContainer.classList.add("hide");
-				setTimeout(() => {
-					imageContainer.classList.remove("hide");
-					imageContainer.innerHTML = `<img src="${newImageSrc}" alt="Die Image">`;
-					imageContainer.classList.add("show");
-				}, 250);
-			};
-			sinkAndShow(greenImage, imageMap[currentRollSheet].green[value1]);
-			setTimeout(
-				() => sinkAndShow(whiteImage, imageMap[currentRollSheet].white[value2]),
-				100
-			);
-			if (rollCount <= roundElements.length) {
-				const nextRound = roundElements[rollCount - 1];
-				if (nextRound && !nextRound.classList.contains("crossed-off")) {
-					nextRound.classList.add("crossed-off");
-				}
-			}
-			stateHistory = [];
-			gamePhase = "dig";
-			updateNgCrossoffState();
-			updateRollButtonState();
-			updateDigButtonState();
-			updateCellCursors();
-		}
-	}
-	let startTime;
-	requestAnimationFrame(animateRoll);
+    if (!isReady) return;
+    const soundKey = isFirstRoll ? "diceRollFirst" : "diceRollSubsequent";
+    console.log("Playing sound:", soundKey);
+    playSound(soundKey);
+    isFirstRoll = false;
+    function animateRoll(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = (timestamp - startTime) / 500;
+        if (progress <= 1) {
+            die1.classList.add("jumping");
+            if (progress >= 0.2) die2.classList.add("jumping");
+            requestAnimationFrame(animateRoll);
+        } else {
+            die1.classList.remove("jumping");
+            die2.classList.remove("jumping");
+            let value1, value2;
+            if (tutorialMode) {
+                ({ green: value1, white: value2 } = tutorialPreRolls[rollCount] || { green: 6, white: 6 });
+            } else if (gameMode === "daily-challenge") {
+                if (rollCount >= 9) return;
+                ({ green: value1, white: value2 } = dailyDiceRolls[rollCount]);
+            } else {
+                value1 = Math.floor(Math.random() * 6) + 1;
+                value2 = Math.floor(Math.random() * 6) + 1;
+            }
+            rollCount++;
+            die1.setAttribute("data-value", value1);
+            die2.setAttribute("data-value", value2);
+            console.log(
+                `Roll result: green=${value1}, white=${value2}, rollCount=${rollCount}, rollSheet=${currentRollSheet}, tutorialStep=${tutorialStep}`
+            );
+            const sinkAndShow = (imageContainer, newImageSrc) => {
+                imageContainer.classList.add("hide");
+                setTimeout(() => {
+                    imageContainer.classList.remove("hide");
+                    imageContainer.innerHTML = `<img src="${newImageSrc}" alt="Die Image">`;
+                    imageContainer.classList.add("show");
+                }, 250);
+            };
+            sinkAndShow(greenImage, imageMap[currentRollSheet].green[value1]);
+            setTimeout(
+                () => {
+                    sinkAndShow(whiteImage, imageMap[currentRollSheet].white[value2]);
+                    // Delay advance after white image shows (total ~350ms post-dice + 1.5s)
+                    if (tutorialMode && tutorialStep === 2) { // After roll post-OK on message1, advance to show message2 ("Your dice..."), increment to 3
+                        advanceTutorialStep();
+                        console.log("Advanced to step 3 after roll at step 2");
+                    } else if (tutorialMode && tutorialStep === 6) { // After second roll post-OK on message5, advance to show message6 ("Dig patterns..."), increment to 7
+                        advanceTutorialStep();
+                        console.log("Advanced to step 7 after second roll at step 6");
+                    } else if (tutorialMode && tutorialStep === 8) { // After third roll post-OK on message7, advance to show message8 ("Some dig patterns..."), increment to 9
+                        advanceTutorialStep();
+                        console.log("Advanced to step 9 after third roll at step 8");
+                    } else if (tutorialMode && tutorialStep === 13) { // After fourth roll post-OK on message12, advance to show message13 (new 14: "Let's bust..."), increment to 14
+                        advanceTutorialStep();
+                        console.log("Advanced to step 14 after fourth roll at step 13");
+                    } else if (tutorialMode && tutorialStep === 16) { // After fifth roll post-OK on message15 (16 1-based), advance to show message16 (17 1-based: "You have a natural gas...")
+                        advanceTutorialStep();
+                        console.log("Advanced to step 17 after fifth roll at step 16");
+                    }
+                },
+                100
+            );
+            if (rollCount <= roundElements.length) {
+                const nextRound = roundElements[rollCount - 1];
+                if (nextRound && !nextRound.classList.contains("crossed-off")) {
+                    nextRound.classList.add("crossed-off");
+                }
+            }
+            stateHistory = [];
+            gamePhase = "dig";
+            updateNgCrossoffState();
+            updateRollButtonState();
+            updateDigButtonState();
+            updateCellCursors();
+        }
+    }
+    let startTime;
+    requestAnimationFrame(animateRoll);
 }
 function updateQSCScore() {
 	const sets = Math.min(quartzCount, sandstoneCount, coalCount);
@@ -5911,242 +6042,246 @@ function hasGameState() {
 		document.querySelectorAll(".cross-off-round.crossed-off").length > 0
 	);
 }
-
 function resetGrid() {
-	console.log("Resetting grid and all cross-off clickers");
-	const grid = document.getElementById("grid");
-	grid.querySelectorAll(".polyomino-svg").forEach((svg) => svg.remove());
-	document.querySelectorAll(".cell").forEach((cell) => {
-		cell.classList.remove("committed", "disabled", "no-pointer");
-	});
-	const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
-	console.log(
-		`Applying unclickable cells for ${currentDigSheet}:`,
-		Array.from(unclickableCells)
-	);
-	requestAnimationFrame(() => {
-		unclickableCells.forEach((index) => {
-			const cell = document.querySelector(`.cell[data-index="${index}"]`);
-			if (cell) cell.classList.add("disabled");
-		});
-		updateCellCursors();
-	});
-	committedCells.clear();
-	selectedCells.clear();
-	lockedGroups = [];
-	outlines.clear();
-	stateHistory = [];
-	document
-		.querySelectorAll(
-			".circle-clicker, .quartz-circle-clicker, .sandstone-circle-clicker, .coal-circle-clicker, .silver-circle-clicker, .diamond-circle-clicker, .lapis-circle-clicker, .peridot-circle-clicker, .topaz-circle-clicker, .opal-circle-clicker, .amber-circle-clicker, .oil-circle-clicker, .ng-circle-clicker"
-		)
-		.forEach((clicker) => {
-			clicker.classList.remove("circled", "disabled");
-			clicker.style.opacity = "1";
-			clicker.style.pointerEvents = "auto";
-			const circle = clicker.querySelector("circle");
-			if (circle) {
-				circle.setAttribute("stroke", "black");
-				circle.setAttribute("stroke-dashoffset", "110");
-			}
-		});
-	document.querySelectorAll(".cross-off-clicker").forEach((clicker) => {
-		clicker.classList.remove("crossed-off");
-		clicker.querySelector(".line-draw")?.classList.remove("crossed-off");
-	});
-	document
-		.querySelectorAll(".oil-ng-cross-off-clicker")
-		.forEach((clicker, index) => {
-			clicker.classList.remove("crossed-off");
-			clicker.querySelector(".line-draw")?.classList.remove("crossed-off");
-			console.log(`Cleared oil/ng cross-off clicker ${index}`);
-		});
-	document.querySelectorAll(".cross-off-round").forEach((round, index) => {
-		round.classList.remove("crossed-off");
-		round.querySelector(".line-draw")?.classList.remove("crossed-off");
-		console.log(
-			`Cleared round cross-off ${index + 1} at position: top=${
-				round.style.top
-			}, left=${round.style.left}`
-		);
-	});
-	document.querySelectorAll(".peridot-score").forEach((div) => {
-		div.textContent = "";
-	});
-	document
-		.querySelectorAll(
-			"#diamond-score-readout, #silver-score-readout, #lapis-score-readout, #peridot-score-readout, #topaz-score-readout, #opal-score-readout, #amber-score-readout, #q-s-c-score-readout"
-		)
-		.forEach((readout) => {
-			readout.textContent = "";
-		});
-	const finalScoreDiv = document.getElementById("final-score");
-	if (finalScoreDiv) finalScoreDiv.textContent = "";
-	document
-		.querySelectorAll(
-			".quartz-bonus-circle, .sandstone-bonus-circle, .coal-bonus-circle"
-		)
-		.forEach((bonus) => {
-			bonus.classList.remove("circled", "disabled");
-			bonus.style.opacity = "1";
-			const circle = bonus.querySelector("circle");
-			if (circle) {
-				circle.setAttribute("stroke", "black");
-				circle.setAttribute("stroke-dashoffset", "110");
-			}
-		});
-	document
-		.querySelectorAll(".oil-square, .oil-square-final")
-		.forEach((square) => {
-			square.style.display = "none";
-			square.classList.remove("pulsing-oil-square");
-		});
-	ngCrossoffDivs.forEach((div) => {
-		div.classList.remove("crossed-off", "clickable", "used");
-		div.style.backgroundColor = ""; // Clear inline style to default to CSS transparent
-		div.style.pointerEvents = "none";
-		div.style.opacity = "0.5";
-	});
-	ngBonusDivs.forEach((bonusDiv) => {
-		bonusDiv.style.display = "none";
-		bonusDiv.classList.remove("pulsing-ng-bonus");
-	});
-	diamondCount = 0;
-	silverCount = 0;
-	quartzCount = 0;
-	sandstoneCount = 0;
-	coalCount = 0;
-	lapisCount = 0;
-	peridotCount = 0;
-	topazCount = 0;
-	opalCount = 0;
-	amberCount = 0;
-	oilCount = 0;
-	ngCount = 0;
-	rowBonusCount = 0;
-	columnBonusCount = 0;
-	boulderBonusCount = 0;
-	rollCount = 0;
-	isFirstRoll = true;
-	quartzBonus = false;
-	sandstoneBonus = false;
-	coalBonus = false;
-	peridotScores = [0, 0, 0, 0, 0];
-	oilBonusQueue = []; // Clear oil bonus queue
-	bonusDigMode = false; // Explicitly reset bonus dig mode
-	const digButton = document.getElementById("dig-button");
-	if (digButton) {
-		digButton.classList.remove("bonus-mode", "pulsing-dig");
-		digButton.classList.add("loading");
-		digButton.style.opacity = "0.5";
-		digButton.style.pointerEvents = "none";
-		digButton.style.animation = "none"; // Prevent spin animation on new game
-		const img = digButton.querySelector("img");
-		if (img) img.src = "https://i.imgur.com/7tDYHqX.png"; // Restore default dig button image
-	}
-	const rollButton = document.getElementById("roll-button");
-	if (rollButton) {
-		rollButton.classList.remove("loading");
-		rollButton.classList.add("loaded", "pulsing-roll");
-		rollButton.style.opacity = "1";
-		rollButton.style.pointerEvents = "auto";
-	}
-	const greenImage = document.getElementById("green-image");
-	const whiteImage = document.getElementById("white-image");
-	if (greenImage) {
-		greenImage.classList.remove("show");
-		greenImage.classList.add("hide");
-		greenImage.style.bottom = "";
-		greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
-		console.log("Reset #green-image to off-screen with .hide");
-	}
-	if (whiteImage) {
-		whiteImage.classList.remove("show");
-		whiteImage.classList.add("hide");
-		whiteImage.style.bottom = "";
-		whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
-		console.log("Reset #white-image to off-screen with .hide");
-	}
-	// NEW: Reset finish/screenshot elements to initial states
-	const finishButton = document.getElementById("finish-button");
-	const screenshotButton = document.getElementById("screenshot-button");
-	const finalScoreBubble = document.getElementById("final-score-bubble");
-	const screenshotExplainer = document.getElementById("screenshot-explainer");
-	const endGameOverlay = document.getElementById("end-game-overlay");
-	if (finishButton) {
-		finishButton.style = ""; // Clear all inline styles
-		finishButton.classList.remove("off-screen"); // Ensure no hidden class
-		finishButton.style.bottom = "10cqh";
-		finishButton.style.opacity = "1";
-		finishButton.style.pointerEvents = "auto";
-	}
-	if (screenshotButton) {
-		screenshotButton.style = ""; // Clear all inline styles
-		screenshotButton.classList.add("off-screen"); // Re-apply initial hidden class
-		screenshotButton.style.bottom = "-10cqh";
-		screenshotButton.style.opacity = "0";
-		screenshotButton.style.left = "50%";
-		screenshotButton.style.transform = "translateX(-50%) scale(1.0)";
-		screenshotButton.offsetHeight; // Force reflow
-	}
-	if (finalScoreBubble) {
-		finalScoreBubble.style = ""; // Clear all inline styles
-		finalScoreBubble.classList.add("hidden-state"); // Re-apply initial hidden class
-		finalScoreBubble.style.bottom = "-10cqh";
-		finalScoreBubble.style.left = "50%";
-		finalScoreBubble.style.opacity = "0";
-		finalScoreBubble.style.pointerEvents = "none";
-		finalScoreBubble.style.transform = "translateX(-50%) scale(1.0)";
-		finalScoreBubble.textContent = "";
-		finalScoreBubble.offsetHeight; // Force reflow
-	}
-	if (screenshotExplainer) {
-		screenshotExplainer.style = ""; // Clear all inline styles
-		screenshotExplainer.classList.add("hidden-state"); // Re-apply initial hidden class
-		screenshotExplainer.style.opacity = "0";
-		screenshotExplainer.offsetHeight; // Force reflow
-	}
-	if (endGameOverlay) {
-		endGameOverlay.classList.add("hidden");
-	}
-	updateNgCrossoffState();
-	updateQuartzClickers();
-	updateSandstoneClickers();
-	updateCoalClickers();
-	updateDiamondClickers();
-	updateSilverClickers();
-	updateLapisClickers();
-	updatePeridotClickers();
-	updateTopazClickers();
-	updateOpalClickers();
-	updateAmberClickers();
-	updateOilClickers();
-	updateNgClickers();
-	updateOilNgCrossOffClickers();
-	gamePhase = "roll";
-	updateRollButtonState();
-	updateDigButtonState();
-	updateCellCursors();
-	console.log(
-		"Score sheet reset: All circle clickers cleared, stroke-dashoffset reset"
-	);
-	console.log(
-		"Diamond clickers circled:",
-		document.querySelectorAll(".diamond-circle-clicker.circled").length
-	);
-	console.log(
-		"Quartz clickers circled:",
-		document.querySelectorAll(".quartz-circle-clicker.circled").length
-	);
-	console.log(
-		"Oil clickers circled:",
-		document.querySelectorAll(".oil-circle-clicker.circled").length
-	);
-	console.log(
-		"NG clickers circled:",
-		document.querySelectorAll(".ng-circle-clicker.circled").length
-	);
-	console.log("Bonus dig mode reset:", bonusDigMode);
+    console.log("Resetting grid and all cross-off clickers");
+    const grid = document.getElementById("grid");
+    grid.querySelectorAll(".polyomino-svg").forEach((svg) => svg.remove());
+    document.querySelectorAll(".cell").forEach((cell) => {
+        cell.classList.remove("committed", "disabled", "no-pointer");
+    });
+    const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
+    console.log(
+        `Applying unclickable cells for ${currentDigSheet}:`,
+        Array.from(unclickableCells)
+    );
+    requestAnimationFrame(() => {
+        unclickableCells.forEach((index) => {
+            const cell = document.querySelector(`.cell[data-index="${index}"]`);
+            if (cell) cell.classList.add("disabled");
+        });
+        updateCellCursors();
+    });
+    committedCells.clear();
+    selectedCells.clear();
+    lockedGroups = [];
+    outlines.clear();
+    stateHistory = [];
+    document
+        .querySelectorAll(
+            ".circle-clicker, .quartz-circle-clicker, .sandstone-circle-clicker, .coal-circle-clicker, .silver-circle-clicker, .diamond-circle-clicker, .lapis-circle-clicker, .peridot-circle-clicker, .topaz-circle-clicker, .opal-circle-clicker, .amber-circle-clicker, .oil-circle-clicker, .ng-circle-clicker"
+        )
+        .forEach((clicker) => {
+            clicker.classList.remove("circled", "disabled");
+            clicker.style.opacity = "1";
+            clicker.style.pointerEvents = "auto";
+            const circle = clicker.querySelector("circle");
+            if (circle) {
+                circle.setAttribute("stroke", "black");
+                circle.setAttribute("stroke-dashoffset", "110");
+            }
+        });
+    document.querySelectorAll(".cross-off-clicker").forEach((clicker) => {
+        clicker.classList.remove("crossed-off");
+        clicker.querySelector(".line-draw")?.classList.remove("crossed-off");
+    });
+    document
+        .querySelectorAll(".oil-ng-cross-off-clicker")
+        .forEach((clicker, index) => {
+            clicker.classList.remove("crossed-off");
+            clicker.querySelector(".line-draw")?.classList.remove("crossed-off");
+            console.log(`Cleared oil/ng cross-off clicker ${index}`);
+        });
+    document.querySelectorAll(".cross-off-round").forEach((round, index) => {
+        round.classList.remove("crossed-off");
+        round.querySelector(".line-draw")?.classList.remove("crossed-off");
+        console.log(
+            `Cleared round cross-off ${index + 1} at position: top=${
+                round.style.top
+            }, left=${round.style.left}`
+        );
+    });
+    document.querySelectorAll(".peridot-score").forEach((div) => {
+        div.textContent = "";
+    });
+    document
+        .querySelectorAll(
+            "#diamond-score-readout, #silver-score-readout, #lapis-score-readout, #peridot-score-readout, #topaz-score-readout, #opal-score-readout, #amber-score-readout, #q-s-c-score-readout"
+        )
+        .forEach((readout) => {
+            readout.textContent = "";
+        });
+    const finalScoreDiv = document.getElementById("final-score");
+    if (finalScoreDiv) finalScoreDiv.textContent = "";
+    document
+        .querySelectorAll(
+            ".quartz-bonus-circle, .sandstone-bonus-circle, .coal-bonus-circle"
+        )
+        .forEach((bonus) => {
+            bonus.classList.remove("circled", "disabled");
+            bonus.style.opacity = "1";
+            const circle = bonus.querySelector("circle");
+            if (circle) {
+                circle.setAttribute("stroke", "black");
+                circle.setAttribute("stroke-dashoffset", "110");
+            }
+        });
+    document
+        .querySelectorAll(".oil-square, .oil-square-final")
+        .forEach((square) => {
+            square.style.display = "none";
+            square.classList.remove("pulsing-oil-square");
+        });
+    ngCrossoffDivs.forEach((div) => {
+        div.classList.remove("crossed-off", "clickable", "used");
+        div.style.backgroundColor = ""; // Clear inline style to default to CSS transparent
+        div.style.pointerEvents = "none";
+        div.style.opacity = "0.5";
+    });
+    ngBonusDivs.forEach((bonusDiv) => {
+        bonusDiv.style.display = "none";
+        bonusDiv.classList.remove("pulsing-ng-bonus");
+    });
+    diamondCount = 0;
+    silverCount = 0;
+    quartzCount = 0;
+    sandstoneCount = 0;
+    coalCount = 0;
+    lapisCount = 0;
+    peridotCount = 0;
+    topazCount = 0;
+    opalCount = 0;
+    amberCount = 0;
+    oilCount = 0;
+    ngCount = 0;
+    rowBonusCount = 0;
+    columnBonusCount = 0;
+    boulderBonusCount = 0;
+    rollCount = 0;
+    isFirstRoll = true;
+    quartzBonus = false;
+    sandstoneBonus = false;
+    coalBonus = false;
+    peridotScores = [0, 0, 0, 0, 0];
+    oilBonusQueue = []; // Clear oil bonus queue
+    bonusDigMode = false; // Explicitly reset bonus dig mode
+    const digButton = document.getElementById("dig-button");
+    if (digButton) {
+        digButton.classList.remove("bonus-mode", "pulsing-dig");
+        digButton.classList.add("loading");
+        digButton.style.opacity = "0.5";
+        digButton.style.pointerEvents = "none";
+        digButton.style.animation = "none"; // Prevent spin animation on new game
+        const img = digButton.querySelector("img");
+        if (img) img.src = "https://i.imgur.com/7tDYHqX.png"; // Restore default dig button image
+    }
+    const rollButton = document.getElementById("roll-button");
+    if (rollButton) {
+        rollButton.classList.remove("loading");
+        rollButton.classList.add("loaded", "pulsing-roll");
+        rollButton.style.opacity = "1";
+        rollButton.style.pointerEvents = "auto";
+    }
+    const greenImage = document.getElementById("green-image");
+    const whiteImage = document.getElementById("white-image");
+    if (greenImage) {
+        greenImage.classList.remove("show");
+        greenImage.classList.add("hide");
+        greenImage.style.bottom = "";
+        greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
+        console.log("Reset #green-image to off-screen with .hide");
+    }
+    if (whiteImage) {
+        whiteImage.classList.remove("show");
+        whiteImage.classList.add("hide");
+        whiteImage.style.bottom = "";
+        whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
+        console.log("Reset #white-image to off-screen with .hide");
+    }
+    // NEW: Reset finish/screenshot elements to initial states
+    const finishButton = document.getElementById("finish-button");
+    const screenshotButton = document.getElementById("screenshot-button");
+    const finalScoreBubble = document.getElementById("final-score-bubble");
+    const screenshotExplainer = document.getElementById("screenshot-explainer");
+    const endGameOverlay = document.getElementById("end-game-overlay");
+    if (finishButton) {
+        finishButton.style = ""; // Clear all inline styles
+        finishButton.classList.remove("off-screen"); // Ensure no hidden class
+        finishButton.style.bottom = "10cqh";
+        finishButton.style.opacity = "1";
+        finishButton.style.pointerEvents = "auto";
+    }
+    if (screenshotButton) {
+        screenshotButton.style = ""; // Clear all inline styles
+        screenshotButton.classList.add("off-screen"); // Re-apply initial hidden class
+        screenshotButton.style.bottom = "-10cqh";
+        screenshotButton.style.opacity = "0";
+        screenshotButton.style.left = "50%";
+        screenshotButton.style.transform = "translateX(-50%) scale(1.0)";
+        screenshotButton.offsetHeight; // Force reflow
+    }
+    if (finalScoreBubble) {
+        finalScoreBubble.style = ""; // Clear all inline styles
+        finalScoreBubble.classList.add("hidden-state"); // Re-apply initial hidden class
+        finalScoreBubble.style.bottom = "-10cqh";
+        finalScoreBubble.style.left = "50%";
+        finalScoreBubble.style.opacity = "0";
+        finalScoreBubble.style.pointerEvents = "none";
+        finalScoreBubble.style.transform = "translateX(-50%) scale(1.0)";
+        finalScoreBubble.textContent = "";
+        finalScoreBubble.offsetHeight; // Force reflow
+    }
+    if (screenshotExplainer) {
+        screenshotExplainer.style = ""; // Clear all inline styles
+        screenshotExplainer.classList.add("hidden-state"); // Re-apply initial hidden class
+        screenshotExplainer.style.opacity = "0";
+        screenshotExplainer.offsetHeight; // Force reflow
+    }
+    if (endGameOverlay) {
+        endGameOverlay.classList.add("hidden");
+    }
+    updateNgCrossoffState();
+    updateQuartzClickers();
+    updateSandstoneClickers();
+    updateCoalClickers();
+    updateDiamondClickers();
+    updateSilverClickers();
+    updateLapisClickers();
+    updatePeridotClickers();
+    updateTopazClickers();
+    updateOpalClickers();
+    updateAmberClickers();
+    updateOilClickers();
+    updateNgClickers();
+    updateOilNgCrossOffClickers();
+    updateCellCursors();
+    gamePhase = "roll";
+    updateRollButtonState();
+    updateDigButtonState();
+    updateCellCursors();
+    console.log(
+        "Score sheet reset: All circle clickers cleared, stroke-dashoffset reset"
+    );
+    console.log(
+        "Diamond clickers circled:",
+        document.querySelectorAll(".diamond-circle-clicker.circled").length
+    );
+    console.log(
+        "Quartz clickers circled:",
+        document.querySelectorAll(".quartz-circle-clicker.circled").length
+    );
+    console.log(
+        "Oil clickers circled:",
+        document.querySelectorAll(".oil-circle-clicker.circled").length
+    );
+    console.log(
+        "NG clickers circled:",
+        document.querySelectorAll(".ng-circle-clicker.circled").length
+    );
+    console.log("Bonus dig mode reset:", bonusDigMode);
+    if (tutorialMode) {
+        tutorialStep = 0;
+        advanceTutorialStep(); // Start tutorial on new game
+    }
 }
 function dfs(index, group, visited, cellSet = selectedCells) {
 	if (visited.has(index) || !cellSet.has(index)) return;
@@ -6285,38 +6420,102 @@ function updateRollButtonState() {
 }
 
 function updatePolyominoOutline() {
-	outlines.forEach((outline) => outline.remove());
-	outlines.clear();
-	const grid = document.getElementById("grid");
-	// Draw for lockedGroups first (white)
-	lockedGroups.forEach((lockedGroup, lgIndex) => {
-		const pathData = generatePolyominoPath(lockedGroup);
-		if (pathData) {
-			const svg = createPolyominoSvg(pathData, "white");
-			svg.classList.add("locked-svg");
-			grid.appendChild(svg);
-			outlines.set(-lgIndex - 1, svg); // Negative key to distinguish
-		}
-	});
-	// Draw for selectedCells last (black) to ensure it appears on top
-	const selectedVisited = new Set();
-	for (let startIndex of Array.from(selectedCells)) {
-		if (!selectedVisited.has(startIndex)) {
-			const group = new Set();
-			dfs(startIndex, group, selectedVisited, selectedCells);
-			if (group.size > 0) {
-				const pathData = generatePolyominoPath(group);
-				if (pathData) {
-					const svg = createPolyominoSvg(pathData, "#000000");
-					svg.classList.add("selection-svg");
-					grid.appendChild(svg);
-					outlines.set(startIndex, svg);
-				}
-			}
-		}
-	}
-	updateCellCursors();
-	updateDigButtonState();
+    outlines.forEach((outline) => outline.remove());
+    outlines.clear();
+    const grid = document.getElementById("grid");
+    // Draw for lockedGroups first (white)
+    lockedGroups.forEach((lockedGroup, lgIndex) => {
+        const pathData = generatePolyominoPath(lockedGroup);
+        if (pathData) {
+            const svg = createPolyominoSvg(pathData, "white");
+            svg.classList.add("locked-svg");
+            grid.appendChild(svg);
+            outlines.set(-lgIndex - 1, svg); // Negative key to distinguish
+        }
+    });
+    // Draw for selectedCells last (black) to ensure it appears on top
+    const selectedVisited = new Set();
+    for (let startIndex of Array.from(selectedCells)) {
+        if (!selectedVisited.has(startIndex)) {
+            const group = new Set();
+            dfs(startIndex, group, selectedVisited, selectedCells);
+            if (group.size > 0) {
+                const pathData = generatePolyominoPath(group);
+                if (pathData) {
+                    const svg = createPolyominoSvg(pathData, "#000000");
+                    svg.classList.add("selection-svg");
+                    grid.appendChild(svg);
+                    outlines.set(startIndex, svg);
+                }
+            }
+        }
+    }
+    updateCellCursors();
+    updateDigButtonState();
+    if (tutorialMode && (tutorialStep === 4 || tutorialStep === 7) && selectedCells.size === 6) {
+        // Check if all selected match allowed (sorted comparison)
+        const selectedArray = Array.from(selectedCells).sort((a, b) => a - b);
+        const allowedArray = tutorialAllowedCells.sort((a, b) => a - b);
+        if (JSON.stringify(selectedArray) === JSON.stringify(allowedArray)) {
+            const digButton = document.getElementById("dig-button");
+            if (digButton) {
+                digButton.style.pointerEvents = "auto";
+                digButton.style.opacity = "1";
+                console.log("All 6 cells selected, enabled dig button at step", tutorialStep);
+            }
+            if (tutorialStep === 4) advanceTutorialStep(); // For first: advance to show message4
+        }
+    } else if (tutorialMode && tutorialStep === 10 && selectedCells.size === 2) {
+        const selectedArray = Array.from(selectedCells).sort((a, b) => a - b);
+        const allowedArray = tutorialAllowedCells.sort((a, b) => a - b);
+        if (JSON.stringify(selectedArray) === JSON.stringify(allowedArray)) {
+            advanceTutorialStep(); // Show message10 ("Great, now... lock it")
+        }
+    } else if (tutorialMode && tutorialStep === 12 && selectedCells.size === 3) {
+        const selectedArray = Array.from(selectedCells).sort((a, b) => a - b);
+        const allowedArray = tutorialAllowedCells.sort((a, b) => a - b);
+        if (JSON.stringify(selectedArray) === JSON.stringify(allowedArray)) {
+            const digButton = document.getElementById("dig-button");
+            if (digButton) {
+                digButton.style.pointerEvents = "auto";
+                digButton.style.opacity = "1";
+                console.log("All 3 cells selected, enabled dig button at step 12");
+            }
+        }
+    } else if (tutorialMode && tutorialStep === 14 && selectedCells.size === 5) {
+        const selectedArray = Array.from(selectedCells).sort((a, b) => a - b);
+        const allowedArray = tutorialAllowedCells.sort((a, b) => a - b);
+        if (JSON.stringify(selectedArray) === JSON.stringify(allowedArray)) {
+            const digButton = document.getElementById("dig-button");
+            if (digButton) {
+                digButton.style.pointerEvents = "auto";
+                digButton.style.opacity = "1";
+                console.log("All 5 cells selected, enabled dig button at step 14");
+            }
+        }
+    } else if (tutorialMode && tutorialStep === 15 && selectedCells.size === 1) {
+        const selectedArray = Array.from(selectedCells).sort((a, b) => a - b);
+        const allowedArray = tutorialAllowedCells.sort((a, b) => a - b);
+        if (JSON.stringify(selectedArray) === JSON.stringify(allowedArray)) {
+            const digButton = document.getElementById("dig-button");
+            if (digButton) {
+                digButton.style.pointerEvents = "auto";
+                digButton.style.opacity = "1";
+                console.log("Bonus cell selected, enabled dig button at step 15");
+            }
+        }
+    } else if (tutorialMode && tutorialStep === 18 && selectedCells.size === 5) {
+        const selectedArray = Array.from(selectedCells).sort((a, b) => a - b);
+        const allowedArray = tutorialAllowedCells.sort((a, b) => a - b);
+        if (JSON.stringify(selectedArray) === JSON.stringify(allowedArray)) {
+            const digButton = document.getElementById("dig-button");
+            if (digButton) {
+                digButton.style.pointerEvents = "auto";
+                digButton.style.opacity = "1";
+                console.log("All 5 cells selected for final guided dig, enabled dig button at step 18");
+            }
+        }
+    }
 }
 
 function createPolyominoSvg(pathData, strokeColor) {
@@ -6404,682 +6603,731 @@ function saveState() {
 	};
 }
 function commitPolyomino() {
-console.log("Dig button clicked");
-const allNewSize =
-selectedCells.size + lockedGroups.reduce((acc, g) => acc + g.size, 0);
-if (allNewSize === 0 || !isConnectedGraph()) return;
-if (!bonusDigMode) {
-stateHistory = [];
-stateHistory.push(saveState());
-}
-
-// Force to dig view at start to ensure consistent starting point, without transition
-const container = document.getElementById("game-container");
-container.style.transition = "none"; // Disable transition for instant jump
-const shift = getShiftAmount();
-container.style.transform = `translateX(-${1 * shift}vw)`;
-currentView = 1;
-updateButtons();
-container.offsetHeight; // Reflow
-container.style.transition = "transform 0.5s ease"; // Re-enable transition
-
-const visited = new Set();
-const grid = document.getElementById("grid");
-const currentCommit = new Set();
-const currentSvgs = [];
-const isNarrowScreen = !window.matchMedia("(min-aspect-ratio: 4/3)").matches;
-grid
-.querySelectorAll(".selection-svg, .locked-svg")
-.forEach((svg) => svg.remove());
-// Collect all new groups: selected's disconnected + locked
-const newGroups = [];
-const selectedVisited = new Set();
-for (let start of Array.from(selectedCells)) {
-if (!selectedVisited.has(start)) {
-const group = new Set();
-dfs(start, group, selectedVisited, selectedCells);
-if (group.size > 0) {
-newGroups.push(group);
-}
-}
-}
-lockedGroups.forEach((g) => newGroups.push(new Set(g)));
-// Draw committed SVG per new group (black)
-for (let grp of newGroups) {
-const pathData = generatePolyominoPath(grp);
-if (pathData) {
-const svg = createPolyominoSvg(pathData, "#000000");
-svg.classList.add("committed-svg");
-svg.classList.add("flash");
-grid.appendChild(svg);
-setTimeout(() => svg.classList.remove("flash"), 200);
-grp.forEach((index) => {
-const cell = document.querySelector(`.cell[data-index="${index}"]`);
-cell.classList.add("committed");
-committedCells.set(index, svg);
-currentCommit.add(index);
-});
-currentSvgs.push(svg);
-}
-}
-playSound("pickaxe");
-const cellsArray = Array.from(
-new Set(newGroups.flatMap((g) => Array.from(g)))
-);
-const elementOrder = [
-"oil",
-"ng",
-"quartz",
-"sandstone",
-"coal",
-"silver",
-"diamond",
-"lapis",
-"peridot",
-"topaz",
-"opal",
-"amber"
-];
-const boulderCenters = {
-"dig-sheet-a": [
-{ row: 2, col: 6, index: 1 },
-{ row: 3, col: 3, index: 2 },
-{ row: 4, col: 7, index: 3 },
-{ row: 8, col: 7, index: 4 },
-{ row: 9, col: 5, index: 5 }
-],
-"dig-sheet-b": [
-{ row: 2, col: 7, index: 1 },
-{ row: 3, col: 3, index: 2 },
-{ row: 5, col: 5, index: 3 },
-{ row: 8, col: 2, index: 4 },
-{ row: 8, col: 6, index: 5 }
-],
-"dig-sheet-c": [
-{ row: 2, col: 6, index: 1 },
-{ row: 3, col: 3, index: 2 },
-{ row: 5, col: 6, index: 3 },
-{ row: 6, col: 8, index: 4 },
-{ row: 9, col: 5, index: 5 }
-],
-"dig-sheet-d": [
-{ row: 2, col: 6, index: 1 },
-{ row: 3, col: 3, index: 2 },
-{ row: 7, col: 4, index: 3 },
-{ row: 7, col: 7, index: 4 },
-{ row: 9, col: 6, index: 5 }
-],
-"dig-sheet-e": [
-{ row: 2, col: 7, index: 1 },
-{ row: 3, col: 5, index: 2 },
-{ row: 7, col: 2, index: 3 },
-{ row: 9, col: 3, index: 4 },
-{ row: 9, col: 8, index: 5 }
-],
-"dig-sheet-f": [
-{ row: 2, col: 3, index: 1 },
-{ row: 3, col: 9, index: 2 },
-{ row: 5, col: 8, index: 3 },
-{ row: 6, col: 3, index: 4 },
-{ row: 9, col: 5, index: 5 }
-],
-"dig-sheet-g": [
-{ row: 3, col: 5, index: 1 },
-{ row: 3, col: 7, index: 2 },
-{ row: 5, col: 3, index: 3 },
-{ row: 7, col: 9, index: 4 },
-{ row: 8, col: 2, index: 5 }
-],
-"dig-sheet-h": [
-{ row: 2, col: 5, index: 1 },
-{ row: 4, col: 6, index: 2 },
-{ row: 5, col: 4, index: 3 },
-{ row: 8, col: 4, index: 4 },
-{ row: 8, col: 7, index: 5 }
-]
-}[currentDigSheet];
-let animationQueue = [];
-let gridElements = [];
-let bonusElements = [];
-let rowBonuses = [];
-const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
-for (let row = 0; row < 10; row++) {
-const rowCells = Array.from({ length: 10 }, (_, col) => row * 10 + col);
-const clickableRowCells = rowCells.filter(
-(index) => !unclickableCells.has(index)
-);
-const committedInRow = clickableRowCells.filter((index) =>
-committedCells.has(index)
-);
-if (
-committedInRow.length >= clickableRowCells.length &&
-clickableRowCells.length > 0
-) {
-const rowIndex = row + 1;
-const rowClicker = Array.from(
-document.querySelectorAll(".row-cross-off")
-).find(
-(clicker) =>
-rowPositionToIndex[clicker.style.cssText] === rowIndex ||
-parseInt(clicker.dataset.index) + 1 === rowIndex
-);
-if (rowClicker && !rowClicker.classList.contains("crossed-off")) {
-rowBonuses.push({ type: "cell-flash", indices: clickableRowCells });
-rowBonuses.push({ type: "row", index: rowIndex });
-if (coordinates[currentDigSheet]) {
-for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
-const rowConfigs = config.row?.filter((r) => r.index === rowIndex) || [];
-rowConfigs.forEach((rowConfig) => {
-for (let i = 0; i < rowConfig.count; i++) {
-bonusElements.push({ type: "element", gem });
-}
-});
-}
-}
-console.log(`Row ${rowIndex} completed, will flash cells and cross off`);
-}
-}
-}
-let columnBonuses = [];
-for (let col = 0; col < 10; col++) {
-const colCells = Array.from({ length: 10 }, (_, row) => row * 10 + col);
-const clickableColCells = colCells.filter(
-(index) => !unclickableCells.has(index)
-);
-const committedInCol = clickableColCells.filter((index) =>
-committedCells.has(index)
-);
-if (
-committedInCol.length >= clickableColCells.length &&
-clickableColCells.length > 0
-) {
-const colIndex = col + 1;
-const colClicker = Array.from(
-document.querySelectorAll(".column-cross-off")
-).find(
-(clicker) =>
-columnPositionToIndex[clicker.style.cssText] === colIndex ||
-parseInt(clicker.dataset.index) + 1 === colIndex
-);
-if (colClicker && !colClicker.classList.contains("crossed-off")) {
-columnBonuses.push({ type: "cell-flash", indices: clickableColCells });
-columnBonuses.push({ type: "column", index: colIndex });
-if (coordinates[currentDigSheet]) {
-for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
-const colConfigs =
-config.column?.filter((c) => c.index === colIndex) || [];
-colConfigs.forEach((colConfig) => {
-for (let i = 0; i < colConfig.count; i++) {
-bonusElements.push({ type: "element", gem });
-}
-});
-}
-}
-console.log(`Column ${colIndex} completed, will flash cells and cross off`);
-}
-}
-}
-let boulderBonuses = [];
-for (const { row, col, index } of boulderCenters) {
-const neighbors = [
-{ r: row - 1, c: col - 1 },
-{ r: row - 1, c: col },
-{ r: row - 1, c: col + 1 },
-{ r: row, c: col - 1 },
-{ r: row, c: col + 1 },
-{ r: row + 1, c: col - 1 },
-{ r: row + 1, c: col },
-{ r: row + 1, c: col + 1 }
-].filter(({ r, c }) => r >= 1 && r <= 10 && c >= 1 && c <= 10);
-const neighborIndices = neighbors.map(({ r, c }) => (r - 1) * 10 + (c - 1));
-if (neighborIndices.every((idx) => committedCells.has(idx))) {
-const boulderClicker = Array.from(
-document.querySelectorAll(".boulder-cross-off")
-).find((clicker) => parseInt(clicker.dataset.index) + 1 === index);
-if (boulderClicker && !boulderClicker.classList.contains("crossed-off")) {
-boulderBonuses.push({ type: "cell-flash", indices: neighborIndices });
-boulderBonuses.push({ type: "boulder", index });
-if (coordinates[currentDigSheet]) {
-for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
-const boulderConfigs =
-config.boulder?.filter((b) => b.index === index) || [];
-boulderConfigs.forEach((boulderConfig) => {
-for (let i = 0; i < boulderConfig.count; i++) {
-bonusElements.push({ type: "element", gem });
-}
-});
-}
-}
-console.log(`Boulder ${index} completed, will flash cells and cross off`);
-}
-}
-}
-let allElements = [];
-let digSheetElements = [];
-let scoreSheetElements = [];
-let newOilCount = 0;
-if (coordinates[currentDigSheet]) {
-const gridCells = coordinates[currentDigSheet];
-cellsArray.forEach((index) => {
-const row = Math.floor(index / 10) + 1;
-const col = (index % 10) + 1;
-for (const [gem, config] of Object.entries(gridCells)) {
-if (config.grid?.some((cell) => cell.row === row && cell.col === col)) {
-allElements.push({ type: "element", gem });
-console.log(`Found ${gem} at grid cell (${row}, ${col})`);
-}
-}
-});
-}
-allElements.push(...bonusElements);
-allElements.forEach((element) => {
-if (element.type === "element" && element.gem === "oil") {
-newOilCount++;
-}
-});
-allElements.sort(
-(a, b) => elementOrder.indexOf(a.gem) - elementOrder.indexOf(b.gem)
-);
-allElements.forEach((element) => {
-if (element.gem === "oil" || element.gem === "ng") {
-digSheetElements.push(element);
-} else {
-scoreSheetElements.push(element);
-}
-});
-// Predict oil bonuses
-const prevOilCount = oilCount;
-const tempOilCount = oilCount + newOilCount;
-const newBonuses = [];
-if (tempOilCount >= 2 && prevOilCount < 2) newBonuses.push(0); // 2nd oil -> clicker 0
-if (tempOilCount >= 4 && prevOilCount < 4) newBonuses.push(1); // 4th oil -> clicker 1
-if (tempOilCount >= 5 && prevOilCount < 5) newBonuses.push(2); // 5th oil -> clicker 2
-if (tempOilCount >= 6 && prevOilCount < 6) newBonuses.push(3); // 6th oil -> clicker 3
-if (tempOilCount >= 7 && prevOilCount < 7) {
-newBonuses.push(4, 4); // 7th oil -> clicker 4 (twice)
-}
-oilBonusQueue.push(...newBonuses); // Always append to end for FIFO order
-console.log(
-`Oil bonuses queued: ${newBonuses}, total queue: ${oilBonusQueue}, bonusDigMode: ${bonusDigMode}`
-);
-selectedCells.clear();
-lockedGroups = [];
-outlines.clear();
-updatePolyominoOutline();
-updateCellCursors();
-updateDigButtonState();
-let delay = 500;
-animationQueue.push(...rowBonuses);
-animationQueue.push(...columnBonuses);
-animationQueue.push(...boulderBonuses);
-let didScrollToScore = false; // Track if we scrolled to score
-if (digSheetElements.length > 0 || scoreSheetElements.length > 0) {
-animationQueue.push(...digSheetElements);
-if (scoreSheetElements.length > 0 && isNarrowScreen) {
-animationQueue.push({ type: "scroll", action: "score" });
-didScrollToScore = true;
-}
-animationQueue.push(...scoreSheetElements);
-if (isNarrowScreen && didScrollToScore) {
-animationQueue.push({ type: "scroll", action: "dig" });
-}
-}
-// Hide current oil square before processing next bonus
-const oilSquareMap = {
-0: "oil-square-1",
-1: "oil-square-2",
-2: "oil-square-3",
-3: "oil-square-4",
-4: "oil-square-5"
-};
-if (bonusDigMode) {
-const currentOilSquareId = oilSquareMap[oilBonusQueue[0]];
-if (currentOilSquareId) {
-const currentOilSquare = document.getElementById(currentOilSquareId);
-if (currentOilSquare) {
-currentOilSquare.style.display = "none";
-currentOilSquare.classList.remove("pulsing-oil-square");
-}
-}
-}
-animationQueue.forEach((item, index) => {
-setTimeout(() => {
-if (item.type === "element") {
-const gem = item.gem;
-switch (gem) {
-case "quartz":
-quartzCount = Math.max(0, quartzCount + 1);
-updateQuartzClickers();
-break;
-case "sandstone":
-sandstoneCount = Math.max(0, sandstoneCount + 1);
-updateSandstoneClickers();
-break;
-case "coal":
-coalCount = Math.max(0, coalCount + 1);
-updateCoalClickers();
-break;
-case "silver":
-silverCount = Math.max(0, silverCount + 1);
-updateSilverClickers();
-break;
-case "diamond":
-diamondCount = Math.max(0, diamondCount + 1);
-updateDiamondClickers();
-break;
-case "lapis":
-lapisCount = Math.max(0, lapisCount + 1);
-updateLapisClickers();
-break;
-case "peridot":
-peridotCount = Math.max(0, peridotCount + 1);
-const greenDieValue =
-parseInt(document.getElementById("die1").getAttribute("data-value")) ||
-0;
-if (greenDieValue > 0) {
-const scoreDiv = document.querySelectorAll(".peridot-score")[
-peridotCount - 1
-];
-if (scoreDiv) scoreDiv.textContent = greenDieValue;
-}
-updatePeridotClickers();
-break;
-case "topaz":
-topazCount = Math.max(0, topazCount + 1);
-updateTopazClickers();
-break;
-case "opal":
-opalCount = Math.max(0, opalCount + 1);
-updateOpalClickers();
-break;
-case "amber":
-amberCount = Math.max(0, amberCount + 1);
-updateAmberClickers();
-break;
-case "oil":
-oilCount = Math.max(0, oilCount + 1);
-updateOilClickers();
-break;
-case "ng":
-ngCount = Math.max(0, ngCount + 1);
-updateNgClickers();
-break;
-}
-console.log(
-`Circled ${gem} (index ${index}), new ${gem}Count: ${
-window[`${gem}Count`]
-}`
-);
-playSound("circle");
-} else if (item.type === "row") {
-const rowIndex = item.index;
-const rowClicker = Array.from(
-document.querySelectorAll(".row-cross-off")
-).find(
-(clicker) =>
-rowPositionToIndex[clicker.style.cssText] === rowIndex ||
-parseInt(clicker.dataset.index) + 1 === rowIndex
-);
-if (rowClicker && !rowClicker.classList.contains("crossed-off")) {
-rowClicker.classList.add("crossed-off");
-rowBonusCount++;
-updateOpalClickers();
-console.log(
-`Crossed off row ${rowIndex} (index ${index}) at ${Date.now()}ms`
-);
-playSound("crossOff");
-}
-} else if (item.type === "column") {
-const colIndex = item.index;
-const colClicker = Array.from(
-document.querySelectorAll(".column-cross-off")
-).find(
-(clicker) =>
-columnPositionToIndex[clicker.style.cssText] === colIndex ||
-parseInt(clicker.dataset.index) + 1 === colIndex
-);
-if (colClicker && !colClicker.classList.contains("crossed-off")) {
-colClicker.classList.add("crossed-off");
-columnBonusCount++;
-updateOpalClickers();
-console.log(
-`Crossed off column ${colIndex} (index ${index}) at ${Date.now()}ms`
-);
-playSound("crossOff");
-}
-} else if (item.type === "boulder") {
-const boulderIndex = item.index;
-const boulderClicker = Array.from(
-document.querySelectorAll(".boulder-cross-off")
-).find((clicker) => parseInt(clicker.dataset.index) + 1 === boulderIndex);
-if (boulderClicker && !boulderClicker.classList.contains("crossed-off")) {
-boulderClicker.classList.add("crossed-off");
-boulderBonusCount++;
-updateAmberClickers();
-console.log(
-`Crossed off boulder ${boulderIndex} (index ${index}) at ${Date.now()}ms`
-);
-playSound("crossOff");
-}
-} else if (item.type === "cell-flash") {
-item.indices.forEach((index) => {
-const cell = document.querySelector(`.cell[data-index="${index}"]`);
-if (cell) {
-cell.classList.add("cell-flash");
-setTimeout(() => {
-cell.classList.remove("cell-flash");
-}, 500);
-}
-});
-console.log(
-`Flashed cells for bonus (index ${index}): ${item.indices
-.map((idx) => `(${((idx / 10) | 0) + 1}, ${(idx % 10) + 1})`)
-.join(", ")}`
-);
-playSound("bonus");
-} else if (item.type === "scroll") {
-if (item.action === "score") {
-scrollRight(); // Use scrollRight() for consistency
-console.log(
-`Scrolled to score sheet (index ${index}) at ${Date.now()}ms`
-);
-} else if (item.action === "dig") {
-scrollLeft(); // Use scrollLeft() to go back
-console.log(
-`Scrolled back to dig sheet (index ${index}) at ${Date.now()}ms`
-);
-}
-}
-updateFinalScore();
-}, delay);
-delay += 500;
-});
-// Handle bonus mode transition after animations (or immediately if none)
-setTimeout(
-() => {
-console.log(
-`Final transition: bonusDigMode=${bonusDigMode}, oilBonusQueue=${oilBonusQueue}`
-);
-if (bonusDigMode && oilBonusQueue.length > 0) {
-const clickerIndex = oilBonusQueue.shift();
-// Only cross off clicker if it's not the first of two index 4 bonuses (7th oil)
-if (clickerIndex >= 0 && clickerIndex < oilNgCrossOffClickers.length) {
-const clicker = oilNgCrossOffClickers[clickerIndex];
-if (clicker && !clicker.classList.contains("crossed-off")) {
-// For index 4 (7th oil), only cross off if the next queue item is not also 4
-if (clickerIndex !== 4 || oilBonusQueue[0] !== 4) {
-clicker.classList.add("crossed-off");
-playSound("crossOff");
-console.log(`Crossed off oil clicker ${clickerIndex}`);
-}
-}
-}
-if (oilBonusQueue.length > 0) {
-console.log("Remaining bonuses, entering bonus dig mode");
-enterBonusDigMode();
-} else {
-console.log("No remaining bonuses, exiting bonus dig mode");
-exitBonusDigMode();
-}
-} else if (oilBonusQueue.length > 0 && !bonusDigMode) {
-console.log("Queue has bonuses, entering bonus dig mode");
-enterBonusDigMode();
-} else {
-console.log("No bonuses, transitioning to roll/end phase");
-gamePhase = rollCount < 9 ? "roll" : "end";
-updateRollButtonState();
-updateDigButtonState();
-updateCellCursors();
-updateNgCrossoffState();
-}
-// Consume used NG-Crossoffs (lock them without reducing ngCount or uncircling)
-ngCrossoffDivs.forEach((div) => {
-if (
-div.classList.contains("crossed-off") &&
-!div.classList.contains("used")
-) {
-div.classList.add("used");
-console.log(
-`Consumed NG-Crossoff at index ${ngCrossoffDivs.indexOf(div)}`
-);
-}
-});
-updateNgCrossoffState();
-// Force reflow to ensure final scroll-back renders (mobile fix)
-const container = document.getElementById("game-container");
-if (container) {
-container.offsetHeight; // Trigger reflow
-}
-},
-animationQueue.length > 0 ? delay : 0
-);
+    console.log("Dig button clicked");
+    const allNewSize =
+        selectedCells.size + lockedGroups.reduce((acc, g) => acc + g.size, 0);
+    if (allNewSize === 0 || !isConnectedGraph()) return;
+    if (!bonusDigMode) {
+        stateHistory = [];
+        stateHistory.push(saveState());
+    }
+    // Force to dig view at start to ensure consistent starting point, without transition
+    const container = document.getElementById("game-container");
+    container.style.transition = "none"; // Disable transition for instant jump
+    const shift = getShiftAmount();
+    container.style.transform = `translateX(-${1 * shift}vw)`;
+    currentView = 1;
+    updateButtons();
+    container.offsetHeight; // Reflow
+    container.style.transition = "transform 0.5s ease"; // Re-enable transition
+    const visited = new Set();
+    const grid = document.getElementById("grid");
+    const currentCommit = new Set();
+    const currentSvgs = [];
+    const isNarrowScreen = !window.matchMedia("(min-aspect-ratio: 4/3)").matches;
+    grid
+        .querySelectorAll(".selection-svg, .locked-svg")
+        .forEach((svg) => svg.remove());
+    // Collect all new groups: selected's disconnected + locked
+    const newGroups = [];
+    const selectedVisited = new Set();
+    for (let start of Array.from(selectedCells)) {
+        if (!selectedVisited.has(start)) {
+            const group = new Set();
+            dfs(start, group, selectedVisited, selectedCells);
+            if (group.size > 0) {
+                newGroups.push(group);
+            }
+        }
+    }
+    lockedGroups.forEach((g) => newGroups.push(new Set(g)));
+    // Draw committed SVG per new group (black)
+    for (let grp of newGroups) {
+        const pathData = generatePolyominoPath(grp);
+        if (pathData) {
+            const svg = createPolyominoSvg(pathData, "#000000");
+            svg.classList.add("committed-svg");
+            svg.classList.add("flash");
+            grid.appendChild(svg);
+            setTimeout(() => svg.classList.remove("flash"), 200);
+            grp.forEach((index) => {
+                const cell = document.querySelector(`.cell[data-index="${index}"]`);
+                cell.classList.add("committed");
+                committedCells.set(index, svg);
+                currentCommit.add(index);
+            });
+            currentSvgs.push(svg);
+        }
+    }
+    playSound("pickaxe");
+    const cellsArray = Array.from(
+        new Set(newGroups.flatMap((g) => Array.from(g)))
+    );
+    const elementOrder = [
+        "oil",
+        "ng",
+        "quartz",
+        "sandstone",
+        "coal",
+        "silver",
+        "diamond",
+        "lapis",
+        "peridot",
+        "topaz",
+        "opal",
+        "amber"
+    ];
+    const boulderCenters = {
+        "dig-sheet-a": [
+            { row: 2, col: 6, index: 1 },
+            { row: 3, col: 3, index: 2 },
+            { row: 4, col: 7, index: 3 },
+            { row: 8, col: 7, index: 4 },
+            { row: 9, col: 5, index: 5 }
+        ],
+        "dig-sheet-b": [
+            { row: 2, col: 7, index: 1 },
+            { row: 3, col: 3, index: 2 },
+            { row: 5, col: 5, index: 3 },
+            { row: 8, col: 2, index: 4 },
+            { row: 8, col: 6, index: 5 }
+        ],
+        "dig-sheet-c": [
+            { row: 2, col: 6, index: 1 },
+            { row: 3, col: 3, index: 2 },
+            { row: 5, col: 6, index: 3 },
+            { row: 6, col: 8, index: 4 },
+            { row: 9, col: 5, index: 5 }
+        ],
+        "dig-sheet-d": [
+            { row: 2, col: 6, index: 1 },
+            { row: 3, col: 3, index: 2 },
+            { row: 7, col: 4, index: 3 },
+            { row: 7, col: 7, index: 4 },
+            { row: 9, col: 6, index: 5 }
+        ],
+        "dig-sheet-e": [
+            { row: 2, col: 7, index: 1 },
+            { row: 3, col: 5, index: 2 },
+            { row: 7, col: 2, index: 3 },
+            { row: 9, col: 3, index: 4 },
+            { row: 9, col: 8, index: 5 }
+        ],
+        "dig-sheet-f": [
+            { row: 2, col: 3, index: 1 },
+            { row: 3, col: 9, index: 2 },
+            { row: 5, col: 8, index: 3 },
+            { row: 6, col: 3, index: 4 },
+            { row: 9, col: 5, index: 5 }
+        ],
+        "dig-sheet-g": [
+            { row: 3, col: 5, index: 1 },
+            { row: 3, col: 7, index: 2 },
+            { row: 5, col: 3, index: 3 },
+            { row: 7, col: 9, index: 4 },
+            { row: 8, col: 2, index: 5 }
+        ],
+        "dig-sheet-h": [
+            { row: 2, col: 5, index: 1 },
+            { row: 4, col: 6, index: 2 },
+            { row: 5, col: 4, index: 3 },
+            { row: 8, col: 4, index: 4 },
+            { row: 8, col: 7, index: 5 }
+        ]
+    }[currentDigSheet];
+    let animationQueue = [];
+    let gridElements = [];
+    let bonusElements = [];
+    let rowBonuses = [];
+    const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
+    for (let row = 0; row < 10; row++) {
+        const rowCells = Array.from({ length: 10 }, (_, col) => row * 10 + col);
+        const clickableRowCells = rowCells.filter(
+            (index) => !unclickableCells.has(index)
+        );
+        const committedInRow = clickableRowCells.filter((index) =>
+            committedCells.has(index)
+        );
+        if (
+            committedInRow.length >= clickableRowCells.length &&
+            clickableRowCells.length > 0
+        ) {
+            const rowIndex = row + 1;
+            const rowClicker = Array.from(
+                document.querySelectorAll(".row-cross-off")
+            ).find(
+                (clicker) =>
+                    rowPositionToIndex[clicker.style.cssText] === rowIndex ||
+                    parseInt(clicker.dataset.index) + 1 === rowIndex
+            );
+            if (rowClicker && !rowClicker.classList.contains("crossed-off")) {
+                rowBonuses.push({ type: "cell-flash", indices: clickableRowCells });
+                rowBonuses.push({ type: "row", index: rowIndex });
+                if (coordinates[currentDigSheet]) {
+                    for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
+                        const rowConfigs = config.row?.filter((r) => r.index === rowIndex) || [];
+                        rowConfigs.forEach((rowConfig) => {
+                            for (let i = 0; i < rowConfig.count; i++) {
+                                bonusElements.push({ type: "element", gem });
+                            }
+                        });
+                    }
+                }
+                console.log(`Row ${rowIndex} completed, will flash cells and cross off`);
+            }
+        }
+    }
+    let columnBonuses = [];
+    for (let col = 0; col < 10; col++) {
+        const colCells = Array.from({ length: 10 }, (_, row) => row * 10 + col);
+        const clickableColCells = colCells.filter(
+            (index) => !unclickableCells.has(index)
+        );
+        const committedInCol = clickableColCells.filter((index) =>
+            committedCells.has(index)
+        );
+        if (
+            committedInCol.length >= clickableColCells.length &&
+            clickableColCells.length > 0
+        ) {
+            const colIndex = col + 1;
+            const colClicker = Array.from(
+                document.querySelectorAll(".column-cross-off")
+            ).find(
+                (clicker) =>
+                    columnPositionToIndex[clicker.style.cssText] === colIndex ||
+                    parseInt(clicker.dataset.index) + 1 === colIndex
+            );
+            if (colClicker && !colClicker.classList.contains("crossed-off")) {
+                columnBonuses.push({ type: "cell-flash", indices: clickableColCells });
+                columnBonuses.push({ type: "column", index: colIndex });
+                if (coordinates[currentDigSheet]) {
+                    for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
+                        const colConfigs =
+                            config.column?.filter((c) => c.index === colIndex) || [];
+                        colConfigs.forEach((colConfig) => {
+                            for (let i = 0; i < colConfig.count; i++) {
+                                bonusElements.push({ type: "element", gem });
+                            }
+                        });
+                    }
+                }
+                console.log(`Column ${colIndex} completed, will flash cells and cross off`);
+            }
+        }
+    }
+    let boulderBonuses = [];
+    for (const { row, col, index } of boulderCenters) {
+        const neighbors = [
+            { r: row - 1, c: col - 1 },
+            { r: row - 1, c: col },
+            { r: row - 1, c: col + 1 },
+            { r: row, c: col - 1 },
+            { r: row, c: col + 1 },
+            { r: row + 1, c: col - 1 },
+            { r: row + 1, c: col },
+            { r: row + 1, c: col + 1 }
+        ].filter(({ r, c }) => r >= 1 && r <= 10 && c >= 1 && c <= 10);
+        const neighborIndices = neighbors.map(({ r, c }) => (r - 1) * 10 + (c - 1));
+        if (neighborIndices.every((idx) => committedCells.has(idx))) {
+            const boulderClicker = Array.from(
+                document.querySelectorAll(".boulder-cross-off")
+            ).find((clicker) => parseInt(clicker.dataset.index) + 1 === index);
+            if (boulderClicker && !boulderClicker.classList.contains("crossed-off")) {
+                boulderBonuses.push({ type: "cell-flash", indices: neighborIndices });
+                boulderBonuses.push({ type: "boulder", index });
+                if (coordinates[currentDigSheet]) {
+                    for (const [gem, config] of Object.entries(coordinates[currentDigSheet])) {
+                        const boulderConfigs =
+                            config.boulder?.filter((b) => b.index === index) || [];
+                        boulderConfigs.forEach((boulderConfig) => {
+                            for (let i = 0; i < boulderConfig.count; i++) {
+                                bonusElements.push({ type: "element", gem });
+                            }
+                        });
+                    }
+                }
+                console.log(`Boulder ${index} completed, will flash cells and cross off`);
+            }
+        }
+    }
+    let allElements = [];
+    let digSheetElements = [];
+    let scoreSheetElements = [];
+    let newOilCount = 0;
+    if (coordinates[currentDigSheet]) {
+        const gridCells = coordinates[currentDigSheet];
+        cellsArray.forEach((index) => {
+            const row = Math.floor(index / 10) + 1;
+            const col = (index % 10) + 1;
+            for (const [gem, config] of Object.entries(gridCells)) {
+                if (config.grid?.some((cell) => cell.row === row && cell.col === col)) {
+                    allElements.push({ type: "element", gem });
+                    if (gem === "oil") newOilCount++;
+                    console.log(`Found ${gem} at grid cell (${row}, ${col})`);
+                }
+            }
+        });
+    }
+    allElements.push(...bonusElements);
+    bonusElements.forEach(({ gem }) => {
+        if (gem === "oil") newOilCount++;
+    });
+    allElements.sort(
+        (a, b) => elementOrder.indexOf(a.gem) - elementOrder.indexOf(b.gem)
+    );
+    allElements.forEach((element) => {
+        if (element.gem === "oil" || element.gem === "ng") {
+            digSheetElements.push(element);
+        } else {
+            scoreSheetElements.push(element);
+        }
+    });
+    // Predict oil bonuses
+    const prevOilCount = oilCount;
+    const tempOilCount = oilCount + newOilCount;
+    const newBonuses = [];
+    if (tempOilCount >= 2 && prevOilCount < 2) newBonuses.push(0); // 2nd oil -> clicker 0
+    if (tempOilCount >= 4 && prevOilCount < 4) newBonuses.push(1); // 4th oil -> clicker 1
+    if (tempOilCount >= 5 && prevOilCount < 5) newBonuses.push(2); // 5th oil -> clicker 2
+    if (tempOilCount >= 6 && prevOilCount < 6) newBonuses.push(3); // 6th oil -> clicker 3
+    if (tempOilCount >= 7 && prevOilCount < 7) {
+        newBonuses.push(4, 4); // 7th oil -> clicker 4 (twice)
+    }
+    oilBonusQueue.push(...newBonuses); // Always append to end for FIFO order
+    console.log(
+        `Oil bonuses queued: ${newBonuses}, total queue: ${oilBonusQueue}, bonusDigMode: ${bonusDigMode}`
+    );
+    selectedCells.clear();
+    lockedGroups = [];
+    outlines.clear();
+    updatePolyominoOutline();
+    updateCellCursors();
+    updateDigButtonState();
+    if (tutorialMode) {
+        // Clear highlights/restrictions after dig
+        document.querySelectorAll(".tutorial-highlight").forEach(cell => cell.classList.remove("tutorial-highlight"));
+        document.querySelectorAll(".cell.no-pointer:not(.disabled)").forEach(cell => cell.classList.remove("no-pointer"));
+        tutorialAllowedCells = [];
+    }
+    let delay = 500;
+    animationQueue.push(...rowBonuses);
+    animationQueue.push(...columnBonuses);
+    animationQueue.push(...boulderBonuses);
+    let didScrollToScore = false; // Track if we scrolled to score
+    if (digSheetElements.length > 0 || scoreSheetElements.length > 0) {
+        animationQueue.push(...digSheetElements);
+        if (scoreSheetElements.length > 0 && isNarrowScreen) {
+            animationQueue.push({ type: "scroll", action: "score" });
+            didScrollToScore = true;
+        }
+        animationQueue.push(...scoreSheetElements);
+        if (isNarrowScreen && didScrollToScore) {
+            animationQueue.push({ type: "scroll", action: "dig" });
+        }
+    }
+    // Hide current oil square before processing next bonus
+    const oilSquareMap = {
+        0: "oil-square-1",
+        1: "oil-square-2",
+        2: "oil-square-3",
+        3: "oil-square-4",
+        4: "oil-square-5"
+    };
+    if (bonusDigMode) {
+        const currentOilSquareId = oilSquareMap[oilBonusQueue[0]];
+        if (currentOilSquareId) {
+            const currentOilSquare = document.getElementById(currentOilSquareId);
+            if (currentOilSquare) {
+                currentOilSquare.style.display = "none";
+                currentOilSquare.classList.remove("pulsing-oil-square");
+            }
+        }
+    }
+    animationQueue.forEach((item, index) => {
+        setTimeout(() => {
+            if (item.type === "element") {
+                const gem = item.gem;
+                switch (gem) {
+                    case "quartz":
+                        quartzCount = Math.max(0, quartzCount + 1);
+                        updateQuartzClickers();
+                        break;
+                    case "sandstone":
+                        sandstoneCount = Math.max(0, sandstoneCount + 1);
+                        updateSandstoneClickers();
+                        break;
+                    case "coal":
+                        coalCount = Math.max(0, coalCount + 1);
+                        updateCoalClickers();
+                        break;
+                    case "silver":
+                        silverCount = Math.max(0, silverCount + 1);
+                        updateSilverClickers();
+                        break;
+                    case "diamond":
+                        diamondCount = Math.max(0, diamondCount + 1);
+                        updateDiamondClickers();
+                        break;
+                    case "lapis":
+                        lapisCount = Math.max(0, lapisCount + 1);
+                        updateLapisClickers();
+                        break;
+                    case "peridot":
+                        peridotCount = Math.max(0, peridotCount + 1);
+                        const greenDieValue =
+                            parseInt(document.getElementById("die1").getAttribute("data-value")) ||
+                            0;
+                        if (greenDieValue > 0) {
+                            const scoreDiv = document.querySelectorAll(".peridot-score")[
+                                peridotCount - 1
+                            ];
+                            if (scoreDiv) scoreDiv.textContent = greenDieValue;
+                        }
+                        updatePeridotClickers();
+                        break;
+                    case "topaz":
+                        topazCount = Math.max(0, topazCount + 1);
+                        updateTopazClickers();
+                        break;
+                    case "opal":
+                        opalCount = Math.max(0, opalCount + 1);
+                        updateOpalClickers();
+                        break;
+                    case "amber":
+                        amberCount = Math.max(0, amberCount + 1);
+                        updateAmberClickers();
+                        break;
+                    case "oil":
+                        oilCount = Math.max(0, oilCount + 1);
+                        updateOilClickers();
+                        break;
+                    case "ng":
+                        ngCount = Math.max(0, ngCount + 1);
+                        updateNgClickers();
+                        break;
+                }
+                console.log(
+                    `Circled ${gem} (index ${index}), new ${gem}Count: ${
+                        window[`${gem}Count`]
+                    }`
+                );
+                playSound("circle");
+            } else if (item.type === "row") {
+                const rowIndex = item.index;
+                const rowClicker = Array.from(
+                    document.querySelectorAll(".row-cross-off")
+                ).find(
+                    (clicker) =>
+                        rowPositionToIndex[clicker.style.cssText] === rowIndex ||
+                        parseInt(clicker.dataset.index) + 1 === rowIndex
+                );
+                if (rowClicker && !rowClicker.classList.contains("crossed-off")) {
+                    rowClicker.classList.add("crossed-off");
+                    rowBonusCount++;
+                    updateOpalClickers();
+                    console.log(
+                        `Crossed off row ${rowIndex} (index ${index}) at ${Date.now()}ms`
+                    );
+                    playSound("crossOff");
+                }
+            } else if (item.type === "column") {
+                const colIndex = item.index;
+                const colClicker = Array.from(
+                    document.querySelectorAll(".column-cross-off")
+                ).find(
+                    (clicker) =>
+                        columnPositionToIndex[clicker.style.cssText] === colIndex ||
+                        parseInt(clicker.dataset.index) + 1 === colIndex
+                );
+                if (colClicker && !colClicker.classList.contains("crossed-off")) {
+                    colClicker.classList.add("crossed-off");
+                    columnBonusCount++;
+                    updateOpalClickers();
+                    console.log(
+                        `Crossed off column ${colIndex} (index ${index}) at ${Date.now()}ms`
+                    );
+                    playSound("crossOff");
+                }
+            } else if (item.type === "boulder") {
+                const boulderIndex = item.index;
+                const boulderClicker = Array.from(
+                    document.querySelectorAll(".boulder-cross-off")
+                ).find((clicker) => parseInt(clicker.dataset.index) + 1 === boulderIndex);
+                if (boulderClicker && !boulderClicker.classList.contains("crossed-off")) {
+                    boulderClicker.classList.add("crossed-off");
+                    boulderBonusCount++;
+                    updateAmberClickers();
+                    console.log(
+                        `Crossed off boulder ${boulderIndex} (index ${index}) at ${Date.now()}ms`
+                    );
+                    playSound("crossOff");
+                }
+            } else if (item.type === "cell-flash") {
+                item.indices.forEach((index) => {
+                    const cell = document.querySelector(`.cell[data-index="${index}"]`);
+                    if (cell) {
+                        cell.classList.add("cell-flash");
+                        setTimeout(() => {
+                            cell.classList.remove("cell-flash");
+                        }, 500);
+                        }
+                    });
+                console.log(
+                    `Flashed cells for bonus (index ${index}): ${item.indices
+                        .map((idx) => `(${((idx / 10) | 0) + 1}, ${(idx % 10) + 1})`)
+                        .join(", ")}`
+                );
+                playSound("bonus");
+            } else if (item.type === "scroll") {
+                if (item.action === "score") {
+                    scrollRight(); // Use scrollRight() for consistency
+                    console.log(
+                        `Scrolled to score sheet (index ${index}) at ${Date.now()}ms`
+                    );
+                } else if (item.action === "dig") {
+                    scrollLeft(); // Use scrollLeft() to go back
+                    console.log(
+                        `Scrolled back to dig sheet (index ${index}) at ${Date.now()}ms`
+                    );
+                    if (tutorialMode && tutorialStep === 5) {
+                        showTutorialMessage(tutorialMessages[5]); // "Cool, you collected..."
+                        tutorialStep = 6; // Update to after message5
+                    } else if (tutorialMode && tutorialStep === 7) {
+                        showTutorialMessage(tutorialMessages[7]); // "You just got a bonus..."
+                        tutorialStep = 8; // Update to after message7
+                    } else if (tutorialMode && tutorialStep === 12) {
+                        showTutorialMessage(tutorialMessages[12]);
+                        tutorialStep = 13;
+                    } else if (tutorialMode && tutorialStep === 15) {
+                        showTutorialMessage(tutorialMessages[15]); // "You dug out an entire row..."
+                        tutorialStep = 16; // Update to after message15
+                    } else if (tutorialMode && tutorialStep === 18) {
+                        showTutorialMessage(tutorialMessages[18]); // "Awesome, you're raking..."
+                        tutorialStep = 19; // Update to after message18 (19 1-based)
+                    }
+                }
+            }
+            updateFinalScore();
+        }, delay);
+        delay += 500;
+    });
+    // Handle bonus mode transition after animations (or immediately if none)
+    setTimeout(
+        () => {
+            console.log(
+                `Final transition: bonusDigMode=${bonusDigMode}, oilBonusQueue=${oilBonusQueue}`
+            );
+            if (bonusDigMode && oilBonusQueue.length > 0) {
+                const clickerIndex = oilBonusQueue.shift();
+                // Only cross off clicker if it's not the first of two index 4 bonuses (7th oil)
+                if (clickerIndex >= 0 && clickerIndex < oilNgCrossOffClickers.length) {
+                    const clicker = oilNgCrossOffClickers[clickerIndex];
+                    if (clicker && !clicker.classList.contains("crossed-off")) {
+                        // For index 4 (7th oil), only cross off if the next queue item is not also 4
+                        if (clickerIndex !== 4 || oilBonusQueue[0] !== 4) {
+                            clicker.classList.add("crossed-off");
+                            playSound("crossOff");
+                            console.log(`Crossed off oil clicker ${clickerIndex}`);
+                        }
+                    }
+                }
+                if (oilBonusQueue.length > 0) {
+                    console.log("Remaining bonuses, entering bonus dig mode");
+                    enterBonusDigMode();
+                } else {
+                    console.log("No remaining bonuses, exiting bonus dig mode");
+                    exitBonusDigMode();
+                    // Tutorial: For round 9 bonus digs, show message 20 after final bonus collection (no score scroll assumed for bonus)
+                    if (tutorialMode && rollCount === 9) {
+                        showTutorialMessage(tutorialMessages[19]); // "You did it! Click the finish button..."
+                        tutorialStep = 20; // Update to after message19 (20 1-based)
+                    }
+                }
+            } else if (oilBonusQueue.length > 0 && !bonusDigMode) {
+                console.log("Queue has bonuses, entering bonus dig mode");
+                enterBonusDigMode();
+            } else {
+                console.log("No bonuses, transitioning to roll/end phase");
+                gamePhase = rollCount < 9 ? "roll" : "end";
+                updateRollButtonState();
+                updateDigButtonState();
+                updateCellCursors();
+                updateNgCrossoffState();
+                // Tutorial: For non-bonus round 9, show message 20 here
+                if (tutorialMode && rollCount === 9) {
+                    showTutorialMessage(tutorialMessages[19]); // "You did it! Click the finish button..."
+                    tutorialStep = 20; // Update to after message19 (20 1-based)
+                }
+            }
+            // Consume used NG-Crossoffs (lock them without reducing ngCount or uncircling)
+            ngCrossoffDivs.forEach((div) => {
+                if (
+                    div.classList.contains("crossed-off") &&
+                    !div.classList.contains("used")
+                ) {
+                    div.classList.add("used");
+                    console.log(
+                        `Consumed NG-Crossoff at index ${ngCrossoffDivs.indexOf(div)}`
+                    );
+                }
+            });
+            updateNgCrossoffState();
+            // Force reflow to ensure final scroll-back renders (mobile fix)
+            const container = document.getElementById("game-container");
+            if (container) {
+                container.offsetHeight; // Trigger reflow
+            }
+            // Tutorial: Show message06 after collection sequence (step 4 after dig)
+            if (tutorialMode && tutorialStep === 5 && !didScrollToScore) {
+                showTutorialMessage(tutorialMessages[5]); // "Cool, you collected..."
+                tutorialStep = 6; // Update to after message5
+            } else if (tutorialMode && tutorialStep === 7 && !didScrollToScore) {
+                showTutorialMessage(tutorialMessages[7]); // "You just got a bonus..."
+                tutorialStep = 8; // Update to after message7
+            } else if (tutorialMode && tutorialStep === 12 && !didScrollToScore) {
+                showTutorialMessage(tutorialMessages[12]);
+                tutorialStep = 13;
+            } else if (tutorialMode && tutorialStep === 15 && !didScrollToScore) {
+                showTutorialMessage(tutorialMessages[15]); // "You dug out an entire row..."
+                tutorialStep = 16; // Update to after message15
+            } else if (tutorialMode && tutorialStep === 18 && !didScrollToScore) {
+                showTutorialMessage(tutorialMessages[18]); // "Awesome, you're raking..."
+                tutorialStep = 19; // Update to after message18 (19 1-based)
+            }
+        },
+        animationQueue.length > 0 ? delay : 0
+    );
 }
 function undoLastCommit() {
-	if (stateHistory.length === 0) {
-		if (selectedCells.size > 0 || lockedGroups.length > 0) {
-			selectedCells.clear();
-			lockedGroups = [];
-			updatePolyominoOutline();
-			updateDigButtonState();
-			updateNgCrossoffState(); // Re-evaluate NG state after clearing selections
-			playSound("click");
-		}
-		console.log("No state to undo, cleared selections if any");
-		return;
-	}
-	const grid = document.getElementById("grid");
-	const previousState = stateHistory.pop();
-	console.log("Restoring state:", {
-		committedCellIndices: Array.from(previousState.committedCellIndices),
-		elementCounts: {
-			oil: previousState.oilCount,
-			ng: previousState.ngCount,
-			quartz: previousState.quartzCount,
-			sandstone: previousState.sandstoneCount,
-			coal: previousState.coalCount,
-			silver: previousState.silverCount,
-			diamond: previousState.diamondCount,
-			lapis: previousState.lapisCount,
-			peridot: previousState.peridotCount,
-			topaz: previousState.topazCount,
-			opal: previousState.opalCount,
-			amber: previousState.amberCount
-		}
-	});
-	grid.querySelectorAll(".polyomino-svg").forEach((svg) => svg.remove());
-	previousState.svgs.forEach((svg) => grid.appendChild(svg));
-	committedCells = new Map(previousState.committedCells);
-	document
-		.querySelectorAll(".cell.committed")
-		.forEach((cell) => cell.classList.remove("committed"));
-	previousState.committedCellIndices.forEach((index) => {
-		const cell = document.querySelector(`.cell[data-index="${index}"]`);
-		if (cell) cell.classList.add("committed");
-	});
-	oilCount = previousState.oilCount;
-	ngCount = previousState.ngCount;
-	quartzCount = previousState.quartzCount;
-	sandstoneCount = previousState.sandstoneCount;
-	coalCount = previousState.coalCount;
-	silverCount = previousState.silverCount;
-	diamondCount = previousState.diamondCount;
-	lapisCount = previousState.lapisCount;
-	peridotCount = previousState.peridotCount;
-	topazCount = previousState.topazCount;
-	opalCount = previousState.opalCount;
-	amberCount = previousState.amberCount;
-	document.querySelectorAll(".circle-clicker").forEach((clicker) => {
-		const stateClicker = previousState.circleClickers.find(
-			(s) => s.class === clicker.className
-		);
-		if (stateClicker) {
-			if (stateClicker.circled) {
-				clicker.classList.add("circled");
-			} else {
-				clicker.classList.remove("circled");
-			}
-		}
-	});
-	// Restore cross-off states
-	document.querySelectorAll(".row-cross-off").forEach((c, i) => {
-		if (previousState.crossOffs.rows[i]) c.classList.add("crossed-off");
-		else c.classList.remove("crossed-off");
-	});
-	document.querySelectorAll(".column-cross-off").forEach((c, i) => {
-		if (previousState.crossOffs.columns[i]) c.classList.add("crossed-off");
-		else c.classList.remove("crossed-off");
-	});
-	document.querySelectorAll(".boulder-cross-off").forEach((c, i) => {
-		if (previousState.crossOffs.boulders[i]) c.classList.add("crossed-off");
-		else c.classList.remove("crossed-off");
-	});
-	document.querySelectorAll(".oil-ng-cross-off-clicker").forEach((c, i) => {
-		if (previousState.crossOffs.oilNg[i]) c.classList.add("crossed-off");
-		else c.classList.remove("crossed-off");
-	});
-	document.querySelectorAll(".cross-off-round").forEach((c, i) => {
-		if (previousState.crossOffs.rounds[i]) c.classList.add("crossed-off");
-		else c.classList.remove("crossed-off");
-	});
-	document.querySelectorAll(".ng-cross-off").forEach((c, i) => {
-		const state = previousState.crossOffs.ngCrossoffs[i];
-		if (state) {
-			c.classList.toggle("crossed-off", state.crossedOff);
-			c.classList.toggle("used", state.used);
-		}
-	});
-	// Recalculate bonus counts after restoring cross-offs
-	rowBonusCount = document.querySelectorAll(".row-cross-off.crossed-off").length;
-	columnBonusCount = document.querySelectorAll(".column-cross-off.crossed-off")
-		.length;
-	boulderBonusCount = document.querySelectorAll(".boulder-cross-off.crossed-off")
-		.length;
-	updateOilClickers();
-	updateNgClickers();
-	updateQuartzClickers();
-	updateSandstoneClickers();
-	updateCoalClickers();
-	updateSilverClickers();
-	updateDiamondClickers();
-	updateLapisClickers();
-	updatePeridotClickers();
-	updateTopazClickers();
-	updateOpalClickers();
-	updateAmberClickers();
-	updateOilNgCrossOffClickers();
-	selectedCells.clear();
-	lockedGroups = [];
-	outlines.clear();
-	updatePolyominoOutline();
-	updateCellCursors();
-	updateDigButtonState();
-	updateNgCrossoffState();
-	rollCount = document.querySelectorAll(".cross-off-round.crossed-off").length;
-	gamePhase = "dig";
-	updateRollButtonState();
-	updateDigButtonState();
-	updateCellCursors();
-	playSound("click");
+    if (stateHistory.length === 0) {
+        if (selectedCells.size > 0 || lockedGroups.length > 0) {
+            selectedCells.clear();
+            lockedGroups = [];
+            updatePolyominoOutline();
+            updateDigButtonState();
+            updateNgCrossoffState(); // Re-evaluate NG state after clearing selections
+            playSound("click");
+        }
+        console.log("No state to undo, cleared selections if any");
+        return;
+    }
+    const grid = document.getElementById("grid");
+    const previousState = stateHistory.pop();
+    console.log("Restoring state:", {
+        committedCellIndices: Array.from(previousState.committedCellIndices),
+        elementCounts: {
+            oil: previousState.oilCount,
+            ng: previousState.ngCount,
+            quartz: previousState.quartzCount,
+            sandstone: previousState.sandstoneCount,
+            coal: previousState.coalCount,
+            silver: previousState.silverCount,
+            diamond: previousState.diamondCount,
+            lapis: previousState.lapisCount,
+            peridot: previousState.peridotCount,
+            topaz: previousState.topazCount,
+            opal: previousState.opalCount,
+            amber: previousState.amberCount
+        }
+    });
+    grid.querySelectorAll(".polyomino-svg").forEach((svg) => svg.remove());
+    previousState.svgs.forEach((svg) => grid.appendChild(svg));
+    committedCells = new Map(previousState.committedCells);
+    document
+        .querySelectorAll(".cell.committed")
+        .forEach((cell) => cell.classList.remove("committed"));
+    previousState.committedCellIndices.forEach((index) => {
+        const cell = document.querySelector(`.cell[data-index="${index}"]`);
+        if (cell) cell.classList.add("committed");
+    });
+    oilCount = previousState.oilCount;
+    ngCount = previousState.ngCount;
+    quartzCount = previousState.quartzCount;
+    sandstoneCount = previousState.sandstoneCount;
+    coalCount = previousState.coalCount;
+    silverCount = previousState.silverCount;
+    diamondCount = previousState.diamondCount;
+    lapisCount = previousState.lapisCount;
+    peridotCount = previousState.peridotCount;
+    topazCount = previousState.topazCount;
+    opalCount = previousState.opalCount;
+    amberCount = previousState.amberCount;
+    document.querySelectorAll(".circle-clicker").forEach((clicker) => {
+        const stateClicker = previousState.circleClickers.find(
+            (s) => s.class === clicker.className
+        );
+        if (stateClicker) {
+            if (stateClicker.circled) {
+                clicker.classList.add("circled");
+            } else {
+                clicker.classList.remove("circled");
+            }
+        }
+    });
+    // Restore cross-off states
+    document.querySelectorAll(".row-cross-off").forEach((c, i) => {
+        if (previousState.crossOffs.rows[i]) c.classList.add("crossed-off");
+        else c.classList.remove("crossed-off");
+    });
+    document.querySelectorAll(".column-cross-off").forEach((c, i) => {
+        if (previousState.crossOffs.columns[i]) c.classList.add("crossed-off");
+        else c.classList.remove("crossed-off");
+    });
+    document.querySelectorAll(".boulder-cross-off").forEach((c, i) => {
+        if (previousState.crossOffs.boulders[i]) c.classList.add("crossed-off");
+        else c.classList.remove("crossed-off");
+    });
+    document.querySelectorAll(".oil-ng-cross-off-clicker").forEach((c, i) => {
+        if (previousState.crossOffs.oilNg[i]) c.classList.add("crossed-off");
+        else c.classList.remove("crossed-off");
+    });
+    document.querySelectorAll(".cross-off-round").forEach((c, i) => {
+        if (previousState.crossOffs.rounds[i]) c.classList.add("crossed-off");
+        else c.classList.remove("crossed-off");
+    });
+    document.querySelectorAll(".ng-cross-off").forEach((c, i) => {
+        const state = previousState.crossOffs.ngCrossoffs[i];
+        if (state) {
+            c.classList.toggle("crossed-off", state.crossedOff);
+            c.classList.toggle("used", state.used);
+        }
+    });
+    // Recalculate bonus counts after restoring cross-offs
+    rowBonusCount = document.querySelectorAll(".row-cross-off.crossed-off").length;
+    columnBonusCount = document.querySelectorAll(".column-cross-off.crossed-off")
+        .length;
+    boulderBonusCount = document.querySelectorAll(".boulder-cross-off.crossed-off")
+        .length;
+    updateOilClickers();
+    updateNgClickers();
+    updateQuartzClickers();
+    updateSandstoneClickers();
+    updateCoalClickers();
+    updateSilverClickers();
+    updateDiamondClickers();
+    updateLapisClickers();
+    updatePeridotClickers();
+    updateTopazClickers();
+    updateOpalClickers();
+    updateAmberClickers();
+    updateOilNgCrossOffClickers();
+    selectedCells.clear();
+    lockedGroups = [];
+    outlines.clear();
+    updatePolyominoOutline();
+    updateCellCursors();
+    updateDigButtonState();
+    updateNgCrossoffState();
+    rollCount = document.querySelectorAll(".cross-off-round.crossed-off").length;
+    gamePhase = "dig";
+    updateRollButtonState();
+    updateDigButtonState();
+    updateCellCursors();
+    // NEW: Clear bonus queue and exit mode (fixes stuck bonus after undo)
+    oilBonusQueue = [];
+    exitBonusDigMode(true);
+    playSound("click");
 }
 
 function seededRandom(seed) {
@@ -7242,6 +7490,207 @@ function updateDailyChallengeTimer() {
 	}
 	setTimeout(updateDailyChallengeTimer, 1000);
 }
+
+function showTutorialMessage(text) {
+    const overlay = document.getElementById("tutorial-overlay");
+    const card = document.getElementById("tutorial-card");
+    const cardText = document.getElementById("tutorial-text");
+    if (overlay && card && cardText) {
+        cardText.textContent = text;
+        card.classList.remove("visible"); // Reset to initial state
+        card.style.visibility = "hidden";
+        overlay.classList.remove("visible"); // Reset overlay
+        overlay.style.visibility = "hidden";
+        card.offsetHeight; // Force reflow
+        overlay.style.visibility = "visible"; // Show overlay
+        overlay.classList.add("visible"); // Activate blocker
+        card.style.visibility = "visible"; // Show card
+        card.classList.add("visible"); // Trigger slide-up
+        console.log(`Showing message: "${text}" at step ${tutorialStep}, bottom: ${card.style.bottom}, opacity: ${card.style.opacity}, visibility: ${card.style.visibility}`);
+    } else {
+        console.error("Tutorial overlay, card, or text element not found");
+    }
+}
+
+function hideTutorialMessage(callback) {
+    const overlay = document.getElementById("tutorial-overlay");
+    const card = document.getElementById("tutorial-card");
+    if (overlay && card) {
+        card.classList.remove("visible"); // Slide down
+        setTimeout(() => {
+            overlay.classList.remove("visible"); // Deactivate blocker
+            card.style.visibility = "hidden";
+            overlay.style.visibility = "hidden";
+            console.log("Message hidden, bottom: -100vh, opacity: 0, visibility: hidden");
+            if (callback) callback(); // Call advance after animation
+        }, 500); // Match CSS transition duration (0.5s)
+    }
+    const openingMenu = document.getElementById("opening-menu");
+    if (openingMenu) openingMenu.style.display = "none"; // Reinforce hide
+}
+
+function advanceTutorialStep() {
+    if (!tutorialMode) return; // Early return if not in tutorial mode
+    const openingMenu = document.getElementById("opening-menu");
+    if (openingMenu) openingMenu.style.display = "none"; // Ensure menu stays hidden
+    if (tutorialStep >= tutorialMessages.length) {
+        // Tutorial end: Reset mode and show menu
+        tutorialMode = false;
+        if (openingMenu) openingMenu.style.display = "flex";
+        return;
+    }
+    console.log(`Advancing to tutorialStep = ${tutorialStep}, showing message: "${tutorialMessages[tutorialStep]}"`);
+    showTutorialMessage(tutorialMessages[tutorialStep]);
+    // Step-specific setup
+    if (tutorialStep === 0) { // Message0 (Welcome1) shown, OK auto-advances to 1
+        const rollButton = document.getElementById("roll-button");
+        if (rollButton) {
+            rollButton.style.pointerEvents = "none"; // Disable roll button
+            rollButton.style.opacity = "0.5";
+            rollButton.classList.remove("pulsing-roll");
+            console.log("Roll button disabled at step 0");
+        }
+    } else if (tutorialStep === 1) { // Message1 (Welcome2: "There are 9 rounds... Ready to roll?") shown, OK enables roll in tutorialOk
+        const rollButton = document.getElementById("roll-button");
+        if (rollButton) {
+            rollButton.style.pointerEvents = "none"; // Keep disabled
+            rollButton.style.opacity = "0.5";
+            rollButton.classList.remove("pulsing-roll");
+            console.log("Roll button disabled at step 1");
+        }
+    } else if (tutorialStep === 3) { // Message3 ("Let's dig...") shown, activate highlights and disable dig button
+        tutorialAllowedCells = [6, 16, 24, 25, 26, 27]; // Cells: [0,6], [1,6], [2,4], [2,5], [2,6], [2,7]
+        document.querySelectorAll(".cell").forEach(cell => {
+            const idx = parseInt(cell.dataset.index);
+            if (tutorialAllowedCells.includes(idx)) {
+                cell.classList.add("tutorial-highlight");
+            } else if (!cell.classList.contains("disabled")) {
+                cell.classList.add("no-pointer"); // Restrict others
+            }
+        });
+        const digButton = document.getElementById("dig-button");
+        if (digButton) {
+            digButton.style.pointerEvents = "none"; // Disable dig button
+            digButton.style.opacity = "0.5";
+            console.log("Dig button disabled at step 3");
+        }
+        updateDigButtonState(); // Ensure state consistency
+    } else if (tutorialStep === 6) { // Message6 ("Dig patterns...") shown, activate new highlights and disable dig button
+        tutorialAllowedCells = [34, 35, 37, 45, 46, 47]; // Corrected: [3,4], [3,5], [3,7], [4,5], [4,6], [4,7] 0-based
+        document.querySelectorAll(".cell").forEach(cell => {
+            const idx = parseInt(cell.dataset.index);
+            if (tutorialAllowedCells.includes(idx)) {
+                cell.classList.add("tutorial-highlight");
+            } else if (!cell.classList.contains("disabled") && !cell.classList.contains("committed")) {
+                cell.classList.add("no-pointer"); // Restrict others (except committed)
+            }
+        });
+        const digButton = document.getElementById("dig-button");
+        if (digButton) {
+            digButton.style.pointerEvents = "none"; // Disable dig button
+            digButton.style.opacity = "0.5";
+            console.log("Dig button disabled at step 6");
+        }
+        updateDigButtonState(); // Ensure state consistency
+    } else if (tutorialStep === 9) { // Message9 ("First, let's click... smaller shape") shown, activate highlights for small shape and disable dig button
+        tutorialAllowedCells = [56, 66]; // Cells: [5,6]=56, [6,6]=66
+        document.querySelectorAll(".cell").forEach(cell => {
+            const idx = parseInt(cell.dataset.index);
+            if (tutorialAllowedCells.includes(idx)) {
+                cell.classList.add("tutorial-highlight");
+            } else if (!cell.classList.contains("disabled") && !cell.classList.contains("committed")) {
+                cell.classList.add("no-pointer"); // Restrict others (except committed)
+            }
+        });
+        const digButton = document.getElementById("dig-button");
+        if (digButton) {
+            digButton.style.pointerEvents = "none"; // Disable dig button
+            digButton.style.opacity = "0.5";
+            console.log("Dig button disabled at step 9");
+        }
+        updateDigButtonState(); // Ensure state consistency
+    } else if (tutorialStep === 11) { // Message11 ("Nice lock...") shown, activate new highlights and disable dig button
+        tutorialAllowedCells = [67, 77, 87]; // Cells: [6,7]=67, [7,7]=77, [8,7]=87
+        document.querySelectorAll(".cell").forEach(cell => {
+            const idx = parseInt(cell.dataset.index);
+            if (tutorialAllowedCells.includes(idx)) {
+                cell.classList.add("tutorial-highlight");
+            } else if (!cell.classList.contains("disabled") && !cell.classList.contains("committed")) {
+                cell.classList.add("no-pointer"); // Restrict others (except committed)
+            }
+        });
+        const digButton = document.getElementById("dig-button");
+        if (digButton) {
+            digButton.style.pointerEvents = "none"; // Disable dig button
+            digButton.style.opacity = "0.5";
+            console.log("Dig button disabled at step 11");
+        }
+        updateDigButtonState(); // Ensure state consistency
+    } else if (tutorialStep === 13) { // Message13 (new message 14) shown, activate highlights and disable dig button
+        tutorialAllowedCells = [55, 65, 75, 85, 86]; // [5,5], [6,5], [7,5], [8,5], [8,6]
+        document.querySelectorAll(".cell").forEach(cell => {
+            const idx = parseInt(cell.dataset.index);
+            if (tutorialAllowedCells.includes(idx)) {
+                cell.classList.add("tutorial-highlight");
+            } else if (!cell.classList.contains("disabled") && !cell.classList.contains("committed")) {
+                cell.classList.add("no-pointer"); // Restrict others (except committed)
+            }
+        });
+        const digButton = document.getElementById("dig-button");
+        if (digButton) {
+            digButton.style.pointerEvents = "none"; // Disable dig button
+            digButton.style.opacity = "0.5";
+            console.log("Dig button disabled at step 13");
+        }
+        updateDigButtonState(); // Ensure state consistency
+    } else if (tutorialStep === 14) { // Message14 (new message 15) shown, highlight single cell and disable dig button
+        tutorialAllowedCells = [44]; // [4,4]
+        document.querySelectorAll(".cell").forEach(cell => {
+            const idx = parseInt(cell.dataset.index);
+            if (tutorialAllowedCells.includes(idx)) {
+                cell.classList.add("tutorial-highlight");
+            } else if (!cell.classList.contains("disabled") && !cell.classList.contains("committed")) {
+                cell.classList.add("no-pointer"); // Restrict others (except committed)
+            }
+        });
+        const digButton = document.getElementById("dig-button");
+        if (digButton) {
+            digButton.style.pointerEvents = "none"; // Disable dig button
+            digButton.style.opacity = "0.5";
+            console.log("Dig button disabled at step 14");
+        }
+        updateDigButtonState(); // Ensure state consistency
+    } else if (tutorialStep === 15) { // Message15 (new message 16) shown, enable roll button
+        const rollButton = document.getElementById("roll-button");
+        if (rollButton) {
+            rollButton.style.pointerEvents = "auto"; // Enable roll button
+            rollButton.style.opacity = "1";
+            rollButton.classList.add("pulsing-roll");
+            console.log("Roll button enabled at step 15 (after showing message 15)");
+        }
+    } else if (tutorialStep === 17) { // After showing message 17 (18 1-based), highlight cells for green 2 and disable dig
+        tutorialAllowedCells = [83, 93, 94, 95, 96]; // [8,3], [9,3], [9,4], [9,5], [9,6]
+        document.querySelectorAll(".cell").forEach(cell => {
+            const idx = parseInt(cell.dataset.index);
+            if (tutorialAllowedCells.includes(idx)) {
+                cell.classList.add("tutorial-highlight");
+            } else if (!cell.classList.contains("disabled") && !cell.classList.contains("committed")) {
+                cell.classList.add("no-pointer"); // Restrict others
+            }
+        });
+        const digButton = document.getElementById("dig-button");
+        if (digButton) {
+            digButton.style.pointerEvents = "none"; // Disable dig button
+            digButton.style.opacity = "0.5";
+            console.log("Dig button disabled at step 17");
+        }
+        updateDigButtonState(); // Ensure state consistency
+    } else if (tutorialStep === 18) { // After showing message 18 (19 1-based), no additional setup needed (cells already highlighted)
+        // nothing
+    }
+    tutorialStep++;
+}
+
 function updateCellCursors() {
 	const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
 	document.querySelectorAll(".cell").forEach((cell) => {
@@ -7258,60 +7707,72 @@ function updateCellCursors() {
 	});
 }
 function toggleCell(index, cellElement) {
-	const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
-	if (committedCells.has(index) || unclickableCells.has(index)) return;
-	// Hide NG bonus divs when a cell is clicked
-	document.querySelectorAll(".ng-bonus").forEach((div) => {
-		div.style.display = "none";
-		div.classList.remove("pulsing-ng-bonus");
-	});
-	if (bonusDigMode) {
-		if (selectedCells.has(index)) {
-			selectedCells.delete(index);
-		} else {
-			selectedCells.clear(); // Only one cell allowed in bonus mode
-			selectedCells.add(index);
-		}
-		updatePolyominoOutline();
-		playSound("click");
-		updateDigButtonState();
-		updateNgCrossoffState();
-		return;
-	}
-	let handled = false;
-	if (selectedCells.has(index)) {
-		// Lock the group containing this index from selectedCells
-		const visited = new Set();
-		const group = new Set();
-		dfs(index, group, visited, selectedCells);
-		if (group.size > 0) {
-			lockedGroups.push(group);
-			group.forEach((i) => selectedCells.delete(i));
-			handled = true;
-		}
-	} else {
-		// Check if in a locked group
-		for (let gi = 0; gi < lockedGroups.length; gi++) {
-			if (lockedGroups[gi].has(index)) {
-				// Clear this locked group
-				lockedGroups.splice(gi, 1);
-				handled = true;
-				break;
-			}
-		}
-	}
-	if (!handled) {
-		// Toggle in selectedCells
-		if (selectedCells.has(index)) {
-			selectedCells.delete(index);
-		} else {
-			selectedCells.add(index);
-		}
-	}
-	updatePolyominoOutline();
-	playSound("click");
-	updateDigButtonState();
-	updateNgCrossoffState();
+    if (tutorialMode && tutorialAllowedCells.length > 0 && !tutorialAllowedCells.includes(index)) {
+        return; // Restrict to allowed cells
+    }
+    const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
+    if (committedCells.has(index) || unclickableCells.has(index)) return;
+    // Hide NG bonus divs when a cell is clicked
+    document.querySelectorAll(".ng-bonus").forEach((div) => {
+        div.style.display = "none";
+        div.classList.remove("pulsing-ng-bonus");
+    });
+    if (bonusDigMode) {
+        if (selectedCells.has(index)) {
+            selectedCells.delete(index);
+        } else {
+            selectedCells.clear(); // Only one cell allowed in bonus mode
+            selectedCells.add(index);
+        }
+        updatePolyominoOutline();
+        playSound("click");
+        updateDigButtonState();
+        updateNgCrossoffState();
+        return;
+    }
+    let handled = false;
+    if (selectedCells.has(index)) {
+        // Lock the group containing this index from selectedCells
+        const visited = new Set();
+        const group = new Set();
+        dfs(index, group, visited, selectedCells);
+        if (group.size > 0) {
+            lockedGroups.push(group);
+            group.forEach((i) => selectedCells.delete(i));
+            handled = true;
+            // Tutorial: Detect lock for step 10 to advance to 11
+            if (tutorialMode && tutorialStep === 11 && lockedGroups.length === 1) {
+                const lockedArray = Array.from(lockedGroups[0]).sort((a, b) => a - b);
+                const targetArray = [56, 66].sort((a, b) => a - b);
+                if (JSON.stringify(lockedArray) === JSON.stringify(targetArray)) {
+                    advanceTutorialStep(); // Show message11
+                    console.log("Locked small shape, advanced to step 12");
+                }
+            }
+        }
+    } else {
+        // Check if in a locked group
+        for (let gi = 0; gi < lockedGroups.length; gi++) {
+            if (lockedGroups[gi].has(index)) {
+                // Clear this locked group
+                lockedGroups.splice(gi, 1);
+                handled = true;
+                break;
+            }
+        }
+    }
+    if (!handled) {
+        // Toggle in selectedCells
+        if (selectedCells.has(index)) {
+            selectedCells.delete(index);
+        } else {
+            selectedCells.add(index);
+        }
+    }
+    updatePolyominoOutline();
+    playSound("click");
+    updateDigButtonState();
+    updateNgCrossoffState();
 }
 function isConnectedGraph() {
 	const allSelected = new Set(selectedCells);
@@ -7353,82 +7814,91 @@ function isConnectedGraph() {
 }
 
 function enterBonusDigMode() {
-	bonusDigMode = true;
-	selectedCells.clear();
-	lockedGroups = [];
-	updatePolyominoOutline();
-	const digButton = document.getElementById("dig-button");
-	const rollButton = document.getElementById("roll-button");
-	// Map oil bonus queue index to oil-square ID
-	const oilSquareMap = {
-		0: "oil-square-1", // 2nd oil
-		1: "oil-square-2", // 4th oil
-		2: "oil-square-3", // 5th oil
-		3: "oil-square-4", // 6th oil
-		4: "oil-square-5" // 7th oil (both bonuses)
-	};
-	const oilSquareId = oilSquareMap[oilBonusQueue[0]];
-	if (oilSquareId) {
-		const oilSquare = document.getElementById(oilSquareId);
-		if (oilSquare) {
-			oilSquare.style.display = "flex";
-			oilSquare.classList.add("pulsing-oil-square");
-		}
-	}
-	if (digButton) {
-		digButton.classList.add("bonus-mode");
-		digButton.classList.add("loading");
-		digButton.classList.remove("loaded", "pulsing-dig");
-		digButton.style.opacity = "0.5";
-		digButton.style.pointerEvents = "none";
-		digButton.style.animation = "spin 0.5s ease-in-out";
-		setTimeout(() => {
-			const img = digButton.querySelector("img");
-			if (img) img.src = "https://i.imgur.com/ZI42Lkq.png"; // Change image halfway through spin
-			digButton.style.animation = ""; // Clear animation after completion
-		}, 250); // Halfway through 0.5s spin
-	}
-	if (rollButton) {
-		rollButton.classList.add("loading");
-		rollButton.classList.remove("loaded", "pulsing-roll");
-		rollButton.style.opacity = "0.5";
-		rollButton.style.pointerEvents = "none";
-	}
-	updateCellCursors();
-	playSound("click");
-	console.log("Entered bonus dig mode, showed oil square:", oilSquareId);
+    bonusDigMode = true;
+    selectedCells.clear();
+    lockedGroups = [];
+    updatePolyominoOutline();
+    const digButton = document.getElementById("dig-button");
+    const rollButton = document.getElementById("roll-button");
+    // Map oil bonus queue index to oil-square ID
+    const oilSquareMap = {
+        0: "oil-square-1", // 2nd oil
+        1: "oil-square-2", // 4th oil
+        2: "oil-square-3", // 5th oil
+        3: "oil-square-4", // 6th oil
+        4: "oil-square-5" // 7th oil (both bonuses)
+    };
+    const oilSquareId = oilSquareMap[oilBonusQueue[0]];
+    if (oilSquareId) {
+        const oilSquare = document.getElementById(oilSquareId);
+        if (oilSquare) {
+            oilSquare.style.display = "flex";
+            oilSquare.classList.add("pulsing-oil-square");
+        }
+    }
+    if (digButton) {
+        digButton.classList.add("bonus-mode");
+        digButton.classList.add("loading");
+        digButton.classList.remove("loaded", "pulsing-dig");
+        digButton.style.opacity = "0.5";
+        digButton.style.pointerEvents = "none";
+        digButton.style.animation = "spin 0.5s ease-in-out";
+        setTimeout(() => {
+            const img = digButton.querySelector("img");
+            if (img) img.src = "https://i.imgur.com/ZI42Lkq.png"; // Change image halfway through spin
+            digButton.style.animation = ""; // Clear animation after completion
+        }, 250); // Halfway through 0.5s spin
+    }
+    if (rollButton) {
+        rollButton.classList.add("loading");
+        rollButton.classList.remove("loaded", "pulsing-roll");
+        rollButton.style.opacity = "0.5";
+        rollButton.style.pointerEvents = "none";
+    }
+    updateCellCursors();
+    playSound("click");
+    console.log("Entered bonus dig mode, showed oil square:", oilSquareId);
+    // Tutorial: Advance to step 14 to show message14 (new 15) after entering bonus mode and set highlights
+    if (tutorialMode && tutorialStep === 14) {
+        advanceTutorialStep();
+    }
 }
 
-function exitBonusDigMode() {
-	bonusDigMode = false;
-	const digButton = document.getElementById("dig-button");
-	const rollButton = document.getElementById("roll-button");
-	if (digButton) {
-		digButton.classList.remove("bonus-mode");
-		digButton.classList.add("loading");
-		digButton.classList.remove("loaded", "pulsing-dig");
-		digButton.style.opacity = "0.5";
-		digButton.style.pointerEvents = "none";
-		digButton.style.animation = "spin 0.5s ease-in-out";
-		setTimeout(() => {
-			const img = digButton.querySelector("img");
-			if (img) img.src = "https://i.imgur.com/7tDYHqX.png"; // Change image halfway through spin
-			digButton.style.animation = ""; // Clear animation after completion
-		}, 250); // Halfway through 0.5s spin
-	}
-	if (oilBonusQueue.length === 0) {
-		gamePhase = rollCount < 9 ? "roll" : "end";
-		if (rollButton) {
-			rollButton.classList.toggle("loaded", gamePhase === "roll");
-			rollButton.classList.toggle("loading", gamePhase !== "roll");
-			rollButton.classList.toggle("pulsing-roll", gamePhase === "roll");
-			rollButton.style.opacity = gamePhase === "roll" ? "1" : "0.5";
-			rollButton.style.pointerEvents = gamePhase === "roll" ? "auto" : "none";
-		}
-	}
-	updateCellCursors();
-	playSound("click");
-	console.log("Exited bonus dig mode");
+function exitBonusDigMode(undo = false) {
+    bonusDigMode = false;
+    const digButton = document.getElementById("dig-button");
+    const rollButton = document.getElementById("roll-button");
+    if (digButton) {
+        digButton.classList.remove("bonus-mode");
+        digButton.classList.add("loading");
+        digButton.classList.remove("loaded", "pulsing-dig");
+        digButton.style.opacity = "0.5";
+        digButton.style.pointerEvents = "none";
+        digButton.style.animation = "spin 0.5s ease-in-out";
+        setTimeout(() => {
+            const img = digButton.querySelector("img");
+            if (img) img.src = "https://i.imgur.com/7tDYHqX.png"; // Change image halfway through spin
+            digButton.style.animation = ""; // Clear animation after completion
+        }, 250); // Halfway through 0.5s spin
+    }
+    if (!undo && oilBonusQueue.length === 0) {
+        gamePhase = rollCount < 9 ? "roll" : "end";
+        if (rollButton) {
+            rollButton.classList.toggle("loaded", gamePhase === "roll");
+            rollButton.classList.toggle("loading", gamePhase !== "roll");
+            rollButton.classList.toggle("pulsing-roll", gamePhase === "roll");
+            rollButton.style.opacity = gamePhase === "roll" ? "1" : "0.5";
+            rollButton.style.pointerEvents = gamePhase === "roll" ? "auto" : "none";
+        }
+    }
+    // NEW: Hide all oil squares and remove pulsing
+    document.querySelectorAll(".oil-square, .oil-square-final").forEach((square) => {
+        square.style.display = "none";
+        square.classList.remove("pulsing-oil-square");
+    });
+    updateCellCursors();
+    playSound("click");
+    console.log("Exited bonus dig mode");
 }
 
 function updateDigButtonState() {
@@ -7530,231 +8000,254 @@ document.addEventListener("DOMContentLoaded", () => {
 				applyClickAnimation(rollSheetSwitcher);
 			});
 		}
-		const freePlayButton = document.getElementById("free-play-button");
-		if (freePlayButton) {
-			freePlayButton.replaceWith(freePlayButton.cloneNode(true));
-			const newFreePlayButton = document.getElementById("free-play-button");
-			newFreePlayButton.addEventListener("click", () => {
-				const freePlaySubmenu = document.getElementById("free-play-submenu");
-				const mainMenuElements = [
-					document.getElementById("free-play-button"),
-					document.getElementById("daily-challenge-button"),
-					document.getElementById("daily-challenge-timer"),
-					document.getElementById("game-logo")
-				];
-				const resumeButton = document.getElementById("resume-button");
-				if (!freePlaySubmenu) {
-					console.error(
-						"Error: #free-play-submenu not found in DOM. Please ensure the sub-menu HTML is inside #opening-menu."
-					);
-					return;
-				}
-				console.log("Free Play clicked, showing #free-play-submenu");
-				mainMenuElements.forEach((el) => {
-					if (el) el.style.display = "none";
-				});
-				if (resumeButton)
-					resumeButton.style.display = hasGameState() ? "block" : "none";
-				freePlaySubmenu.style.display = "flex";
-				freePlaySubmenu.style.visibility = "visible";
-				freePlaySubmenu.style.opacity = "1";
-				initializeSubMenuSelections();
-				console.log("Sub-menu styles:", {
-					display: freePlaySubmenu.style.display,
-					visibility: freePlaySubmenu.style.visibility,
-					opacity: freePlaySubmenu.style.opacity,
-					zIndex: freePlaySubmenu.style.zIndex
-				});
-				applyClickAnimation(newFreePlayButton);
-			});
-		}
-		const dailyChallengeButton = document.getElementById(
-			"daily-challenge-button"
-		);
-		if (dailyChallengeButton) {
-			dailyChallengeButton.addEventListener("click", () => {
-				gameMode = "daily-challenge";
-				document.getElementById("opening-menu").style.display = "none";
-				const resumeButton = document.getElementById("resume-button");
-				if (resumeButton) resumeButton.style.display = "block";
-				startDailyChallenge();
-				applyClickAnimation(dailyChallengeButton);
-			});
-		}
+		// Updated Free Play button listener (complete block, for consistency)
+const freePlayButton = document.getElementById("free-play-button");
+if (freePlayButton) {
+    freePlayButton.replaceWith(freePlayButton.cloneNode(true));
+    const newFreePlayButton = document.getElementById("free-play-button");
+    newFreePlayButton.addEventListener("click", () => {
+        const freePlaySubmenu = document.getElementById("free-play-submenu");
+        const mainMenuElements = [
+            document.getElementById("free-play-button"),
+            document.getElementById("daily-challenge-button"),
+            document.getElementById("daily-challenge-timer"),
+            document.getElementById("game-logo")
+        ];
+        const resumeButton = document.getElementById("resume-button");
+        if (!freePlaySubmenu) {
+            console.error(
+                "Error: #free-play-submenu not found in DOM. Please ensure the sub-menu HTML is inside #opening-menu."
+            );
+            return;
+        }
+        console.log("Free Play clicked, showing #free-play-submenu");
+        mainMenuElements.forEach((el) => {
+            if (el) el.style.display = "none";
+        });
+        if (resumeButton) resumeButton.style.display = "none"; // Explicitly hide resume in submenu
+        freePlaySubmenu.style.display = "flex";
+        freePlaySubmenu.style.visibility = "visible";
+        freePlaySubmenu.style.opacity = "1";
+        initializeSubMenuSelections();
+        console.log("Sub-menu styles:", {
+            display: freePlaySubmenu.style.display,
+            visibility: freePlaySubmenu.style.visibility,
+            opacity: freePlaySubmenu.style.opacity,
+            zIndex: freePlaySubmenu.style.zIndex
+        });
+        applyClickAnimation(newFreePlayButton);
+    });
+}
 		
-		// New button listeners
-    const howToPlayButton = document.getElementById("how-to-play-button");
-    if (howToPlayButton) {
-        howToPlayButton.replaceWith(howToPlayButton.cloneNode(true));
-        const newHowToPlayButton = document.getElementById("how-to-play-button");
-        newHowToPlayButton.addEventListener("click", () => {
-            const howToPlaySubmenu = document.getElementById("how-to-play-submenu");
-            const mainMenuElements = [
-                document.getElementById("free-play-button"),
-                document.getElementById("daily-challenge-button"),
-                document.getElementById("how-to-play-button"),
-                document.getElementById("clearly-sharp-button"),
-                document.getElementById("daily-challenge-timer"),
-                document.getElementById("game-logo")
-            ];
-            const resumeButton = document.getElementById("resume-button");
-            if (!howToPlaySubmenu) {
-                console.error(
-                    "Error: #how-to-play-submenu not found in DOM."
-                );
-                return;
+		// Updated Daily Challenge button listener (complete block)
+const dailyChallengeButton = document.getElementById(
+"daily-challenge-button"
+);
+if (dailyChallengeButton) {
+    dailyChallengeButton.addEventListener("click", () => {
+        tutorialMode = false; // Explicitly disable tutorial mode
+        gameMode = "daily-challenge";
+        document.getElementById("opening-menu").style.display = "none";
+        const resumeButton = document.getElementById("resume-button");
+        if (resumeButton) resumeButton.style.display = "block";
+        startDailyChallenge();
+        applyClickAnimation(dailyChallengeButton);
+    });
+}
+		
+
+    // Updated Clearly Sharp button listener (complete block)
+const clearlySharpButton = document.getElementById("clearly-sharp-button");
+if (clearlySharpButton) {
+    clearlySharpButton.replaceWith(clearlySharpButton.cloneNode(true));
+    const newClearlySharpButton = document.getElementById("clearly-sharp-button");
+    newClearlySharpButton.addEventListener("click", () => {
+        const clearlySharpSubmenu = document.getElementById("clearly-sharp-submenu");
+        const mainMenuElements = [
+            document.getElementById("free-play-button"),
+            document.getElementById("daily-challenge-button"),
+            document.getElementById("how-to-play-button"),
+            document.getElementById("clearly-sharp-button"),
+            document.getElementById("daily-challenge-timer"),
+            document.getElementById("game-logo")
+        ];
+        const resumeButton = document.getElementById("resume-button");
+        if (!clearlySharpSubmenu) {
+            console.error(
+                "Error: #clearly-sharp-submenu not found in DOM."
+            );
+            return;
+        }
+        console.log("Clearly Sharp clicked, showing #clearly-sharp-submenu");
+        mainMenuElements.forEach((el) => {
+            if (el) el.style.display = "none";
+        });
+        if (resumeButton) resumeButton.style.display = "none"; // Explicitly hide resume in submenu
+        clearlySharpSubmenu.style.display = "flex";
+        clearlySharpSubmenu.style.visibility = "visible";
+        clearlySharpSubmenu.style.opacity = "1";
+        applyClickAnimation(newClearlySharpButton);
+    });
+}
+		
+		// Updated Back button listener for free-play submenu (complete block)
+const backButton = document.getElementById("back-button");
+if (backButton) {
+    backButton.replaceWith(backButton.cloneNode(true));
+    const newBackButton = document.getElementById("back-button");
+    newBackButton.addEventListener("click", () => {
+        const freePlaySubmenu = document.getElementById("free-play-submenu");
+        const mainMenuElements = [
+            document.getElementById("free-play-button"),
+            document.getElementById("daily-challenge-button"),
+            document.getElementById("how-to-play-button"),
+            document.getElementById("clearly-sharp-button"),
+            document.getElementById("daily-challenge-timer"),
+            document.getElementById("game-logo")
+        ];
+        const resumeButton = document.getElementById("resume-button");
+        console.log("Back clicked, returning to #opening-menu");
+        freePlaySubmenu.style.display = "none";
+        mainMenuElements.forEach((el) => {
+            if (el) el.style.display = "block";
+        });
+        if (resumeButton)
+            resumeButton.style.display = hasGameState() ? "block" : "none";
+        tutorialMode = false; // Reset tutorial mode on return to menu
+        applyClickAnimation(newBackButton);
+    });
+}
+
+    // Remove any old tutorialButton listener (since button is gone)
+
+// Repurpose How to Play button to start tutorial
+// Updated How to Play button listener (complete block)
+const howToPlayButton = document.getElementById("how-to-play-button");
+if (howToPlayButton) {
+    howToPlayButton.replaceWith(howToPlayButton.cloneNode(true)); // Clone to clear old listeners if any
+    const newHowToPlayButton = document.getElementById("how-to-play-button");
+    newHowToPlayButton.addEventListener("click", () => {
+        tutorialMode = true;
+        gameMode = "tutorial";
+        const openingMenu = document.getElementById("opening-menu");
+        if (openingMenu) openingMenu.style.display = "none"; // Hide menu
+        currentDigSheet = "dig-sheet-a"; // Fixed for tutorial
+        currentRollSheet = "roll-sheet-a";
+        resetGrid(); // Start fresh
+        tutorialStep = 0; // Reset step
+        advanceTutorialStep(); // Explicitly start tutorial after reset
+        console.log("How to Play started, tutorialMode = true, step = 0");
+        playSound("click");
+        applyClickAnimation(newHowToPlayButton);
+    });
+}
+		
+const tutorialOk = document.getElementById("tutorial-ok");
+if (tutorialOk) {
+    tutorialOk.addEventListener("click", () => {
+        hideTutorialMessage(() => {
+            console.log(`OK clicked at tutorialStep = ${tutorialStep}`);
+            if (tutorialMode) {
+                if (tutorialStep === 1) { // After OK on message0 (Welcome1), auto-advance to 1 (show message1)
+                    advanceTutorialStep();
+                    console.log("Advanced to step 2 after OK on message0");
+                } else if (tutorialStep === 2) { // After OK on message1 (Welcome2), enable roll button, no advance
+                    const rollButton = document.getElementById("roll-button");
+                    if (rollButton) {
+                        rollButton.style.pointerEvents = "auto"; // Enable roll button
+                        rollButton.style.opacity = "1";
+                        rollButton.classList.add("pulsing-roll");
+                        console.log("Roll button enabled at step 2 (after OK on message1)");
+                    }
+                } else if (tutorialStep === 3) { // Auto-advance after message2 (to3)
+                    advanceTutorialStep();
+                    console.log("Advanced to step 4 after OK on message2");
+                } else if (tutorialStep === 9) { // After OK on message8 (some dig patterns), advance to show message9 (first click build smaller)
+                    advanceTutorialStep();
+                    console.log("Advanced to step 10 after OK on message8");
+                } else if (tutorialStep === 10) { // After OK on message9 (first click build), no advance - wait for selection
+                    // nothing
+                } else if (tutorialStep === 11) { // After OK on message10 (great prevent lock), no advance - wait for lock
+                    // nothing
+                } else if (tutorialStep === 12) { // After OK on message11 (nice lock select other), no advance - wait for selection/dig
+                    // nothing
+                } else if (tutorialStep === 16) { // After OK on message15 (16 1-based), enable roll, no advance (wait for roll)
+                    const rollButton = document.getElementById("roll-button");
+                    if (rollButton) {
+                        rollButton.style.pointerEvents = "auto"; // Enable roll button
+                        rollButton.style.opacity = "1";
+                        rollButton.classList.add("pulsing-roll");
+                        console.log("Roll button enabled at step 16 (after OK on message15)");
+                    }
+                } else if (tutorialStep === 17) { // After OK on message16 (17 1-based), no advance (wait for NG cross-off)
+                    // nothing (cells already disabled in advance for step=17)
+                }
             }
-            console.log("How to Play clicked, showing #how-to-play-submenu");
-            mainMenuElements.forEach((el) => {
-                if (el) el.style.display = "none";
-            });
-            if (resumeButton)
-                resumeButton.style.display = hasGameState() ? "block" : "none";
-            howToPlaySubmenu.style.display = "flex";
-            howToPlaySubmenu.style.visibility = "visible";
-            howToPlaySubmenu.style.opacity = "1";
-            applyClickAnimation(newHowToPlayButton);
         });
-    }
-
-    const clearlySharpButton = document.getElementById("clearly-sharp-button");
-    if (clearlySharpButton) {
-        clearlySharpButton.replaceWith(clearlySharpButton.cloneNode(true));
-        const newClearlySharpButton = document.getElementById("clearly-sharp-button");
-        newClearlySharpButton.addEventListener("click", () => {
-            const clearlySharpSubmenu = document.getElementById("clearly-sharp-submenu");
-            const mainMenuElements = [
-                document.getElementById("free-play-button"),
-                document.getElementById("daily-challenge-button"),
-                document.getElementById("how-to-play-button"),
-                document.getElementById("clearly-sharp-button"),
-                document.getElementById("daily-challenge-timer"),
-                document.getElementById("game-logo")
-            ];
-            const resumeButton = document.getElementById("resume-button");
-            if (!clearlySharpSubmenu) {
-                console.error(
-                    "Error: #clearly-sharp-submenu not found in DOM."
-                );
-                return;
-            }
-            console.log("Clearly Sharp clicked, showing #clearly-sharp-submenu");
-            mainMenuElements.forEach((el) => {
-                if (el) el.style.display = "none";
-            });
-            if (resumeButton)
-                resumeButton.style.display = hasGameState() ? "block" : "none";
-            clearlySharpSubmenu.style.display = "flex";
-            clearlySharpSubmenu.style.visibility = "visible";
-            clearlySharpSubmenu.style.opacity = "1";
-            applyClickAnimation(newClearlySharpButton);
-        });
-    }
+        playSound("click");
+    });
+}
 		
-		const backButton = document.getElementById("back-button");
-    if (backButton) {
-        backButton.replaceWith(backButton.cloneNode(true));
-        const newBackButton = document.getElementById("back-button");
-        newBackButton.addEventListener("click", () => {
-            const freePlaySubmenu = document.getElementById("free-play-submenu");
-            const mainMenuElements = [
-                document.getElementById("free-play-button"),
-                document.getElementById("daily-challenge-button"),
-                document.getElementById("how-to-play-button"),
-                document.getElementById("clearly-sharp-button"),
-                document.getElementById("daily-challenge-timer"),
-                document.getElementById("game-logo")
-            ];
-            const resumeButton = document.getElementById("resume-button");
-            console.log("Back clicked, returning to #opening-menu");
-            freePlaySubmenu.style.display = "none";
-            mainMenuElements.forEach((el) => {
-                if (el) el.style.display = "block";
-            });
-            if (resumeButton)
-                resumeButton.style.display = hasGameState() ? "block" : "none";
-            applyClickAnimation(newBackButton);
-        });
-    }
-
-    const backHowToPlayButton = document.getElementById("back-how-to-play");
-    if (backHowToPlayButton) {
-        backHowToPlayButton.replaceWith(backHowToPlayButton.cloneNode(true));
-        const newBackHowToPlayButton = document.getElementById("back-how-to-play");
-        newBackHowToPlayButton.addEventListener("click", () => {
-            const howToPlaySubmenu = document.getElementById("how-to-play-submenu");
-            const mainMenuElements = [
-                document.getElementById("free-play-button"),
-                document.getElementById("daily-challenge-button"),
-                document.getElementById("how-to-play-button"),
-                document.getElementById("clearly-sharp-button"),
-                document.getElementById("daily-challenge-timer"),
-                document.getElementById("game-logo")
-            ];
-            const resumeButton = document.getElementById("resume-button");
-            console.log("Back clicked, returning to #opening-menu from How to Play");
-            howToPlaySubmenu.style.display = "none";
-            mainMenuElements.forEach((el) => {
-                if (el) el.style.display = "block";
-            });
-            if (resumeButton)
-                resumeButton.style.display = hasGameState() ? "block" : "none";
-            applyClickAnimation(newBackHowToPlayButton);
-        });
-    }
-
-    const backClearlySharpButton = document.getElementById("back-clearly-sharp");
-    if (backClearlySharpButton) {
-        backClearlySharpButton.replaceWith(backClearlySharpButton.cloneNode(true));
-        const newBackClearlySharpButton = document.getElementById("back-clearly-sharp");
-        newBackClearlySharpButton.addEventListener("click", () => {
-            const clearlySharpSubmenu = document.getElementById("clearly-sharp-submenu");
-            const mainMenuElements = [
-                document.getElementById("free-play-button"),
-                document.getElementById("daily-challenge-button"),
-                document.getElementById("how-to-play-button"),
-                document.getElementById("clearly-sharp-button"),
-                document.getElementById("daily-challenge-timer"),
-                document.getElementById("game-logo")
-            ];
-            const resumeButton = document.getElementById("resume-button");
-            console.log("Back clicked, returning to #opening-menu from Clearly Sharp");
-            clearlySharpSubmenu.style.display = "none";
-            mainMenuElements.forEach((el) => {
-                if (el) el.style.display = "block";
-            });
-            if (resumeButton)
-                resumeButton.style.display = hasGameState() ? "block" : "none";
-            applyClickAnimation(newBackClearlySharpButton);
-        });
-    }
 		
-		const homeButton = document.getElementById("home-button");
-		if (homeButton) {
-			homeButton.addEventListener("click", () => {
-				const openingMenu = document.getElementById("opening-menu");
-				const resumeButton = document.getElementById("resume-button");
-				if (!openingMenu) {
-					console.error("Error: #opening-menu not found in DOM.");
-					return;
-				}
-				console.log("Home clicked, showing #opening-menu");
-				openingMenu.style.display = "flex";
-				const mainMenuElements = [
-					document.getElementById("free-play-button"),
-					document.getElementById("daily-challenge-button"),
-					document.getElementById("daily-challenge-timer"),
-					document.getElementById("game-logo")
-				];
-				mainMenuElements.forEach((el) => {
-					if (el) el.style.display = "";
-				});
-				if (resumeButton)
-					resumeButton.style.display = hasGameState() ? "block" : "none";
-				playSound("click");
-				applyClickAnimation(homeButton);
-			});
-		}
+
+// Keep your existing tutorial-ok listener unchanged
+
+    // Updated Back button listener for clearly-sharp submenu (complete block)
+const backClearlySharpButton = document.getElementById("back-clearly-sharp");
+if (backClearlySharpButton) {
+    backClearlySharpButton.replaceWith(backClearlySharpButton.cloneNode(true));
+    const newBackClearlySharpButton = document.getElementById("back-clearly-sharp");
+    newBackClearlySharpButton.addEventListener("click", () => {
+        const clearlySharpSubmenu = document.getElementById("clearly-sharp-submenu");
+        const mainMenuElements = [
+            document.getElementById("free-play-button"),
+            document.getElementById("daily-challenge-button"),
+            document.getElementById("how-to-play-button"),
+            document.getElementById("clearly-sharp-button"),
+            document.getElementById("daily-challenge-timer"),
+            document.getElementById("game-logo")
+        ];
+        const resumeButton = document.getElementById("resume-button");
+        console.log("Back clicked, returning to #opening-menu from Clearly Sharp");
+        clearlySharpSubmenu.style.display = "none";
+        mainMenuElements.forEach((el) => {
+            if (el) el.style.display = "block";
+        });
+        if (resumeButton)
+            resumeButton.style.display = hasGameState() ? "block" : "none";
+        tutorialMode = false; // Reset tutorial mode on return to menu
+        applyClickAnimation(newBackClearlySharpButton);
+    });
+}
+		
+		// Updated Home button listener (complete block)
+const homeButton = document.getElementById("home-button");
+if (homeButton) {
+    homeButton.addEventListener("click", () => {
+        const openingMenu = document.getElementById("opening-menu");
+        const resumeButton = document.getElementById("resume-button");
+        if (!openingMenu) {
+            console.error("Error: #opening-menu not found in DOM.");
+            return;
+        }
+        console.log("Home clicked, showing #opening-menu");
+        openingMenu.style.display = "flex";
+        const mainMenuElements = [
+            document.getElementById("free-play-button"),
+            document.getElementById("daily-challenge-button"),
+            document.getElementById("daily-challenge-timer"),
+            document.getElementById("game-logo")
+        ];
+        mainMenuElements.forEach((el) => {
+            if (el) el.style.display = "";
+        });
+        if (resumeButton)
+            resumeButton.style.display = hasGameState() ? "block" : "none";
+        tutorialMode = false; // Reset tutorial mode on return to menu
+        playSound("click");
+        applyClickAnimation(homeButton);
+    });
+}
 		const resumeButton = document.getElementById("resume-button");
 		if (resumeButton) {
 			resumeButton.addEventListener("click", () => {
@@ -7770,155 +8263,158 @@ document.addEventListener("DOMContentLoaded", () => {
 			});
 		}
 		
-		const playButton = document.getElementById("play-button");
-		if (playButton) {
-			playButton.addEventListener("click", () => {
-				if (selectedDigSheet && selectedRollSheet) {
-					gameMode = "free-play";
-					currentDigSheet = selectedDigSheet;
-					currentRollSheet = selectedRollSheet;
-					const digSheetElement = document.getElementById("dig-sheet");
-					const overlayImg = document.querySelector("#dig-sheet-overlay img");
-					const rollSheetImg = document
-						.getElementById("roll-sheet")
-						.querySelector("img:not(#green-image img):not(#white-image img)");
-					const openingMenu = document.getElementById("opening-menu");
-					const resumeButton = document.getElementById("resume-button");
-					const homeButton = document.getElementById("home-button");
-					if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
-						console.error("Error: Missing game elements", {
-							digSheetElement,
-							overlayImg,
-							rollSheetImg,
-							openingMenu
-						});
-						return;
-					}
-					console.log("Play clicked, setting sheets:", {
-						currentDigSheet,
-						currentRollSheet
-					});
-					digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
-					overlayImg.src = digSheetOverlayImages[currentDigSheet];
-					rollSheetImg.src = rollSheetImages[currentRollSheet];
-					// Set default dice images (6 for both green and white)
-					greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
-					whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
-					die1.setAttribute("data-value", "6");
-					die2.setAttribute("data-value", "6");
-					// Update boulder positions
-					const boulderElements = document.querySelectorAll(".boulder-cross-off");
-					boulderElements.forEach((element, index) => {
-						const config = digSheetBoulderConfigs[currentDigSheet][index];
-						if (config) {
-							element.style.top = config.top;
-							element.style.left = config.left;
-						}
-					});
-					// Hide opening menu
-					openingMenu.style.display = "none";
-					freePlaySubmenu.style.display = "none";
-					if (resumeButton) resumeButton.style.display = "block";
-					if (homeButton) {
-						homeButton.classList.remove("loading");
-						homeButton.classList.add("loaded");
-					}
-					// Force redraw
-					requestAnimationFrame(() => {
-						digSheetElement.offsetHeight;
-						rollSheetImg.offsetHeight;
-						console.log("Dig sheet and roll sheet redrawn", {
-							digSheetBackground: digSheetElement.style.backgroundImage,
-							overlayImage: overlayImg.src,
-							rollSheetImage: rollSheetImg.src
-						});
-					});
-					resetGrid();
-					playSound("click");
-				}
-			});
-		}
-		const randomButton = document.getElementById("random-button");
-		if (randomButton) {
-			randomButton.addEventListener("click", () => {
-				const digSheetsList = [
-					"dig-sheet-a",
-					"dig-sheet-b",
-					"dig-sheet-c",
-					"dig-sheet-d",
-					"dig-sheet-e",
-					"dig-sheet-f",
-					"dig-sheet-g",
-					"dig-sheet-h"
-				];
-				const rollSheetsList = ["roll-sheet-a", "roll-sheet-b"];
-				selectedDigSheet =
-					digSheetsList[Math.floor(Math.random() * digSheetsList.length)];
-				currentDigSheet = selectedDigSheet;
-				selectedRollSheet =
-					rollSheetsList[Math.floor(Math.random() * rollSheetsList.length)];
-				currentRollSheet = selectedRollSheet;
-				const digSheetElement = document.getElementById("dig-sheet");
-				const overlayImg = document.querySelector("#dig-sheet-overlay img");
-				const rollSheetImg = document
-					.getElementById("roll-sheet")
-					.querySelector("img:not(#green-image img):not(#white-image img)");
-				const openingMenu = document.getElementById("opening-menu");
-				const resumeButton = document.getElementById("resume-button");
-				const homeButton = document.getElementById("home-button");
-
-				if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
-					console.error("Error: Missing game elements", {
-						digSheetElement,
-						overlayImg,
-						rollSheetImg,
-						openingMenu
-					});
-					return;
-				}
-				console.log("Random clicked, setting sheets:", {
-					currentDigSheet,
-					currentRollSheet
-				});
-				digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
-				overlayImg.src = digSheetOverlayImages[currentDigSheet];
-				rollSheetImg.src = rollSheetImages[currentRollSheet];
-				// Set default dice images (6 for both green and white)
-				greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
-				whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
-				die1.setAttribute("data-value", "6");
-				die2.setAttribute("data-value", "6");
-				// Update boulder positions
-				const boulderElements = document.querySelectorAll(".boulder-cross-off");
-				boulderElements.forEach((element, index) => {
-					const config = digSheetBoulderConfigs[currentDigSheet][index];
-					if (config) {
-						element.style.top = config.top;
-						element.style.left = config.left;
-					}
-				});
-				// Hide opening menu
-				openingMenu.style.display = "none";
-				freePlaySubmenu.style.display = "none";
-				if (resumeButton) resumeButton.style.display = "block";
-				if (homeButton) {
-					homeButton.classList.remove("loading");
-					homeButton.classList.add("loaded");
-				}
-				// Force redraw and then reset grid
-				requestAnimationFrame(() => {
-					digSheetElement.offsetHeight;
-					rollSheetImg.offsetHeight;
-					console.log("Dig sheet and roll sheet redrawn", {
-						digSheetBackground: digSheetElement.style.backgroundImage,
-						overlayImage: overlayImg.src,
-						rollSheetImage: rollSheetImg.src
-					});
-					resetGrid();
-				});
-				playSound("click");
-			});
-		}
+		// Updated Play button listener (complete block, for free-play start)
+const playButton = document.getElementById("play-button");
+if (playButton) {
+    playButton.addEventListener("click", () => {
+        if (selectedDigSheet && selectedRollSheet) {
+            tutorialMode = false; // Explicitly disable tutorial mode
+            gameMode = "free-play";
+            currentDigSheet = selectedDigSheet;
+            currentRollSheet = selectedRollSheet;
+            const digSheetElement = document.getElementById("dig-sheet");
+            const overlayImg = document.querySelector("#dig-sheet-overlay img");
+            const rollSheetImg = document
+                .getElementById("roll-sheet")
+                .querySelector("img:not(#green-image img):not(#white-image img)");
+            const openingMenu = document.getElementById("opening-menu");
+            const resumeButton = document.getElementById("resume-button");
+            const homeButton = document.getElementById("home-button");
+            if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
+                console.error("Error: Missing game elements", {
+                    digSheetElement,
+                    overlayImg,
+                    rollSheetImg,
+                    openingMenu
+                });
+                return;
+            }
+            console.log("Play clicked, setting sheets:", {
+                currentDigSheet,
+                currentRollSheet
+            });
+            digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+            overlayImg.src = digSheetOverlayImages[currentDigSheet];
+            rollSheetImg.src = rollSheetImages[currentRollSheet];
+            // Set default dice images (6 for both green and white)
+            greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
+            whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
+            die1.setAttribute("data-value", "6");
+            die2.setAttribute("data-value", "6");
+            // Update boulder positions
+            const boulderElements = document.querySelectorAll(".boulder-cross-off");
+            boulderElements.forEach((element, index) => {
+                const config = digSheetBoulderConfigs[currentDigSheet][index];
+                if (config) {
+                    element.style.top = config.top;
+                    element.style.left = config.left;
+                }
+            });
+            // Hide opening menu
+            openingMenu.style.display = "none";
+            freePlaySubmenu.style.display = "none";
+            if (resumeButton) resumeButton.style.display = "block";
+            if (homeButton) {
+                homeButton.classList.remove("loading");
+                homeButton.classList.add("loaded");
+            }
+            // Force redraw
+            requestAnimationFrame(() => {
+                digSheetElement.offsetHeight;
+                rollSheetImg.offsetHeight;
+                console.log("Dig sheet and roll sheet redrawn", {
+                    digSheetBackground: digSheetElement.style.backgroundImage,
+                    overlayImage: overlayImg.src,
+                    rollSheetImage: rollSheetImg.src
+                });
+            });
+            resetGrid();
+            playSound("click");
+        }
+    });
+}
+		// Updated Random button listener (complete block, for random free-play start)
+const randomButton = document.getElementById("random-button");
+if (randomButton) {
+    randomButton.addEventListener("click", () => {
+        tutorialMode = false; // Explicitly disable tutorial mode
+        const digSheetsList = [
+            "dig-sheet-a",
+            "dig-sheet-b",
+            "dig-sheet-c",
+            "dig-sheet-d",
+            "dig-sheet-e",
+            "dig-sheet-f",
+            "dig-sheet-g",
+            "dig-sheet-h"
+        ];
+        const rollSheetsList = ["roll-sheet-a", "roll-sheet-b"];
+        selectedDigSheet =
+            digSheetsList[Math.floor(Math.random() * digSheetsList.length)];
+        currentDigSheet = selectedDigSheet;
+        selectedRollSheet =
+            rollSheetsList[Math.floor(Math.random() * rollSheetsList.length)];
+        currentRollSheet = selectedRollSheet;
+        const digSheetElement = document.getElementById("dig-sheet");
+        const overlayImg = document.querySelector("#dig-sheet-overlay img");
+        const rollSheetImg = document
+            .getElementById("roll-sheet")
+            .querySelector("img:not(#green-image img):not(#white-image img)");
+        const openingMenu = document.getElementById("opening-menu");
+        const resumeButton = document.getElementById("resume-button");
+        const homeButton = document.getElementById("home-button");
+        if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
+            console.error("Error: Missing game elements", {
+                digSheetElement,
+                overlayImg,
+                rollSheetImg,
+                openingMenu
+            });
+            return;
+        }
+        console.log("Random clicked, setting sheets:", {
+            currentDigSheet,
+            currentRollSheet
+        });
+        digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+        overlayImg.src = digSheetOverlayImages[currentDigSheet];
+        rollSheetImg.src = rollSheetImages[currentRollSheet];
+        // Set default dice images (6 for both green and white)
+        greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
+        whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
+        die1.setAttribute("data-value", "6");
+        die2.setAttribute("data-value", "6");
+        // Update boulder positions
+        const boulderElements = document.querySelectorAll(".boulder-cross-off");
+        boulderElements.forEach((element, index) => {
+            const config = digSheetBoulderConfigs[currentDigSheet][index];
+            if (config) {
+                element.style.top = config.top;
+                element.style.left = config.left;
+            }
+        });
+        // Hide opening menu to reveal game-container (already visible underneath)
+        openingMenu.style.display = "none";
+        freePlaySubmenu.style.display = "none";
+        if (resumeButton) resumeButton.style.display = "block";
+        if (homeButton) {
+            homeButton.classList.remove("loading");
+            homeButton.classList.add("loaded");
+        }
+        // Force redraw of dig sheet and roll sheet
+        requestAnimationFrame(() => {
+            digSheetElement.offsetHeight;
+            rollSheetImg.offsetHeight;
+            console.log("Dig sheet and roll sheet redrawn", {
+                digSheetBackground: digSheetElement.style.backgroundImage,
+                overlayImage: overlayImg.src,
+                rollSheetImage: rollSheetImg.src
+            });
+        });
+        resetGrid();
+        playSound("click");
+    });
+}
 
 		// New consolidated declarations and logic for the finish/screenshot feature
 		const finishButton = document.getElementById("finish-button");
@@ -8460,32 +8956,37 @@ document
 const ngCrossoffDivs = [];
 
 document.querySelectorAll(".ng-cross-off").forEach((div, index) => {
-	ngCrossoffDivs.push(div);
-	div.dataset.index = index;
-	div.addEventListener("click", () => {
-		if (div.classList.contains("used")) return; // Prevent any toggle if used
-		if (div.classList.contains("crossed-off")) {
-			div.classList.remove("crossed-off");
-			const isClickable =
-				gamePhase === "dig" &&
-				selectedCells.size === 0 &&
-				lockedGroups.length === 0 &&
-				index < ngCount &&
-				!bonusDigMode;
-			div.style.opacity = isClickable ? "1" : "0.5";
-			div.style.pointerEvents = isClickable ? "auto" : "none";
-			div.classList.toggle("clickable", isClickable);
-			playSound("crossOff");
-			updateNgCrossoffState();
-		} else if (div.classList.contains("clickable")) {
-			div.classList.add("crossed-off");
-			div.classList.remove("clickable");
-			div.style.opacity = "1";
-			div.style.pointerEvents = "auto"; // Allow uncrossing
-			playSound("crossOff");
-			updateNgCrossoffState();
-		}
-	});
+    ngCrossoffDivs.push(div);
+    div.dataset.index = index;
+    div.addEventListener("click", () => {
+        if (div.classList.contains("used")) return; // Prevent any toggle if used
+        if (div.classList.contains("crossed-off")) {
+            div.classList.remove("crossed-off");
+            const isClickable =
+                gamePhase === "dig" &&
+                selectedCells.size === 0 &&
+                lockedGroups.length === 0 &&
+                index < ngCount &&
+                !bonusDigMode;
+            div.style.opacity = isClickable ? "1" : "0.5";
+            div.style.pointerEvents = isClickable ? "auto" : "none";
+            div.classList.toggle("clickable", isClickable);
+            playSound("crossOff");
+            updateNgCrossoffState();
+        } else if (div.classList.contains("clickable")) {
+            div.classList.add("crossed-off");
+            div.classList.remove("clickable");
+            div.style.opacity = "1";
+            div.style.pointerEvents = "auto"; // Allow uncrossing
+            playSound("crossOff");
+            updateNgCrossoffState();
+            // Tutorial: On crossing off NG-Crossoff-1 (index 0) at step 17, advance to show message 18
+            if (tutorialMode && tutorialStep === 17 && index === 0) {
+                advanceTutorialStep();
+                console.log("NG-Crossoff-1 crossed off, advanced to step 18");
+            }
+        }
+    });
 });
 
 const ngBonusDivs = [];
@@ -8758,20 +9259,7 @@ randomButton.addEventListener("click", () => {
 	playSound("click");
 });
 
+
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
