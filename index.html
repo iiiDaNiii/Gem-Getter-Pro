@@ -2005,34 +2005,7 @@ body {
 }
     </style>
 </head>
-	<script>
-		document.addEventListener('DOMContentLoaded', () => {
-  // Your existing code here...
-
-  // Add the fix contents here
-  function setVH() {
-    setTimeout(() => { // Async for reflow
-      const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight) * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-      document.body.style.zoom = '1'; // Reset any persisted zoom
-    }, 0);
-  }
-  setVH(); // Set on initial load
-  // Force slight scroll to hide address bar and trigger full height
-  setTimeout(() => {
-    window.scrollTo(0, 1);
-    setVH(); // Recalc after scroll
-  }, 100); // Delay for initial render
-  window.addEventListener('resize', setVH);
-  window.addEventListener('orientationchange', setVH);
-  window.addEventListener('pageshow', (event) => {
-    if (event.persisted) { // bfcache restore
-      setVH();
-      setTimeout(() => window.scrollTo(0, 1), 100); // Re-force on restore
-    }
-  });
-});
-	</script>
+	
 <body>
 	<div id="end-game-overlay" class="end-game-overlay hidden">
 	<div id="screenshot-container" class="screenshot-container">
@@ -2045,7 +2018,7 @@ body {
 <!-- opening menu hidden-->
 <div id="opening-menu">
 	<button id="resume-button" class="menu-button" style="display: none;">Resume</button>
-	<button id="free-play-button" class="menu-button">Free Play</button>
+	<button id="free-play-button" class="menu-button">Free Play 1</button>
 	<button id="daily-challenge-button" class="menu-button">The Daily Gem</button>
 	<div id="daily-challenge-timer"></div>
 	<button id="how-to-play-button" class="menu-button-white">How to Play</button>
@@ -8271,6 +8244,27 @@ document.addEventListener("DOMContentLoaded", () => {
 	updateView();
 	
 	window.addEventListener("resize", updateView);
+	function setVH() {
+    setTimeout(() => { // Async for reflow
+      const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight) * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+      document.body.style.zoom = '1'; // Reset any persisted zoom
+    }, 0);
+  }
+  setVH(); // Set on initial load
+  // Force slight scroll to hide address bar and trigger full height
+  setTimeout(() => {
+    window.scrollTo(0, 1);
+    setVH(); // Recalc after scroll
+  }, 100); // Delay for initial render
+  window.addEventListener('resize', setVH);
+  window.addEventListener('orientationchange', setVH);
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) { // bfcache restore
+      setVH();
+      setTimeout(() => window.scrollTo(0, 1), 100); // Re-force on restore
+    }
+  });
 });
 
 updateView(); // Set starting view
@@ -8743,6 +8737,7 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
 
 
