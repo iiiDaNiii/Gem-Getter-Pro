@@ -19,6 +19,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&family=Gamja+Flower&family=Patrick+Hand&family=Single+Day&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    
     <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+	<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('SW registered:', reg))
+        .catch(err => console.error('SW registration failed:', err));
+    });
+  }
+</script>
     <style>
 
         /* Add to the top of your CSS */
@@ -9270,4 +9279,5 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
