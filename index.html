@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">-->
     <title>Gem Getter Pro</title>
 <!-- Cache-control meta tags to prevent caching -->
@@ -2005,6 +2005,15 @@ body {
 }
     </style>
 </head>
+	document.addEventListener('DOMContentLoaded', () => {
+  function setVH() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }
+  setVH(); // Set on load
+  window.addEventListener('resize', setVH); // Update on resize/orientation
+  window.addEventListener('orientationchange', setVH); // Extra for mobile
+});
 <body>
 	<div id="end-game-overlay" class="end-game-overlay hidden">
 	<div id="screenshot-container" class="screenshot-container">
@@ -8715,6 +8724,7 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
 
 
