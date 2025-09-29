@@ -6068,9 +6068,9 @@ function resetGrid() {
     const grid = document.getElementById("grid");
     grid.querySelectorAll(".polyomino-svg").forEach((svg) => svg.remove());
     document.querySelectorAll(".cell").forEach((cell) => {
-        cell.classList.remove("committed", "disabled", "no-pointer");
+        cell.classList.remove("committed", "disabled", "no-pointer", "tutorial-highlight"); // NEW: Clear tutorial classes too
     });
-    // NEW: Re-apply disabled based on current sheet (fixes random unclickables)
+    // Re-apply disabled based on current sheet
     const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
     document.querySelectorAll(".cell").forEach((cell) => {
         const index = parseInt(cell.dataset.index);
@@ -9264,6 +9264,7 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
 
 
