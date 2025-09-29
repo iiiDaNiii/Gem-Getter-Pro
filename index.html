@@ -6066,17 +6066,13 @@ function resetGrid() {
     document.querySelectorAll(".cell").forEach((cell) => {
         cell.classList.remove("committed", "disabled", "no-pointer");
     });
+    // NEW: Re-apply disabled based on current sheet (fixes random unclickables)
     const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
-    console.log(
-        `Applying unclickable cells for ${currentDigSheet}:`,
-        Array.from(unclickableCells)
-    );
-    requestAnimationFrame(() => {
-        unclickableCells.forEach((index) => {
-            const cell = document.querySelector(`.cell[data-index="${index}"]`);
-            if (cell) cell.classList.add("disabled");
-        });
-        updateCellCursors();
+    document.querySelectorAll(".cell").forEach((cell) => {
+        const index = parseInt(cell.dataset.index);
+        if (unclickableCells.has(index)) {
+            cell.classList.add("disabled");
+        }
     });
     committedCells.clear();
     selectedCells.clear();
@@ -9234,4 +9230,5 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
