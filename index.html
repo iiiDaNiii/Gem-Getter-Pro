@@ -5130,13 +5130,13 @@ function playSound(soundName) {
 		audio.currentTime = 0;
 		audio.volume =
 			soundName === "click"
-				? 0.7
+				? 0.6
 				: soundName === "pickaxe"
 				? 0.1
 			    : soundName === "circle"
-				? 0.7
+				? 1
 			    : soundName === "crossOff"
-				? 0.7
+				? 1
 				: soundName === "bonus"
 				? 0.25
 				: 0.5;
@@ -9264,6 +9264,7 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
 
 
