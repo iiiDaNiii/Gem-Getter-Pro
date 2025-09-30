@@ -8141,6 +8141,7 @@ if (backButton) {
 
 // Repurpose How to Play button to start tutorial
 // Updated How to Play button listener (complete block)
+// Updated How to Play button listener (complete block)
 const howToPlayButton = document.getElementById("how-to-play-button");
 if (howToPlayButton) {
     howToPlayButton.replaceWith(howToPlayButton.cloneNode(true)); // Clone to clear old listeners if any
@@ -8152,6 +8153,36 @@ if (howToPlayButton) {
         if (openingMenu) openingMenu.style.display = "none"; // Hide menu
         currentDigSheet = "dig-sheet-a"; // Fixed for tutorial
         currentRollSheet = "roll-sheet-a";
+        // NEW: Explicitly update dig/roll sheet visuals before reset
+        const digSheetElement = document.getElementById("dig-sheet");
+        const overlayImg = document.querySelector("#dig-sheet-overlay img");
+        const rollSheetImg = document
+            .getElementById("roll-sheet")
+            .querySelector("img:not(#green-image img):not(#white-image img)");
+        if (digSheetElement && overlayImg && rollSheetImg) {
+            digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+            overlayImg.src = digSheetOverlayImages[currentDigSheet];
+            rollSheetImg.src = rollSheetImages[currentRollSheet];
+            // Set default dice images (6 for both green and white)
+            greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
+            whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
+            die1.setAttribute("data-value", "6");
+            die2.setAttribute("data-value", "6");
+            // Update boulder positions
+            const boulderElements = document.querySelectorAll(".boulder-cross-off");
+            boulderElements.forEach((element, index) => {
+                const config = digSheetBoulderConfigs[currentDigSheet][index];
+                if (config) {
+                    element.style.top = config.top;
+                    element.style.left = config.left;
+                }
+            });
+            // Force redraw
+            requestAnimationFrame(() => {
+                digSheetElement.offsetHeight;
+                rollSheetImg.offsetHeight;
+            });
+        }
         resetGrid(); // Start fresh
         tutorialStep = 0; // Reset step
         advanceTutorialStep(); // Explicitly start tutorial after reset
