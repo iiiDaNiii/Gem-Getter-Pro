@@ -2,13 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	
-	<meta property="og:title" content="Gem Getter Pro">
-	<meta property="og:description" content="A fun browser-based dice-rolling game! Dig for gems and score big.">
-	<meta property="og:image" content="https://i.imgur.com/MaXNSkT.png"> <!-- Absolute URL to your preferred image -->
-	<meta property="og:url" content="https://gemgetter.clearlysharp.com/">
-	<meta property="og:type" content="website">
-	
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>Gem Getter Pro</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -409,17 +402,17 @@ body {
 	width:100%;
   height: 75dvh;
   overflow: hidden;
-	background-image: url('https://i.imgur.com/3biwDEh.png');
+	background-image: url('images/ds-a.png');
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
 }
 
 #dig-sheet.dig-sheet-a {
-  background-image: url('https://i.imgur.com/3biwDEh.png');
+  background-image: url('images/ds-a.png');
 }
 #dig-sheet.dig-sheet-b {
-  background-image: url('https://i.imgur.com/AwZ16ox.png');
+  background-image: url('images/ds-b.png');
 }
 
 #dig-sheet-overlay {
@@ -584,12 +577,12 @@ body {
 	z-index: 4;
 }
 .die.green {
-	background-image: url("https://i.imgur.com/gDedEHi.png");
+	background-image: url("images/green-die.png");
 	left: calc(50% - 8dvh);
 	top: 5dvh;
 }
 .die.white {
-	background-image: url("https://i.imgur.com/nZjAHjr.png");
+	background-image: url("images/white-die.png");
 	left: calc(50% + 1dvh);
 	top: 5dvh;
 }
@@ -1667,7 +1660,7 @@ body {
 }
 
 #dig-button.bonus-mode {
-  background-image: url('https://i.imgur.com/ZI42Lkq.png');
+  background-image: url('images/oil-dig-button.png');
   animation: spin 0.5s ease-in-out;
 }
 
@@ -1677,7 +1670,7 @@ body {
   position: absolute;
   z-index: 200;
 	pointer-events:none;
-	background-image: url('https://i.imgur.com/ioTAHqi.png');
+	background-image: url('images/oil-square-1.png');
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -1692,7 +1685,7 @@ body {
   position: absolute;
   z-index: 200;
 	pointer-events:none;
-	background-image: url('https://i.imgur.com/GyOYDfA.png');
+	background-image: url('images/oil-square-2.png');
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -1760,7 +1753,7 @@ body {
   width: 4.7cqh;
   height: 4.7cqh;
   position: absolute;
-  background-image: url('https://i.imgur.com/C6SGy1S.png');
+  background-image: url('images/ng-bonus.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -1910,7 +1903,7 @@ body {
   transform: translateX(-50%) scale(1.0);
   width: 10cqh;
   height: 10cqh;
-  background-image: url('https://i.imgur.com/FIWlNcD.png');
+  background-image: url('images/score-bubble.png');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -2120,7 +2113,7 @@ body {
 <div id="opening-menu">
 	<button id="resume-button" class="menu-button" style="display: none;">Resume</button>
 	<button id="free-play-button" class="menu-button">Free Play</button>
-	<button id="daily-challenge-button" class="menu-button">The Daily Gem</button>
+	<button id="daily-challenge-button" class="menu-button">Daily Challenge</button>
 	<div id="daily-challenge-timer"></div>
 	<button id="how-to-play-button" class="menu-button-white">How to Play</button>
 	<button id="clearly-sharp-button" class="menu-button-white">Clearly Sharp</button>
@@ -2132,22 +2125,22 @@ body {
 			<h2>Dig Sheet</h2>
 			<div class="dig-sheet-buttons">
 				<div class="dig-sheet-row">
-					<button class="sheet-button" data-dig-sheet="dig-sheet-a"><img src="https://i.imgur.com/HDpEsz9.png" alt="Dig Sheet A"></button>
-					<button class="sheet-button" data-dig-sheet="dig-sheet-b"><img src="https://i.imgur.com/BQwShon.png" alt="Dig Sheet B"></button>
-					<button class="sheet-button" data-dig-sheet="dig-sheet-c"><img src="https://i.imgur.com/SRPkaWH.png" alt="Dig Sheet C"></button>
-					<button class="sheet-button" data-dig-sheet="dig-sheet-d"><img src="https://i.imgur.com/vZFkrYT.png" alt="Dig Sheet D"></button>
+					<button class="sheet-button" data-dig-sheet="dig-sheet-a"><img src="images/dsA.png" alt="Dig Sheet A"></button>
+					<button class="sheet-button" data-dig-sheet="dig-sheet-b"><img src="images/dsB.png" alt="Dig Sheet B"></button>
+					<button class="sheet-button" data-dig-sheet="dig-sheet-c"><img src="images/dsC.png" alt="Dig Sheet C"></button>
+					<button class="sheet-button" data-dig-sheet="dig-sheet-d"><img src="images/dsD.png" alt="Dig Sheet D"></button>
 				</div>
 				<div class="dig-sheet-row">
-					<button class="sheet-button" data-dig-sheet="dig-sheet-e"><img src="https://i.imgur.com/61AGFQU.png" alt="Dig Sheet E"></button>
-					<button class="sheet-button" data-dig-sheet="dig-sheet-f"><img src="https://i.imgur.com/W6ihlfP.png" alt="Dig Sheet F"></button>
-					<button class="sheet-button" data-dig-sheet="dig-sheet-g"><img src="https://i.imgur.com/VoYIEQ7.png" alt="Dig Sheet G"></button>
-					<button class="sheet-button" data-dig-sheet="dig-sheet-h"><img src="https://i.imgur.com/uQsBTwt.png" alt="Dig Sheet H"></button>
+					<button class="sheet-button" data-dig-sheet="dig-sheet-e"><img src="images/dsE.png" alt="Dig Sheet E"></button>
+					<button class="sheet-button" data-dig-sheet="dig-sheet-f"><img src="images/dsF.png" alt="Dig Sheet F"></button>
+					<button class="sheet-button" data-dig-sheet="dig-sheet-g"><img src="images/dsG.png" alt="Dig Sheet G"></button>
+					<button class="sheet-button" data-dig-sheet="dig-sheet-h"><img src="images/dsH.png" alt="Dig Sheet H"></button>
 				</div>
 			</div>
 			<h2>Roll Sheet</h2>
 			<div class="roll-sheet-buttons">
-				<button class="sheet-button" data-roll-sheet="roll-sheet-a"><img src="https://i.imgur.com/8PIVNrn.png" alt="Roll Sheet A"></button>
-				<button class="sheet-button" data-roll-sheet="roll-sheet-b"><img src="https://i.imgur.com/jduT1AK.png" alt="Roll Sheet B"></button>
+				<button class="sheet-button" data-roll-sheet="roll-sheet-a"><img src="images/rsA.png" alt="Roll Sheet A"></button>
+				<button class="sheet-button" data-roll-sheet="roll-sheet-b"><img src="images/rsB.png" alt="Roll Sheet B"></button>
 			</div>
 			<div class="submenu-actions">
 				<button id="play-button" class="menu-button" disabled>Play</button>
@@ -2161,18 +2154,18 @@ body {
 				<path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
 			</svg></button>
 		<div class="submenu-content">
-			<img src="https://i.imgur.com/OLU7c2s.png" alt="Clearly Sharp Logo" class="clearly-sharp-logo">
+			<img src="images/cs-logo.png" alt="Clearly Sharp Logo" class="clearly-sharp-logo">
 			<p class="clearly-sharp-text">Clearly Sharp is the graphic design work of Daniel Young. Click to learn more and get help with your next logo, print, or digital design:</p>
 			<a href="https://clearlysharp.com" target="_blank" class="menu-button">Check it Out</a>
 		</div>
 	</div>
-	<img id="game-logo" src="https://i.imgur.com/5opdz7e.png" alt="Game Logo">
+	<img id="game-logo" src="images/logo-big.png" alt="Game Logo">
 </div>
 
 <div id="game-container">
 	<div id="roll-sheet" class="section">
 		<div class="section-image-wrapper">
-			<img src="https://i.imgur.com/U3dEe1S.png" alt="Roll Sheet" class="section-image">
+			<img src="images/rs-a.png" alt="Roll Sheet" class="section-image">
 			<div id="roll-sheet-switcher"></div>
 		</div>
 	</div>
@@ -2186,11 +2179,11 @@ body {
 			<div id="dig-sheet-overlay">
 
 				<div id="dig-sheet-switcher"></div>
-				<img src="https://i.imgur.com/i8KpuK2.png" alt="Dig Sheet Overlay">
+				<img src="images/ds-a-overlay.png" alt="Dig Sheet Overlay">
 				<div id="cross-off-container">
-					<div id="dig-button" class="loaded"><img src="https://i.imgur.com/7tDYHqX.png" alt="Dig"></div>
-					<div id="undo-button" class="loaded"><img src="https://i.imgur.com/mtBWnJM.png" alt="Undo"></div>
-					<div id="home-button" class="loaded"><img src="https://i.imgur.com/YxlqWad.png" alt="Home"></div>
+					<div id="dig-button" class="loaded"><img src="images/dig-button.png" alt="Dig"></div>
+					<div id="undo-button" class="loaded"><img src="images/undo.png" alt="Undo"></div>
+					<div id="home-button" class="loaded"><img src="images/home.png" alt="Home"></div>
 					<!-- Boulder Bonuses -->
 					<div class="cross-off-clicker boulder-cross-off" style="top: 30.9cqh; left: 44.4cqh;">
 						<div class="line-draw"></div>
@@ -2442,7 +2435,7 @@ body {
 			<button id="screenshot-button" class="scoresheet-button off-screen">Screenshot</button>
 			<div id="final-score-bubble" class="final-score-bubble hidden"></div>
 			<div id="screenshot-explainer" class="screenshot-explainer hidden-state">spoiler-free ></div>
-			<img src="https://i.imgur.com/GHIUilC.png" alt="Scoresheet" class="section-image">
+			<img src="images/scoresheet.png" alt="Scoresheet" class="section-image">
 			<!-- Quartz Circle Clickers -->
 			<div class="quartz-circle-clicker" style="top: 10.4cqh; left: calc(50% - 16.45cqh); transform: translate(-50%, -50%);">
 				<svg viewBox="0 0 40 40">
@@ -3502,8 +3495,8 @@ let tutorialPreRolls = [{ green: 5, white: 1 }, { green: 6, white: 2 }, { green:
 const dailyDiceRolls = []; // Pre-computed rolls for daily challenge
 const rollSheets = ["roll-sheet-a", "roll-sheet-b"];
 const rollSheetImages = {
-	"roll-sheet-a": "https://i.imgur.com/U3dEe1S.png",
-	"roll-sheet-b": "https://i.imgur.com/Fh6WlRZ.png"
+	"roll-sheet-a": "images/rs-a.png",
+	"roll-sheet-b": "images/rs-b.png"
 };
 const digSheetBoulderConfigs = {
 	"dig-sheet-a": [
@@ -4709,24 +4702,24 @@ const digSheets = [
 	"dig-sheet-h"
 ];
 const digSheetOverlayImages = {
-	"dig-sheet-a": "https://i.imgur.com/IehffPE.png",
-	"dig-sheet-b": "https://i.imgur.com/qcEXPya.png",
-	"dig-sheet-c": "https://i.imgur.com/Chip1Es.png",
-	"dig-sheet-d": "https://i.imgur.com/qSwze1g.png",
-	"dig-sheet-e": "https://i.imgur.com/kQbtrOJ.png",
-	"dig-sheet-f": "https://i.imgur.com/gYvD1AJ.png",
-	"dig-sheet-g": "https://i.imgur.com/Zieirfz.png",
-	"dig-sheet-h": "https://i.imgur.com/c3YdwvM.png"
+	"dig-sheet-a": "images/ds-a-overlay.png",
+	"dig-sheet-b": "images/ds-b-overlay.png",
+	"dig-sheet-c": "images/ds-c-overlay.png",
+	"dig-sheet-d": "images/ds-d-overlay.png",
+	"dig-sheet-e": "images/ds-e-overlay.png",
+	"dig-sheet-f": "images/ds-f-overlay.png",
+	"dig-sheet-g": "images/ds-g-overlay.png",
+	"dig-sheet-h": "images/ds-h-overlay.png"
 };
 const digSheetBackgroundImages = {
-	"dig-sheet-a": "https://i.imgur.com/Q6Rha58.png",
-	"dig-sheet-b": "https://i.imgur.com/ViWEV4V.png",
-	"dig-sheet-c": "https://i.imgur.com/tVO1usF.png",
-	"dig-sheet-d": "https://i.imgur.com/2t23Tzn.png",
-	"dig-sheet-e": "https://i.imgur.com/PNmnqT9.png",
-	"dig-sheet-f": "https://i.imgur.com/82mPolH.png",
-	"dig-sheet-g": "https://i.imgur.com/svQS3YG.png",
-	"dig-sheet-h": "https://i.imgur.com/CJYKymQ.png"
+	"dig-sheet-a": "images/ds-a.png",
+	"dig-sheet-b": "images/ds-b.png",
+	"dig-sheet-c": "images/ds-c.png",
+	"dig-sheet-d": "images/ds-d.png",
+	"dig-sheet-e": "images/ds-e.png",
+	"dig-sheet-f": "images/ds-f.png",
+	"dig-sheet-g": "images/ds-g.png",
+	"dig-sheet-h": "images/ds-h.png"
 };
 const sounds = {
 	pickaxe: {
@@ -5137,13 +5130,9 @@ function playSound(soundName) {
 		audio.currentTime = 0;
 		audio.volume =
 			soundName === "click"
-				? 0.6
+				? 0.4
 				: soundName === "pickaxe"
 				? 0.1
-			    : soundName === "circle"
-				? 1
-			    : soundName === "crossOff"
-				? 1
 				: soundName === "bonus"
 				? 0.25
 				: 0.5;
@@ -5330,38 +5319,38 @@ let rollCount = 0;
 const imageMap = {
 	"roll-sheet-a": {
 		green: {
-			1: "https://i.imgur.com/NugZHpC.png",
-			2: "https://i.imgur.com/8NPzkIj.png",
-			3: "https://i.imgur.com/N8Ps2CK.png",
-			4: "https://i.imgur.com/TtNDSwd.png",
-			5: "https://i.imgur.com/oI2WRXC.png",
-			6: "https://i.imgur.com/wns5xXP.png"
+			1: "images/g1-rsa.png",
+			2: "images/g2-rsa.png",
+			3: "images/g3-rsa.png",
+			4: "images/g4-rsa.png",
+			5: "images/g5-rsa.png",
+			6: "images/g6-rsa.png"
 		},
 		white: {
-			1: "https://i.imgur.com/FuDH2yD.png",
-			2: "https://i.imgur.com/9ElkVLT.png",
-			3: "https://i.imgur.com/liSpdk7.png",
-			4: "https://i.imgur.com/ejw4zrn.png",
-			5: "https://i.imgur.com/wsFcuIL.png",
-			6: "https://i.imgur.com/CwsIcnz.png"
+			1: "images/w1-rsa.png",
+			2: "images/w2-rsa.png",
+			3: "images/w3-rsa.png",
+			4: "images/w4-rsa.png",
+			5: "images/w5-rsa.png",
+			6: "images/w6-rsa.png"
 		}
 	},
 	"roll-sheet-b": {
 		green: {
-			1: "https://i.imgur.com/MtOVS0P.png",
-			2: "https://i.imgur.com/1Z3uPrg.png",
-			3: "https://i.imgur.com/shOFUOJ.png",
-			4: "https://i.imgur.com/4u3ghLR.png",
-			5: "https://i.imgur.com/ZWhr6Dn.png",
-			6: "https://i.imgur.com/3f2wOg7.png"
+			1: "images/g1-rsb.png",
+			2: "images/g2-rsb.png",
+			3: "images/g3-rsb.png",
+			4: "images/g4-rsb.png",
+			5: "images/g5-rsb.png",
+			6: "images/g6-rsb.png"
 		},
 		white: {
-			1: "https://i.imgur.com/TeWqi5E.png",
-			2: "https://i.imgur.com/OVyHWkz.png",
-			3: "https://i.imgur.com/HGurD8z.png",
-			4: "https://i.imgur.com/WdyyfSy.png",
-			5: "https://i.imgur.com/QoazCJ3.png",
-			6: "https://i.imgur.com/7YgS7iL.png"
+			1: "images/w1-rsb.png",
+			2: "images/w2-rsb.png",
+			3: "images/w3-rsb.png",
+			4: "images/w4-rsb.png",
+			5: "images/w5-rsb.png",
+			6: "images/w6-rsb.png"
 		}
 	}
 };
@@ -6075,15 +6064,19 @@ function resetGrid() {
     const grid = document.getElementById("grid");
     grid.querySelectorAll(".polyomino-svg").forEach((svg) => svg.remove());
     document.querySelectorAll(".cell").forEach((cell) => {
-        cell.classList.remove("committed", "disabled", "no-pointer", "tutorial-highlight"); // NEW: Clear tutorial classes too
+        cell.classList.remove("committed", "disabled", "no-pointer");
     });
-    // Re-apply disabled based on current sheet
     const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
-    document.querySelectorAll(".cell").forEach((cell) => {
-        const index = parseInt(cell.dataset.index);
-        if (unclickableCells.has(index)) {
-            cell.classList.add("disabled");
-        }
+    console.log(
+        `Applying unclickable cells for ${currentDigSheet}:`,
+        Array.from(unclickableCells)
+    );
+    requestAnimationFrame(() => {
+        unclickableCells.forEach((index) => {
+            const cell = document.querySelector(`.cell[data-index="${index}"]`);
+            if (cell) cell.classList.add("disabled");
+        });
+        updateCellCursors();
     });
     committedCells.clear();
     selectedCells.clear();
@@ -6196,7 +6189,7 @@ function resetGrid() {
         digButton.style.pointerEvents = "none";
         digButton.style.animation = "none"; // Prevent spin animation on new game
         const img = digButton.querySelector("img");
-        if (img) img.src = "https://i.imgur.com/7tDYHqX.png"; // Restore default dig button image
+        if (img) img.src = "images/dig-button.png"; // Restore default dig button image
     }
     const rollButton = document.getElementById("roll-button");
     if (rollButton) {
@@ -7869,7 +7862,7 @@ function enterBonusDigMode() {
         digButton.style.animation = "spin 0.5s ease-in-out";
         setTimeout(() => {
             const img = digButton.querySelector("img");
-            if (img) img.src = "https://i.imgur.com/ZI42Lkq.png"; // Change image halfway through spin
+            if (img) img.src = "images/oil-dig-button.png"; // Change image halfway through spin
             digButton.style.animation = ""; // Clear animation after completion
         }, 250); // Halfway through 0.5s spin
     }
@@ -7901,7 +7894,7 @@ function exitBonusDigMode(undo = false) {
         digButton.style.animation = "spin 0.5s ease-in-out";
         setTimeout(() => {
             const img = digButton.querySelector("img");
-            if (img) img.src = "https://i.imgur.com/7tDYHqX.png"; // Change image halfway through spin
+            if (img) img.src = "images/dig-button.png"; // Change image halfway through spin
             digButton.style.animation = ""; // Clear animation after completion
         }, 250); // Halfway through 0.5s spin
     }
@@ -7958,7 +7951,7 @@ function updateDigButtonState() {
 		digButton.style.pointerEvents = "auto";
 		if (bonusDigMode) {
 			const img = digButton.querySelector("img");
-			if (img) img.src = "https://i.imgur.com/ZI42Lkq.png"; // Ensure bonus image
+			if (img) img.src = "images/oil-dig-button.png"; // Ensure bonus image
 		}
 	} else {
 		digButton.classList.add("loading");
@@ -8145,7 +8138,6 @@ if (backButton) {
 
 // Repurpose How to Play button to start tutorial
 // Updated How to Play button listener (complete block)
-// Updated How to Play button listener (complete block)
 const howToPlayButton = document.getElementById("how-to-play-button");
 if (howToPlayButton) {
     howToPlayButton.replaceWith(howToPlayButton.cloneNode(true)); // Clone to clear old listeners if any
@@ -8157,36 +8149,6 @@ if (howToPlayButton) {
         if (openingMenu) openingMenu.style.display = "none"; // Hide menu
         currentDigSheet = "dig-sheet-a"; // Fixed for tutorial
         currentRollSheet = "roll-sheet-a";
-        // NEW: Explicitly update dig/roll sheet visuals before reset
-        const digSheetElement = document.getElementById("dig-sheet");
-        const overlayImg = document.querySelector("#dig-sheet-overlay img");
-        const rollSheetImg = document
-            .getElementById("roll-sheet")
-            .querySelector("img:not(#green-image img):not(#white-image img)");
-        if (digSheetElement && overlayImg && rollSheetImg) {
-            digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
-            overlayImg.src = digSheetOverlayImages[currentDigSheet];
-            rollSheetImg.src = rollSheetImages[currentRollSheet];
-            // Set default dice images (6 for both green and white)
-            greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
-            whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
-            die1.setAttribute("data-value", "6");
-            die2.setAttribute("data-value", "6");
-            // Update boulder positions
-            const boulderElements = document.querySelectorAll(".boulder-cross-off");
-            boulderElements.forEach((element, index) => {
-                const config = digSheetBoulderConfigs[currentDigSheet][index];
-                if (config) {
-                    element.style.top = config.top;
-                    element.style.left = config.left;
-                }
-            });
-            // Force redraw
-            requestAnimationFrame(() => {
-                digSheetElement.offsetHeight;
-                rollSheetImg.offsetHeight;
-            });
-        }
         resetGrid(); // Start fresh
         tutorialStep = 0; // Reset step
         advanceTutorialStep(); // Explicitly start tutorial after reset
@@ -8195,6 +8157,7 @@ if (howToPlayButton) {
         applyClickAnimation(newHowToPlayButton);
     });
 }
+		
 const tutorialOk = document.getElementById("tutorial-ok");
 if (tutorialOk) {
     tutorialOk.addEventListener("click", () => {
@@ -8631,7 +8594,7 @@ if (randomButton) {
 
 				// Add <img> for badge (full-width, aspect preserved, centered)
 				const scoreImg = document.createElement("img");
-				scoreImg.src = "https://i.imgur.com/DM8guQA.png";
+				scoreImg.src = "images/final-score-wide.png";
 				scoreImg.style.position = "absolute";
 				scoreImg.style.top = "0";
 				scoreImg.style.left = "0";
@@ -8733,7 +8696,7 @@ if (randomButton) {
 
 				// NEW: Add game logo <img> centered near top of screenshot
 				const logoImg = document.createElement("img");
-				logoImg.src = "https://i.imgur.com/H1v1du8.png";
+				logoImg.src = "images/logo-big.png";
 				logoImg.style.position = "absolute";
 				logoImg.style.top = "1.5dvh"; // Change this to nudge up/down (lower number moves up, higher moves down)
 				logoImg.style.left = "50%";
@@ -9271,10 +9234,3 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
