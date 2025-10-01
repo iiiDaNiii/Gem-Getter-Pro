@@ -2040,8 +2040,7 @@ body {
     bottom: -100vh; /* Start off-screen bottom */
     left: 50%;
     transform: translate(-50%, 50%);
-    width: 80vw;
-    max-width: 400px;
+    width: 54dvh;
     height: auto; /* Adapt to content */
     min-height: 20dvh; /* Ensure minimum size */
     padding: 2dvh;
@@ -3479,20 +3478,20 @@ let tutorialMessages = [
     "Welcome to Gem Getter Pro! Let's get you up to speed with how things work around here.",
     "There are 9 rounds in a game of Gem Getter Pro. You begin each round by rolling the dice. Ready to roll?",
     "Your dice roll reveals two or more possible dig patterns you can dig in your mine.",
-    "Let's dig the green 5 pattern. Your first dig needs to touch the top row of the mine (just like real life!). Tap all the highlighted grid squares to create this dig pattern.",
-    "Great job. Now you're ready to dig. Push the dig button to commit your dig to the grid!",
+    "Let's dig the green 5 pattern. Your first dig needs to touch the top row of the mine (just like real life). Tap all the highlighted grid squares to create this dig pattern.",
+    "Great job. Now you're ready to dig. Push the dig button to commit your pattern to the grid!",
     "Cool, you collected some gems! Let's roll the dice again and dig some more!",
-	"Dig patterns can be rotated or flipped however you like. Lets try it out on that green 6!",
+	"Dig patterns can be rotated or flipped however you like. Let's try it out on that green 6! Important: from now on, all new digs must connect to a previous dig.",
     "You just got a bonus by digging all the way around that boulder. Nice work! Let's roll again.",
 	"Some dig patterns let you dig multiple small shapes. Let's try out that white 6.",
-    "First, let's tap to build the smaller shape",
-    "Great, now tap within your shape again to lock it and prevent it from expanding further.",
+    "First, let's tap to build the smaller shape.",
+    "Great! Now tap within your shape again to lock it and prevent it from expanding further.",
     "Nice lock! Now we can select the other piece of the pattern. Go ahead and punch that in. Then tap the dig button.",
     "We've nearly reached the bottom! Roll again, and let's keep digging!",
 	"Let's bust another boulder to collect that oil and natural gas! Dig the green 2 pattern.",
 "You've collected enough oil for a bonus dig! Tap and dig another square.",
 	"You dug out an entire row and got a bonus. So satisfying! Let's roll again.",
-"You have a natural gas available. Tap the natural gas bonus to dig any pattern from the roll sheet (you don't have to dig the green 1 or the white 3).",
+"You have a natural gas available. Tap the natural gas bonus to dig any pattern from the roll sheet instead of having to dig the green 3 or the white 1.",
 "Now you can dig any pattern available on the roll sheet. Instead of using the green 1, let's dig another green 2!",
 	"Awesome. You're raking in the gems now! Go ahead and finish the last 4 rounds on your own. Each element has different scoring criteria, so keep an eye on your score sheet. Happy digging!",
 	"You did it! Tap the finish button on the score sheet to see your final score."
@@ -6910,7 +6909,7 @@ function commitPolyomino() {
     if (tempOilCount >= 2 && prevOilCount < 2) newBonuses.push(0); // 2nd oil -> clicker 0
     if (tempOilCount >= 4 && prevOilCount < 4) newBonuses.push(1); // 4th oil -> clicker 1
     if (tempOilCount >= 5 && prevOilCount < 5) newBonuses.push(2); // 5th oil -> clicker 2
-    if (tempOilCount >= 6 && prevOilCount < 6) newBonuses.push(3); // 6th oil -> clicker 3
+    if (tempOilCount >= 6 && prevOilCount < 7) newBonuses.push(3); // 6th oil -> clicker 3
     if (tempOilCount >= 7 && prevOilCount < 7) {
         newBonuses.push(4, 4); // 7th oil -> clicker 4 (twice)
     }
@@ -7110,6 +7109,7 @@ function commitPolyomino() {
                     console.log(
                         `Scrolled back to dig sheet (index ${index}) at ${Date.now()}ms`
                     );
+                    // Tutorial: Run scroll-back advances only if scrolled (narrow)
                     if (tutorialMode && tutorialStep === 5) {
                         showTutorialMessage(tutorialMessages[5]); // "Cool, you collected..."
                         tutorialStep = 6; // Update to after message5
@@ -7128,11 +7128,9 @@ function commitPolyomino() {
                     }
                 }
             }
-            updateFinalScore();
         }, delay);
         delay += 500;
     });
-    // Handle bonus mode transition after animations (or immediately if none)
     setTimeout(
         () => {
             console.log(
@@ -7163,10 +7161,20 @@ function commitPolyomino() {
                         showTutorialMessage(tutorialMessages[19]); // "You did it! Click the finish button..."
                         tutorialStep = 20; // Update to after message19 (20 1-based)
                     }
+                    // NEW: Show message 15 after exiting bonus mode (post-bonus dig)
+                    if (tutorialMode && tutorialStep === 15) {
+                        showTutorialMessage(tutorialMessages[15]); // "You dug out an entire row..."
+                        tutorialStep = 16; // Update to after message15
+                    }
                 }
             } else if (oilBonusQueue.length > 0 && !bonusDigMode) {
                 console.log("Queue has bonuses, entering bonus dig mode");
                 enterBonusDigMode();
+                // NEW: Show oil bonus message (14) right after entering mode on wide/narrow
+                if (tutorialMode && tutorialStep === 14) {
+                    showTutorialMessage(tutorialMessages[14]); // "You've collected enough oil..."
+                    tutorialStep = 15; // Advance to 15
+                }
             } else {
                 console.log("No bonuses, transitioning to roll/end phase");
                 gamePhase = rollCount < 9 ? "roll" : "end";
@@ -7198,22 +7206,21 @@ function commitPolyomino() {
             if (container) {
                 container.offsetHeight; // Trigger reflow
             }
-            // Tutorial: Show message06 after collection sequence (step 4 after dig)
-            if (tutorialMode && tutorialStep === 5 && !didScrollToScore) {
-                showTutorialMessage(tutorialMessages[5]); // "Cool, you collected..."
-                tutorialStep = 6; // Update to after message5
-            } else if (tutorialMode && tutorialStep === 7 && !didScrollToScore) {
-                showTutorialMessage(tutorialMessages[7]); // "You just got a bonus..."
-                tutorialStep = 8; // Update to after message7
-            } else if (tutorialMode && tutorialStep === 12 && !didScrollToScore) {
-                showTutorialMessage(tutorialMessages[12]);
-                tutorialStep = 13;
-            } else if (tutorialMode && tutorialStep === 15 && !didScrollToScore) {
-                showTutorialMessage(tutorialMessages[15]); // "You dug out an entire row..."
-                tutorialStep = 16; // Update to after message15
-            } else if (tutorialMode && tutorialStep === 18 && !didScrollToScore) {
-                showTutorialMessage(tutorialMessages[18]); // "Awesome, you're raking..."
-                tutorialStep = 19; // Update to after message18 (19 1-based)
+            // NEW: Tutorial advances for post-collection messages (run always if !didScrollToScore, or after delay on wide)
+            if (!didScrollToScore) {
+                if (tutorialMode && tutorialStep === 5) {
+                    showTutorialMessage(tutorialMessages[5]); // "Cool, you collected..."
+                    tutorialStep = 6; // Update to after message5
+                } else if (tutorialMode && tutorialStep === 7) {
+                    showTutorialMessage(tutorialMessages[7]); // "You just got a bonus..."
+                    tutorialStep = 8; // Update to after message7
+                } else if (tutorialMode && tutorialStep === 12) {
+                    showTutorialMessage(tutorialMessages[12]);
+                    tutorialStep = 13;
+                } else if (tutorialMode && tutorialStep === 18) {
+                    showTutorialMessage(tutorialMessages[18]); // "Awesome, you're raking..."
+                    tutorialStep = 19; // Update to after message18 (19 1-based)
+                }
             }
         },
         animationQueue.length > 0 ? delay : 0
