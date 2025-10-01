@@ -30,6 +30,14 @@
 
         /* Add to the top of your CSS */
 
+/* New Bit to Block Double Tap Zoom on iOS */
+html, body, #game-container, #opening-menu, .submenu-content, .cell, .menu-button, .sheet-button {
+  touch-action: manipulation; /* Prevents double-tap zoom on iOS */
+}
+.menu-button, .sheet-button, .back-button, #roll-button, #dig-button, #undo-button, #home-button {
+  touch-action: manipulation;
+}
+		
 /* Lock html/body to full viewport, no scroll */
 html, body {
   height: 100%; /* Fallback for older browsers */
@@ -9598,4 +9606,5 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
