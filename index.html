@@ -2087,6 +2087,41 @@ body {
     100% { background-color: rgba(255, 255, 0, 0.3); }
 }
 
+/* Add this to CSS for group play text (similar to clearly-sharp-text) */
+.group-play-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5dvh;
+    color: black;
+    text-align: center;
+    max-width: 80vw;
+    margin: 2dvh auto;
+    padding-bottom: 4dvh;
+}
+
+/* Add this to CSS for seed input field */
+#seed-input {
+  height: 7dvh;
+  width: 28dvh;
+  font-size: 3.5dvh;
+  background-color: #ededed;
+  color: black;
+  border: none;
+  border-radius: 0.5dvh;
+  text-align: center;
+  margin: 2dvh 0;
+  padding: 1dvh;
+  font-family: 'Bebas Neue', sans-serif;
+  text-transform: uppercase;
+}
+
+#group-play-start-button {
+	width:20dvh;
+}
+
+#generate-seed-button {
+	width:20dvh;
+}
+
     </style>
 </head>
 
@@ -2119,6 +2154,7 @@ body {
 <div id="opening-menu">
 	<button id="resume-button" class="menu-button" style="display: none;">Resume</button>
 	<button id="free-play-button" class="menu-button">Free Play</button>
+<button id="group-play-button" class="menu-button">Group Play</button>
 	<button id="daily-challenge-button" class="menu-button">Daily Challenge</button>
 	<div id="daily-challenge-timer"></div>
 	<button id="how-to-play-button" class="menu-button-white">How to Play</button>
@@ -2154,6 +2190,18 @@ body {
 			</div>
 		</div>
 	</div>
+<!-- Add this sub-menu div after #free-play-submenu or before #clearly-sharp-submenu -->
+<div id="group-play-submenu" style="display: none;">
+  <button id="back-group-play" class="back-button"><svg xmlns="http://www.w3.org/2000/svg" height="24dvh" viewBox="0 -960 960 960" width="24dvh" fill="#FFFFFF">
+    <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+  </svg></button>
+  <div class="submenu-content">
+    <p class="group-play-text">To play with a group, have all players enter the same seed (any string of 10 letters and/or numbers). You can generate a random seed and share it with friends, or make up your own!</p>
+    <button id="generate-seed-button" class="menu-button">Generate</button>
+    <input type="text" id="seed-input" maxlength="10" placeholder="Enter seed">
+    <button id="group-play-start-button" class="menu-button">Play</button>
+  </div>
+</div>
 	<!-- Clearly Sharp sub-menu remains unchanged -->
 	<div id="clearly-sharp-submenu" style="display: none;">
 		<button id="back-clearly-sharp" class="back-button"><svg xmlns="http://www.w3.org/2000/svg" height="24dvh" viewBox="0 -960 960 960" width="24dvh" fill="#FFFFFF">
@@ -3471,6 +3519,7 @@ const digPatterns = {
 };
 let currentRollSheet = "roll-sheet-a";
 let gameMode = "free-play"; // Default to free-play
+let currentSeed = '';
 
 let tutorialMode = false;
 let tutorialStep = 0;
@@ -5360,6 +5409,73 @@ const imageMap = {
 		}
 	}
 };
+// Add this to JS: New group play variables (after dailyDiceRolls)
+const groupDiceRolls = []; // Pre-computed rolls for group play
+
+// Add this function to JS (for generating random seed)
+function generateRandomSeed(length = 10) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let seed = '';
+  for (let i = 0; i < length; i++) {
+    seed += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return seed;
+}
+
+// Add this function to JS (for generating random seed)
+function generateRandomSeed(length = 10) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let seed = '';
+  for (let i = 0; i < length; i++) {
+    seed += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return seed;
+}
+
+// Add this function to JS (similar to startDailyChallenge, but for group play)
+function startGroupPlay(seed) {
+  console.log("Group Play Seed:", seed);
+  const random = seededRandom(seed);
+  const groupDigIndex = Math.floor(random() * digSheets.length);
+  currentDigSheet = digSheets[groupDigIndex];
+  console.log("Selected Dig Sheet:", currentDigSheet);
+  const digSheetElement = document.getElementById("dig-sheet");
+  const overlayImg = document.querySelector("#dig-sheet-overlay img");
+  digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+  overlayImg.src = digSheetOverlayImages[currentDigSheet];
+  digSheetElement.style.display = "none";
+  digSheetElement.offsetHeight;
+  digSheetElement.style.display = "block";
+  const groupRollIndex = Math.floor(random() * rollSheets.length);
+  currentRollSheet = rollSheets[groupRollIndex];
+  console.log("Selected Roll Sheet:", currentRollSheet);
+  const rollSheetImg = document
+    .getElementById("roll-sheet")
+    .querySelector("img:not(#green-image img):not(#white-image img)");
+  rollSheetImg.src = rollSheetImages[currentRollSheet];
+  groupDiceRolls.length = 0;
+  for (let i = 0; i < 9; i++) {
+    const greenRoll = Math.floor(random() * 6) + 1;
+    const whiteRoll = Math.floor(random() * 6) + 1;
+    groupDiceRolls.push({ green: greenRoll, white: whiteRoll });
+  }
+  console.log("Group Dice Rolls:", groupDiceRolls);
+  rollCount = 0;
+  const boulderElements = document.querySelectorAll(".boulder-cross-off");
+  boulderElements.forEach((element, index) => {
+    const config = digSheetBoulderConfigs[currentDigSheet][index];
+    if (config) {
+      element.style.top = config.top;
+      element.style.left = config.left;
+    }
+  });
+  resetGrid();
+  console.log("First random (dig): ", random());
+  console.log("Second random (roll): ", random());
+  console.log("First green roll: ", Math.floor(random() * 6) + 1);
+}
+
+// Update rollDice function: Add group-play handling (replace the entire function)
 function rollDice() {
     if (!isReady) return;
     const soundKey = isFirstRoll ? "diceRollFirst" : "diceRollSubsequent";
@@ -5382,6 +5498,9 @@ function rollDice() {
             } else if (gameMode === "daily-challenge") {
                 if (rollCount >= 9) return;
                 ({ green: value1, white: value2 } = dailyDiceRolls[rollCount]);
+            } else if (gameMode === "group-play") {
+                if (rollCount >= 9) return;
+                ({ green: value1, white: value2 } = groupDiceRolls[rollCount]);
             } else {
                 value1 = Math.floor(Math.random() * 6) + 1;
                 value2 = Math.floor(Math.random() * 6) + 1;
@@ -5440,6 +5559,88 @@ function rollDice() {
     }
     let startTime;
     requestAnimationFrame(animateRoll);
+}
+
+// Add this to DOMContentLoaded listener: Group Play button and sub-menu handlers
+const groupPlayButton = document.getElementById("group-play-button");
+if (groupPlayButton) {
+  groupPlayButton.addEventListener("click", () => {
+    const groupPlaySubmenu = document.getElementById("group-play-submenu");
+    const mainMenuElements = [
+      document.getElementById("resume-button"),
+      document.getElementById("free-play-button"),
+      document.getElementById("group-play-button"),
+      document.getElementById("daily-challenge-button"),
+      document.getElementById("how-to-play-button"),
+      document.getElementById("clearly-sharp-button"),
+      document.getElementById("daily-challenge-timer"),
+      document.getElementById("game-logo")
+    ];
+    mainMenuElements.forEach((el) => {
+      if (el) el.style.display = "none";
+    });
+    groupPlaySubmenu.style.display = "flex";
+    playSound("click");
+  });
+}
+
+const backGroupPlayButton = document.getElementById("back-group-play");
+if (backGroupPlayButton) {
+  backGroupPlayButton.addEventListener("click", () => {
+    const groupPlaySubmenu = document.getElementById("group-play-submenu");
+    const mainMenuElements = [
+      document.getElementById("resume-button"),
+      document.getElementById("free-play-button"),
+      document.getElementById("group-play-button"),
+      document.getElementById("daily-challenge-button"),
+      document.getElementById("how-to-play-button"),
+      document.getElementById("clearly-sharp-button"),
+      document.getElementById("daily-challenge-timer"),
+      document.getElementById("game-logo")
+    ];
+    groupPlaySubmenu.style.display = "none";
+    mainMenuElements.forEach((el) => {
+      if (el) el.style.display = "";
+    });
+    if (document.getElementById("resume-button"))
+      document.getElementById("resume-button").style.display = hasGameState() ? "block" : "none";
+    playSound("click");
+  });
+}
+
+const generateSeedButton = document.getElementById("generate-seed-button");
+if (generateSeedButton) {
+  generateSeedButton.addEventListener("click", () => {
+    const seedInput = document.getElementById("seed-input");
+    seedInput.value = generateRandomSeed(10);
+    playSound("click");
+  });
+}
+
+const groupPlayStartButton = document.getElementById("group-play-start-button");
+if (groupPlayStartButton) {
+  groupPlayStartButton.addEventListener("click", () => {
+    const seedInput = document.getElementById("seed-input");
+    const seed = seedInput.value.trim().toUpperCase();
+    if (seed.length !== 10 || !/^[A-Z0-9]+$/.test(seed)) {
+      alert("Please enter exactly 10 letters or numbers.");
+      return;
+    }
+    gameMode = "group-play";
+    const openingMenu = document.getElementById("opening-menu");
+    const groupPlaySubmenu = document.getElementById("group-play-submenu");
+    const resumeButton = document.getElementById("resume-button");
+    const homeButton = document.getElementById("home-button");
+    openingMenu.style.display = "none";
+    groupPlaySubmenu.style.display = "none";
+    if (resumeButton) resumeButton.style.display = "block";
+    if (homeButton) {
+      homeButton.classList.remove("loading");
+      homeButton.classList.add("loaded");
+    }
+    startGroupPlay(seed);
+    playSound("click");
+  });
 }
 function updateQSCScore() {
 	const sets = Math.min(quartzCount, sandstoneCount, coalCount);
@@ -7369,6 +7570,50 @@ function seededRandom(seed) {
 	};
 }
 
+// Add this function to JS (similar to startDailyChallenge, but for group play)
+function startGroupPlay(seed) {
+  currentSeed = seed; // Store for screenshot
+  console.log("Group Play Seed:", seed);
+  const random = seededRandom(seed);
+  const groupDigIndex = Math.floor(random() * digSheets.length);
+  currentDigSheet = digSheets[groupDigIndex];
+  console.log("Selected Dig Sheet:", currentDigSheet);
+  const digSheetElement = document.getElementById("dig-sheet");
+  const overlayImg = document.querySelector("#dig-sheet-overlay img");
+  digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+  overlayImg.src = digSheetOverlayImages[currentDigSheet];
+  digSheetElement.style.display = "none";
+  digSheetElement.offsetHeight;
+  digSheetElement.style.display = "block";
+  const groupRollIndex = Math.floor(random() * rollSheets.length);
+  currentRollSheet = rollSheets[groupRollIndex];
+  console.log("Selected Roll Sheet:", currentRollSheet);
+  const rollSheetImg = document
+    .getElementById("roll-sheet")
+    .querySelector("img:not(#green-image img):not(#white-image img)");
+  rollSheetImg.src = rollSheetImages[currentRollSheet];
+  groupDiceRolls.length = 0;
+  for (let i = 0; i < 9; i++) {
+    const greenRoll = Math.floor(random() * 6) + 1;
+    const whiteRoll = Math.floor(random() * 6) + 1;
+    groupDiceRolls.push({ green: greenRoll, white: whiteRoll });
+  }
+  console.log("Group Dice Rolls:", groupDiceRolls);
+  rollCount = 0;
+  const boulderElements = document.querySelectorAll(".boulder-cross-off");
+  boulderElements.forEach((element, index) => {
+    const config = digSheetBoulderConfigs[currentDigSheet][index];
+    if (config) {
+      element.style.top = config.top;
+      element.style.left = config.left;
+    }
+  });
+  resetGrid();
+  console.log("First random (dig): ", random());
+  console.log("Second random (roll): ", random());
+  console.log("First green roll: ", Math.floor(random() * 6) + 1);
+}
+
 function switchDigSheet() {
 	if (hasGameState()) {
 		const confirmReset = window.confirm(
@@ -8065,6 +8310,90 @@ if (freePlayButton) {
         applyClickAnimation(newFreePlayButton);
     });
 }
+
+const backGroupPlayButton = document.getElementById("back-group-play");
+if (backGroupPlayButton) {
+  backGroupPlayButton.addEventListener("click", () => {
+    const groupPlaySubmenu = document.getElementById("group-play-submenu");
+    const mainMenuElements = [
+      document.getElementById("resume-button"),
+      document.getElementById("free-play-button"),
+      document.getElementById("group-play-button"),
+      document.getElementById("daily-challenge-button"),
+      document.getElementById("how-to-play-button"),
+      document.getElementById("clearly-sharp-button"),
+      document.getElementById("daily-challenge-timer"),
+      document.getElementById("game-logo")
+    ];
+    groupPlaySubmenu.style.display = "none";
+    mainMenuElements.forEach((el) => {
+      if (el) el.style.display = "";
+    });
+    if (document.getElementById("resume-button"))
+      document.getElementById("resume-button").style.display = hasGameState() ? "block" : "none";
+    playSound("click");
+  });
+}
+
+const generateSeedButton = document.getElementById("generate-seed-button");
+if (generateSeedButton) {
+  generateSeedButton.addEventListener("click", () => {
+    const seedInput = document.getElementById("seed-input");
+    seedInput.value = generateRandomSeed(10);
+    playSound("click");
+  });
+}
+
+const groupPlayStartButton = document.getElementById("group-play-start-button");
+if (groupPlayStartButton) {
+  groupPlayStartButton.addEventListener("click", () => {
+    const seedInput = document.getElementById("seed-input");
+    const seed = seedInput.value.trim().toUpperCase();
+    if (seed.length !== 10 || !/^[A-Z0-9]+$/.test(seed)) {
+      alert("Please enter exactly 10 letters or numbers.");
+      return;
+    }
+    gameMode = "group-play";
+    const openingMenu = document.getElementById("opening-menu");
+    const groupPlaySubmenu = document.getElementById("group-play-submenu");
+    const resumeButton = document.getElementById("resume-button");
+    const homeButton = document.getElementById("home-button");
+    openingMenu.style.display = "none";
+    groupPlaySubmenu.style.display = "none";
+    if (resumeButton) resumeButton.style.display = "block";
+    if (homeButton) {
+      homeButton.classList.remove("loading");
+      homeButton.classList.add("loaded");
+    }
+    startGroupPlay(seed);
+    playSound("click");
+  });
+}
+
+// Updated Group Play button listener (complete block) - add explicit resume hide
+const groupPlayButton = document.getElementById("group-play-button");
+if (groupPlayButton) {
+  groupPlayButton.addEventListener("click", () => {
+    const groupPlaySubmenu = document.getElementById("group-play-submenu");
+    const mainMenuElements = [
+      document.getElementById("free-play-button"),
+      document.getElementById("group-play-button"),
+      document.getElementById("daily-challenge-button"),
+      document.getElementById("how-to-play-button"),
+      document.getElementById("clearly-sharp-button"),
+      document.getElementById("daily-challenge-timer"),
+      document.getElementById("game-logo")
+    ];
+    const resumeButton = document.getElementById("resume-button");
+    mainMenuElements.forEach((el) => {
+      if (el) el.style.display = "none";
+    });
+    if (resumeButton) resumeButton.style.display = "none"; // Explicitly hide resume in submenu
+    groupPlaySubmenu.style.display = "flex";
+    playSound("click");
+  });
+}
+
 // Updated Daily Challenge button listener (complete block)
 const dailyChallengeButton = document.getElementById(
 "daily-challenge-button"
@@ -8278,6 +8607,7 @@ if (backClearlySharpButton) {
 }
 		
 		// Updated Home button listener (complete block)
+// Updated Home button listener (complete block)
 const homeButton = document.getElementById("home-button");
 if (homeButton) {
     homeButton.addEventListener("click", () => {
@@ -8291,7 +8621,10 @@ if (homeButton) {
         openingMenu.style.display = "flex";
         const mainMenuElements = [
             document.getElementById("free-play-button"),
+            document.getElementById("group-play-button"),
             document.getElementById("daily-challenge-button"),
+            document.getElementById("how-to-play-button"),
+            document.getElementById("clearly-sharp-button"),
             document.getElementById("daily-challenge-timer"),
             document.getElementById("game-logo")
         ];
@@ -8564,205 +8897,195 @@ if (randomButton) {
 		}
 
 		// "Screenshot" button logic (triggers your existing screenshot overlay)
-		if (screenshotButton) {
-			screenshotButton.addEventListener("click", () => {
-				const digClone = digSheet.cloneNode(true);
-				digClone.id = "dig-sheet-clone";
-				// Explicit styles for container fill
-				digClone.style.position = "absolute";
-				digClone.style.top = "0";
-				digClone.style.left = "0";
-				digClone.style.width = "100%";
-				digClone.style.height = "75dvh";
-				digClone.style.overflow = "hidden";
-
-				// Access nested overlay in clone
-				const nestedOverlay = digClone.querySelector("#dig-sheet-overlay");
-				if (nestedOverlay) {
-					nestedOverlay.style.width = "100%";
-					nestedOverlay.style.height = "75dvh";
-					nestedOverlay.style.pointerEvents = "none";
-				}
-
-				// Hide buttons/nav in the clone
-				const buttonsToHide = digClone.querySelectorAll(
-					"#home-button, #dig-button, #undo-button, .return-button, .nav-button"
-				);
-				buttonsToHide.forEach((btn) => (btn.style.display = "none"));
-
-				// NEW: Disable and hide dig-sheet-switcher in clone (no hover/click)
-				const switcherClone = digClone.querySelector("#dig-sheet-switcher");
-				if (switcherClone) {
-					switcherClone.style.pointerEvents = "none";
-					switcherClone.style.opacity = "0"; // Or "display: none;" if you want it completely gone
-				}
-
-				// Hide polyomino SVGs
-				const svgsToHide = digClone.querySelectorAll(".polyomino-svg");
-				svgsToHide.forEach((svg) => (svg.style.display = "none"));
-
-				// Replace bg-image with full-res <img> for crisp raster
-				const bgImg = document.createElement("img");
-				bgImg.src = digSheetBackgroundImages[currentDigSheet];
-				bgImg.style.position = "absolute";
-				bgImg.style.top = "0";
-				bgImg.style.left = "0";
-				bgImg.style.width = "100%";
-				bgImg.style.height = "100%";
-				bgImg.style.objectFit = "contain";
-				bgImg.style.zIndex = "-1";
-				bgImg.style.pointerEvents = "none";
-				digClone.insertBefore(bgImg, digClone.firstChild);
-
-				// Clear original bg-image
-				digClone.style.backgroundImage = "none";
-
-				// Grid placeholder
-				const gridPlaceholder = digClone.querySelector(".grid-placeholder");
-				if (gridPlaceholder) {
-					gridPlaceholder.style.position = "absolute";
-				}
-
-				const scoreBgDiv = document.createElement("div");
-				scoreBgDiv.id = "score-bg-div";
-				scoreBgDiv.style.position = "absolute";
-				scoreBgDiv.style.top = "77dvh"; // Change this number to move scoreBgDiv down (e.g., "80dvh" for more space, "75dvh" for no space)
-				scoreBgDiv.style.left = "9dvh";
-				scoreBgDiv.style.width = "100%";
-				scoreBgDiv.style.height = "10dvh";
-				scoreBgDiv.style.overflow = "hidden";
-				scoreBgDiv.style.alignItems = "center";
-
-				// Add <img> for badge (full-width, aspect preserved, centered)
-				const scoreImg = document.createElement("img");
-				scoreImg.src = "images/final-score-wide.png";
-				scoreImg.style.position = "absolute";
-				scoreImg.style.top = "0";
-				scoreImg.style.left = "0";
-				scoreImg.style.width = "100%";
-				scoreImg.style.height = "auto";
-				scoreImg.style.objectFit = "contain";
-				scoreImg.style.objectPosition = "center";
-				scoreBgDiv.appendChild(scoreImg);
-
-				// Create new scoreTextDiv from scratch (child of scoreBgDiv)
-				const scoreTextDiv = document.createElement("div");
-				scoreTextDiv.id = "score-text-div";
-				scoreTextDiv.style.position = "absolute";
-				scoreTextDiv.style.top = "0";
-				scoreTextDiv.style.left = "-.4dvh";
-				scoreTextDiv.style.width = "100%";
-				scoreTextDiv.style.height = "100%";
-				scoreTextDiv.style.display = "flex";
-				scoreTextDiv.style.justifyContent = "center";
-				scoreTextDiv.style.alignItems = "center";
-				scoreTextDiv.style.paddingTop = "0.5dvh"; // Change this number to nudge the number down (e.g., "2dvh" for more down, "0dvh" for none)
-				scoreTextDiv.style.paddingLeft = ".3cqh"; // Change this number to nudge the number left (e.g., "2dvh" for more left, "0dvh" for none)
-				scoreTextDiv.style.zIndex = "40"; // High for above img
-				scoreTextDiv.style.color = "black";
-				scoreTextDiv.style.fontSize = "4dvh";
-				scoreTextDiv.style.fontFamily = '"Covered By Your Grace", cursive';
-				scoreTextDiv.style.opacity = "1";
-				scoreTextDiv.style.visibility = "visible";
-
-				// Duplicate sum logic from updateFinalScore() for screenshot total
-				let totalScore = 0;
-				totalScore +=
-					parseInt(document.getElementById("diamond-score-readout")?.textContent) ||
-					0;
-				totalScore +=
-					parseInt(document.getElementById("silver-score-readout")?.textContent) ||
-					0;
-				totalScore +=
-					parseInt(document.getElementById("lapis-score-readout")?.textContent) || 0;
-				totalScore +=
-					parseInt(document.getElementById("peridot-score-readout")?.textContent) ||
-					0;
-				totalScore +=
-					parseInt(document.getElementById("topaz-score-readout")?.textContent) || 0;
-				totalScore +=
-					parseInt(document.getElementById("opal-score-readout")?.textContent) || 0;
-				totalScore +=
-					parseInt(document.getElementById("amber-score-readout")?.textContent) || 0;
-				totalScore +=
-					parseInt(document.getElementById("q-s-c-score-readout")?.textContent) || 0;
-				if (quartzBonus) totalScore += 6;
-				if (sandstoneBonus) totalScore += 9;
-				if (coalBonus) totalScore += 13;
-
-				// Set the score text from calculated total
-				scoreTextDiv.textContent = totalScore === 0 ? "" : totalScore;
-
-				// Append to scoreBgDiv
-				scoreBgDiv.appendChild(scoreTextDiv);
-
-				const dateDiv = document.createElement("div");
-				dateDiv.style.position = "absolute";
-				dateDiv.style.top = "77.5dvh"; // Same as scoreBgDiv
-				dateDiv.style.left = "-5.5dvh";
-				dateDiv.style.width = "50%";
-				dateDiv.style.height = "10dvh";
-				dateDiv.style.display = "flex";
-				dateDiv.style.flexDirection = "column";
-				dateDiv.style.justifyContent = "center";
-				dateDiv.style.alignItems = "center";
-				dateDiv.style.fontFamily = '"Covered By Your Grace", cursive';
-				dateDiv.style.fontSize = "3.5dvh";
-				dateDiv.style.color = "black";
-				dateDiv.style.textAlign = "center";
-				dateDiv.style.zIndex = "50";
-				dateDiv.style.pointerEvents = "none";
-
-				// Get current date in format "Month <br> 05 / 2025"
-				const months = [
-					"January",
-					"February",
-					"March",
-					"April",
-					"May",
-					"June",
-					"July",
-					"August",
-					"September",
-					"October",
-					"November",
-					"December"
-				];
-
-				const now = new Date();
-				const month = months[now.getMonth()];
-				const day = now.getDate().toString().padStart(2, "0");
-				const year = now.getFullYear();
-				dateDiv.innerHTML = `${month}<br>${day} / ${year}`;
-
-				// NEW: Add game logo <img> centered near top of screenshot
-				const logoImg = document.createElement("img");
-				logoImg.src = "images/logo-big.png";
-				logoImg.style.position = "absolute";
-				logoImg.style.top = "1.5dvh"; // Change this to nudge up/down (lower number moves up, higher moves down)
-				logoImg.style.left = "50%";
-				logoImg.style.transform = "translateX(-50%)"; // Center horizontally
-				logoImg.style.width = "17dvh"; // Change this for size (e.g., "25dvh" for larger, "15dvh" for smaller)
-				logoImg.style.height = "auto"; // Preserve aspect
-				logoImg.style.zIndex = "50"; // Above dig sheet
-				logoImg.style.pointerEvents = "none";
-
-				// Append to container
-				screenshotContainer.innerHTML = "";
-				screenshotContainer.appendChild(digClone);
-				screenshotContainer.appendChild(logoImg); // Add logo after digClone
-				screenshotContainer.appendChild(dateDiv); // Add date on left
-				screenshotContainer.appendChild(scoreBgDiv);
-
-				// Reflow
-				screenshotContainer.offsetHeight;
-
-				// Show overlay
-				endGameOverlay.classList.remove("hidden");
-
-				playSound("click");
-			});
-		}
+		// Update screenshotButton listener: Conditional dateDiv text with <br> for seed (replace the entire listener block)
+if (screenshotButton) {
+  screenshotButton.addEventListener("click", () => {
+    const digClone = digSheet.cloneNode(true);
+    digClone.id = "dig-sheet-clone";
+    // Explicit styles for container fill
+    digClone.style.position = "absolute";
+    digClone.style.top = "0";
+    digClone.style.left = "0";
+    digClone.style.width = "100%";
+    digClone.style.height = "75dvh";
+    digClone.style.overflow = "hidden";
+    // Access nested overlay in clone
+    const nestedOverlay = digClone.querySelector("#dig-sheet-overlay");
+    if (nestedOverlay) {
+      nestedOverlay.style.width = "100%";
+      nestedOverlay.style.height = "75dvh";
+      nestedOverlay.style.pointerEvents = "none";
+    }
+    // Hide buttons/nav in the clone
+    const buttonsToHide = digClone.querySelectorAll(
+      "#home-button, #dig-button, #undo-button, .return-button, .nav-button"
+    );
+    buttonsToHide.forEach((btn) => (btn.style.display = "none"));
+    // NEW: Disable and hide dig-sheet-switcher in clone (no hover/click)
+    const switcherClone = digClone.querySelector("#dig-sheet-switcher");
+    if (switcherClone) {
+      switcherClone.style.pointerEvents = "none";
+      switcherClone.style.opacity = "0"; // Or "display: none;" if you want it completely gone
+    }
+    // Hide polyomino SVGs
+    const svgsToHide = digClone.querySelectorAll(".polyomino-svg");
+    svgsToHide.forEach((svg) => (svg.style.display = "none"));
+    // Replace bg-image with full-res <img> for crisp raster
+    const bgImg = document.createElement("img");
+    bgImg.src = digSheetBackgroundImages[currentDigSheet];
+    bgImg.style.position = "absolute";
+    bgImg.style.top = "0";
+    bgImg.style.left = "0";
+    bgImg.style.width = "100%";
+    bgImg.style.height = "100%";
+    bgImg.style.objectFit = "contain";
+    bgImg.style.zIndex = "-1";
+    bgImg.style.pointerEvents = "none";
+    digClone.insertBefore(bgImg, digClone.firstChild);
+    // Clear original bg-image
+    digClone.style.backgroundImage = "none";
+    // Grid placeholder
+    const gridPlaceholder = digClone.querySelector(".grid-placeholder");
+    if (gridPlaceholder) {
+      gridPlaceholder.style.position = "absolute";
+    }
+    const scoreBgDiv = document.createElement("div");
+    scoreBgDiv.id = "score-bg-div";
+    scoreBgDiv.style.position = "absolute";
+    scoreBgDiv.style.top = "77dvh"; // Change this number to move scoreBgDiv down (e.g., "80dvh" for more space, "75dvh" for no space)
+    scoreBgDiv.style.left = "9dvh";
+    scoreBgDiv.style.width = "100%";
+    scoreBgDiv.style.height = "10dvh";
+    scoreBgDiv.style.overflow = "hidden";
+    scoreBgDiv.style.alignItems = "center";
+    // Add <img> for badge (full-width, aspect preserved, centered)
+    const scoreImg = document.createElement("img");
+    scoreImg.src = "images/final-score-wide.png";
+    scoreImg.style.position = "absolute";
+    scoreImg.style.top = "0";
+    scoreImg.style.left = "0";
+    scoreImg.style.width = "100%";
+    scoreImg.style.height = "auto";
+    scoreImg.style.objectFit = "contain";
+    scoreImg.style.objectPosition = "center";
+    scoreBgDiv.appendChild(scoreImg);
+    // Create new scoreTextDiv from scratch (child of scoreBgDiv)
+    const scoreTextDiv = document.createElement("div");
+    scoreTextDiv.id = "score-text-div";
+    scoreTextDiv.style.position = "absolute";
+    scoreTextDiv.style.top = "0";
+    scoreTextDiv.style.left = "-.4dvh";
+    scoreTextDiv.style.width = "100%";
+    scoreTextDiv.style.height = "100%";
+    scoreTextDiv.style.display = "flex";
+    scoreTextDiv.style.justifyContent = "center";
+    scoreTextDiv.style.alignItems = "center";
+    scoreTextDiv.style.paddingTop = "0.5dvh"; // Change this number to nudge the number down (e.g., "2dvh" for more down, "0dvh" for none)
+    scoreTextDiv.style.paddingLeft = ".3cqh"; // Change this number to nudge the number left (e.g., "2dvh" for more left, "0dvh" for none)
+    scoreTextDiv.style.zIndex = "40"; // High for above img
+    scoreTextDiv.style.color = "black";
+    scoreTextDiv.style.fontSize = "4dvh";
+    scoreTextDiv.style.fontFamily = '"Covered By Your Grace", cursive';
+    scoreTextDiv.style.opacity = "1";
+    scoreTextDiv.style.visibility = "visible";
+    // Duplicate sum logic from updateFinalScore() for screenshot total
+    let totalScore = 0;
+    totalScore +=
+      parseInt(document.getElementById("diamond-score-readout")?.textContent) ||
+      0;
+    totalScore +=
+      parseInt(document.getElementById("silver-score-readout")?.textContent) ||
+      0;
+    totalScore +=
+      parseInt(document.getElementById("lapis-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("peridot-score-readout")?.textContent) ||
+      0;
+    totalScore +=
+      parseInt(document.getElementById("topaz-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("opal-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("amber-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("q-s-c-score-readout")?.textContent) || 0;
+    if (quartzBonus) totalScore += 6;
+    if (sandstoneBonus) totalScore += 9;
+    if (coalBonus) totalScore += 13;
+    // Set the score text from calculated total
+    scoreTextDiv.textContent = totalScore === 0 ? "" : totalScore;
+    // Append to scoreBgDiv
+    scoreBgDiv.appendChild(scoreTextDiv);
+    const dateDiv = document.createElement("div");
+    dateDiv.style.position = "absolute";
+    dateDiv.style.top = "77.5dvh"; // Same as scoreBgDiv
+    dateDiv.style.left = "-5.5dvh";
+    dateDiv.style.width = "50%";
+    dateDiv.style.height = "10dvh";
+    dateDiv.style.display = "flex";
+    dateDiv.style.flexDirection = "column";
+    dateDiv.style.justifyContent = "center";
+    dateDiv.style.alignItems = "center";
+    dateDiv.style.fontFamily = '"Covered By Your Grace", cursive';
+    dateDiv.style.fontSize = "3.5dvh";
+    dateDiv.style.color = "black";
+    dateDiv.style.textAlign = "center";
+    dateDiv.style.zIndex = "50";
+    dateDiv.style.pointerEvents = "none";
+    // Conditional text based on gameMode
+    let dateText = "";
+    if (gameMode === "daily-challenge") {
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ];
+      const now = new Date();
+      const month = months[now.getMonth()];
+      const day = now.getDate().toString().padStart(2, "0");
+      const year = now.getFullYear();
+      dateText = `${month}<br>${day} / ${year}`;
+    } else if (gameMode === "free-play") {
+      dateText = "Free Play";
+    } else if (gameMode === "group-play") {
+      dateText = `Seed:<br>${currentSeed}`;
+    } else {
+      dateText = "Gem Getter Pro"; // Fallback
+    }
+    dateDiv.innerHTML = dateText;
+    // NEW: Add game logo <img> centered near top of screenshot
+    const logoImg = document.createElement("img");
+    logoImg.src = "images/logo-big.png";
+    logoImg.style.position = "absolute";
+    logoImg.style.top = "1.5dvh"; // Change this to nudge up/down (lower number moves up, higher moves down)
+    logoImg.style.left = "50%";
+    logoImg.style.transform = "translateX(-50%)"; // Center horizontally
+    logoImg.style.width = "17dvh"; // Change this for size (e.g., "25dvh" for larger, "15dvh" for smaller)
+    logoImg.style.height = "auto"; // Preserve aspect
+    logoImg.style.zIndex = "50"; // Above dig sheet
+    logoImg.style.pointerEvents = "none";
+    // Append to container
+    screenshotContainer.innerHTML = "";
+    screenshotContainer.appendChild(digClone);
+    screenshotContainer.appendChild(logoImg); // Add logo after digClone
+    screenshotContainer.appendChild(dateDiv); // Add date on left
+    screenshotContainer.appendChild(scoreBgDiv);
+    // Reflow
+    screenshotContainer.offsetHeight;
+    // Show overlay
+    endGameOverlay.classList.remove("hidden");
+    playSound("click");
+  });
+}
 
 		// Selectors for cloning and overlay
 		const digSheet = document.getElementById("dig-sheet");
@@ -9275,4 +9598,3 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
-
