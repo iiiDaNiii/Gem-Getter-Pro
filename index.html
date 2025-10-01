@@ -6909,7 +6909,7 @@ function commitPolyomino() {
     if (tempOilCount >= 2 && prevOilCount < 2) newBonuses.push(0); // 2nd oil -> clicker 0
     if (tempOilCount >= 4 && prevOilCount < 4) newBonuses.push(1); // 4th oil -> clicker 1
     if (tempOilCount >= 5 && prevOilCount < 5) newBonuses.push(2); // 5th oil -> clicker 2
-    if (tempOilCount >= 6 && prevOilCount < 7) newBonuses.push(3); // 6th oil -> clicker 3
+    if (tempOilCount >= 6 && prevOilCount < 6) newBonuses.push(3); // 6th oil -> clicker 3
     if (tempOilCount >= 7 && prevOilCount < 7) {
         newBonuses.push(4, 4); // 7th oil -> clicker 4 (twice)
     }
@@ -7156,15 +7156,15 @@ function commitPolyomino() {
                 } else {
                     console.log("No remaining bonuses, exiting bonus dig mode");
                     exitBonusDigMode();
-                    // Tutorial: For round 9 bonus digs, show message 20 after final bonus collection (no score scroll assumed for bonus)
-                    if (tutorialMode && rollCount === 9) {
-                        showTutorialMessage(tutorialMessages[19]); // "You did it! Click the finish button..."
-                        tutorialStep = 20; // Update to after message19 (20 1-based)
-                    }
-                    // NEW: Show message 15 after exiting bonus mode (post-bonus dig)
+                    // MODIFIED: Moved tutorial message 15 here for all modes
                     if (tutorialMode && tutorialStep === 15) {
                         showTutorialMessage(tutorialMessages[15]); // "You dug out an entire row..."
                         tutorialStep = 16; // Update to after message15
+                    }
+                    // Tutorial: For round 9 bonus digs, show message 20 after final bonus collection
+                    if (tutorialMode && rollCount === 9) {
+                        showTutorialMessage(tutorialMessages[19]); // "You did it! Click the finish button..."
+                        tutorialStep = 20; // Update to after message19 (20 1-based)
                     }
                 }
             } else if (oilBonusQueue.length > 0 && !bonusDigMode) {
@@ -9275,3 +9275,4 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
