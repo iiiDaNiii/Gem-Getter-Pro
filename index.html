@@ -29,14 +29,6 @@
     <style>
 
         /* Add to the top of your CSS */
-
-/* New Bit to Block Double Tap Zoom on iOS */
-html, body, #game-container, #opening-menu, .submenu-content, .cell, .menu-button, .sheet-button {
-  touch-action: manipulation; /* Prevents double-tap zoom on iOS */
-}
-.menu-button, .sheet-button, .back-button, #roll-button, #dig-button, #undo-button, #home-button {
-  touch-action: manipulation;
-}
 		
 /* Lock html/body to full viewport, no scroll */
 html, body {
@@ -44,8 +36,8 @@ html, body {
   min-height: 100svh; /* Use svh (small viewport) on mobile to avoid bar-induced overflow */
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Disable all overflow/scroll (x and y) */
-  touch-action: pan-x; /* Allow horizontal touch (for swipes), block vertical */
+  overflow: hidden;
+  touch-action: pan-x manipulation;
 }
 
 /* Prevent pull-to-refresh/bounce on mobile */
@@ -58,6 +50,7 @@ body {
   height: 100svh; /* Match body, use svh for consistency */
   min-height: 100svh;
   overflow: hidden; /* Redundant but ensures no child overflow */
+  touch-action: pan-x manipulation;
 }
 
 /* For sections/wrappers: Clamp heights to prevent internal overflow */
@@ -65,6 +58,7 @@ body {
   height: 100svh; /* Switch to svh if dvh causes issues; test both */
   max-height: 100svh;
   overflow: hidden;
+  touch-action: pan-x manipulation;
 }
 
 /* Fixed arrows: Ensure they stay visible over everything */
@@ -387,6 +381,7 @@ body {
 	position: relative;
 	overflow: hidden;
 	background-color: white;
+	touch-action: pan-x manipulation;
 }
 .section-image-wrapper {
 	position: relative;
@@ -396,6 +391,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	container-type:size;
+	touch-action: pan-x manipulation;
 }
 .section-image {
 	max-width: 100%;
@@ -404,11 +400,13 @@ body {
 	height: auto; /* Allow natural height up to max */
 	object-fit: contain;
 	position: relative; /* Remove any absolute positioning conflicts */
+	touch-action: pan-x manipulation;
 }
 #dig-roll {
 	position: relative;
 	width: 100vw;
 	height: 100dvh;
+	touch-action: pan-x manipulation;
 }
 
 #dig-sheet {
@@ -421,6 +419,7 @@ body {
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
+	touch-action: pan-x manipulation;
 }
 
 #dig-sheet.dig-sheet-a {
@@ -440,11 +439,13 @@ body {
   pointer-events: none;
 	container-type:size;
 	container-name:overlay;
+	touch-action: pan-x manipulation;
 }
 #dig-sheet-overlay img {
   width: 100%;
   height: 100%;
   object-fit: contain; /* Preserve aspect ratio */
+	touch-action: pan-x manipulation;
 }
 
 #dig-sheet-switcher {
@@ -492,6 +493,7 @@ body {
 	height:100cqh;
 	z-index:40;
 	container-type:size;
+	touch-action: pan-x manipulation;
 }
 
 .grid-placeholder {
@@ -503,6 +505,7 @@ body {
   z-index: 2;
   position: absolute;
   overflow: visible;
+	touch-action: pan-x manipulation;
 }
 
 #roll-area {
@@ -960,6 +963,7 @@ body {
   overflow: visible; /* Prevent clipping of SVG stroke */
 	container-type:size;
 	-webkit-transform: translateZ(0);
+	touch-action: pan-x manipulation;
 }
 
 .cell {
@@ -970,6 +974,7 @@ body {
 	cursor: pointer;
 	box-sizing: border-box;
 	position: relative;
+	touch-action: pan-x manipulation;
 }
 
 .cell.no-pointer, .cell.disabled, .cell.committed {
@@ -9606,6 +9611,7 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
 
 
 
