@@ -1667,12 +1667,22 @@ body {
   100% { transform: scale(1); }
 }
 
+@keyframes pulse-finish {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.1); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
 .pulsing-roll {
   animation: pulse-roll 1000ms ease-in-out infinite;
 }
 
 .pulsing-dig {
   animation: pulse-dig 1000ms ease-in-out infinite;
+}
+
+.pulsing-finish {
+  animation: pulse-finish 1000ms ease-in-out infinite;
 }
 
 @keyframes spin {
@@ -1793,31 +1803,6 @@ body {
   animation: pulse-ng-bonus 1000ms ease-in-out infinite;
 }
 
-.finish-button {
-  position: absolute;
-  bottom: 10cqh; /* Bottom-aligned in scoresheet, above any nav */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20cqh;
-  height: 6cqh;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.5cqh;
-  background-color: #333;
-  color: white;
-  border: none;
-  border-radius: 0.5cqh;
-  cursor: pointer;
-  z-index: 30; /* Above circles/readouts */
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  opacity: 1; /* Always visible/clickable */
-  pointer-events: auto;
-}
-
-.finish-button:hover {
-  background-color: #555;
-  box-shadow: 0 0 0.5dvh rgba(255, 255, 255, 0.3);
-}
-
 .end-game-overlay {
   position: fixed;
   top: 0;
@@ -1905,10 +1890,22 @@ body {
   pointer-events: auto;
 }
 
-.scoresheet-button:hover {
+.scoresheet-button:not(.disabled):hover {
   background-color: #555;
   box-shadow: 0 0 0.5dvh rgba(255, 255, 255, 0.3);
-	transform: translateX(-50%) scale(1.1);
+  transform: translateX(-50%) scale(1.1);
+}
+
+.scoresheet-button.disabled {
+  opacity: 0.5;
+  cursor: default; /* No pointer hand */
+  transition: none; /* Block all transitions to prevent subtle hover changes */
+}
+
+.scoresheet-button.disabled:hover {
+  transform: translateX(-50%) scale(1); /* Explicitly block scale */
+  background-color: #333; /* Lock base color, no change */
+  box-shadow: none; /* No shadow */
 }
 
 .off-screen {
@@ -5569,6 +5566,7 @@ function rollDice() {
             updateRollButtonState();
             updateDigButtonState();
             updateCellCursors();
+		updateFinishButtonState();
         }
     }
     let startTime;
@@ -6488,6 +6486,7 @@ function resetGrid() {
     updateNgClickers();
     updateOilNgCrossOffClickers();
     updateCellCursors();
+    updateFinishButtonState(); // NEW: Update Finish button state after reset
     gamePhase = "roll";
     updateRollButtonState();
     updateDigButtonState();
@@ -7416,6 +7415,7 @@ function commitPolyomino() {
                 }
             });
             updateNgCrossoffState();
+		updateFinishButtonState();
             // Force reflow to ensure final scroll-back renders (mobile fix)
             const container = document.getElementById("game-container");
             if (container) {
@@ -8185,55 +8185,74 @@ function exitBonusDigMode(undo = false) {
     updateCellCursors();
     playSound("click");
     console.log("Exited bonus dig mode");
+    updateFinishButtonState();
 }
 
+// Update updateDigButtonState: Aggressive animation reset with inline none/reflow (replace entire function)
 function updateDigButtonState() {
-	const digButton = document.getElementById("dig-button");
-	if (!digButton) return;
-	if (gamePhase !== "dig") {
-		digButton.classList.add("loading");
-		digButton.classList.remove("loaded", "pulsing-dig");
-		digButton.style.opacity = "0.5";
-		digButton.style.pointerEvents = "none";
-		if (bonusDigMode) {
-			digButton.classList.add("bonus-mode");
-		} else {
-			digButton.classList.remove("bonus-mode");
-		}
-		return;
-	}
-	const allNewSize =
-		selectedCells.size + lockedGroups.reduce((acc, g) => acc + g.size, 0);
-	const isValid = bonusDigMode
-		? allNewSize === 1 && isConnectedGraph()
-		: allNewSize > 0 &&
-		  isConnectedGraph() &&
-		  (allNewSize === 1 || isValidPattern());
-	console.log(
-		`Dig button state: allNewSize=${allNewSize}, connected=${isConnectedGraph()}, validPattern=${isValidPattern()}, bonusDigMode=${bonusDigMode}`
-	);
-	if (isValid) {
-		digButton.classList.remove("loading");
-		digButton.classList.add("loaded", "pulsing-dig");
-		digButton.classList.remove("bonus-mode"); // Remove bonus-mode to avoid spin animation conflict
-		digButton.style.opacity = "1";
-		digButton.style.pointerEvents = "auto";
-		if (bonusDigMode) {
-			const img = digButton.querySelector("img");
-			if (img) img.src = "images/oil-dig-button.png"; // Ensure bonus image
-		}
-	} else {
-		digButton.classList.add("loading");
-		digButton.classList.remove("loaded", "pulsing-dig");
-		if (bonusDigMode) {
-			digButton.classList.add("bonus-mode");
-		} else {
-			digButton.classList.remove("bonus-mode");
-		}
-		digButton.style.opacity = "0.5";
-		digButton.style.pointerEvents = "none";
-	}
+  const digButton = document.getElementById("dig-button");
+  if (!digButton) return;
+  if (gamePhase !== "dig") {
+    digButton.classList.add("loading");
+    digButton.classList.remove("loaded", "pulsing-dig");
+    digButton.style.opacity = "0.5";
+    digButton.style.pointerEvents = "none";
+    if (bonusDigMode) {
+      digButton.classList.add("bonus-mode");
+    } else {
+      digButton.classList.remove("bonus-mode");
+    }
+    return;
+  }
+  const allNewSize =
+    selectedCells.size + lockedGroups.reduce((acc, g) => acc + g.size, 0);
+  const isValid = bonusDigMode
+    ? allNewSize === 1 && isConnectedGraph()
+    : allNewSize > 0 &&
+      isConnectedGraph() &&
+      (allNewSize === 1 || isValidPattern());
+  console.log(
+    `Dig button state: allNewSize=${allNewSize}, connected=${isConnectedGraph()}, validPattern=${isValidPattern()}, bonusDigMode=${bonusDigMode}`
+  );
+  if (isValid) {
+    digButton.classList.remove("loading");
+    digButton.classList.add("loaded");
+    digButton.classList.remove("bonus-mode"); // Remove bonus-mode to avoid spin animation conflict
+    digButton.style.opacity = "1";
+    digButton.style.pointerEvents = "auto";
+    if (bonusDigMode) {
+      const img = digButton.querySelector("img");
+      if (img) img.src = "images/oil-dig-button.png"; // Ensure bonus image
+    }
+    // Aggressive pulsing-dig restart: Remove class, set inline animation none, reflow, clear inline, add class
+    digButton.classList.remove("pulsing-dig");
+    digButton.style.animation = "none"; // Inline override to stop any animation
+    digButton.offsetHeight; // Force reflow
+    digButton.style.animation = ""; // Clear inline to let class take over
+    digButton.classList.add("pulsing-dig");
+  } else {
+    digButton.classList.add("loading");
+    digButton.classList.remove("loaded", "pulsing-dig");
+    if (bonusDigMode) {
+      digButton.classList.add("bonus-mode");
+    } else {
+      digButton.classList.remove("bonus-mode");
+    }
+    digButton.style.opacity = "0.5";
+    digButton.style.pointerEvents = "none";
+  }
 }
+
+// Update updateFinishButtonState: Restore opacity control (replace entire function)
+function updateFinishButtonState() {
+  const finishButton = document.getElementById("finish-button");
+  if (!finishButton) return;
+  const enabled = rollCount >= 9 && oilBonusQueue.length === 0 && !bonusDigMode && gamePhase === "end";
+  finishButton.classList.toggle("disabled", !enabled);
+  finishButton.style.opacity = enabled ? "1" : "0.5"; // Inline for override
+  finishButton.classList.toggle("pulsing-finish", enabled); // Use new class
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 	preloadImages().then(() => {
 		// Function to handle click animation
@@ -8852,63 +8871,129 @@ if (randomButton) {
 			requestAnimationFrame(update);
 		}
 
-		// "Finish" button logic
-		if (finishButton) {
-			finishButton.addEventListener("click", () => {
-				// Duplicate sum logic for totalScore
-				let totalScore = 0;
-				totalScore +=
-					parseInt(document.getElementById("diamond-score-readout")?.textContent) ||
-					0;
-				totalScore +=
-					parseInt(document.getElementById("silver-score-readout")?.textContent) ||
-					0;
-				totalScore +=
-					parseInt(document.getElementById("lapis-score-readout")?.textContent) || 0;
-				totalScore +=
-					parseInt(document.getElementById("peridot-score-readout")?.textContent) ||
-					0;
-				totalScore +=
-					parseInt(document.getElementById("topaz-score-readout")?.textContent) || 0;
-				totalScore +=
-					parseInt(document.getElementById("opal-score-readout")?.textContent) || 0;
-				totalScore +=
-					parseInt(document.getElementById("amber-score-readout")?.textContent) || 0;
-				totalScore +=
-					parseInt(document.getElementById("q-s-c-score-readout")?.textContent) || 0;
-				if (quartzBonus) totalScore += 6;
-				if (sandstoneBonus) totalScore += 9;
-				if (coalBonus) totalScore += 13;
-				// Slide down Finish button
-				finishButton.style.animation = "slide-down 0.5s forwards";
-				// Slide up final-score-bubble and start spin/scale + count-up
-				finalScoreBubble.classList.remove("hidden-state");
-				finalScoreBubble.style.animation =
-					"slide-up 0.5s forwards, spin-scale .75s cubic-bezier(0.8, 0, 0.2, 1.0)";
-				finalScoreBubble.style.paddingRight = ".3cqh";
-				animateCountUp(finalScoreBubble, totalScore, 1000); // 1s count-up
-				// After 1s, slide bubble right, slide up Screenshot button, fade in explainer
-				setTimeout(() => {
-					playSound("bonus");
-					finalScoreBubble.style.animation = "slide-right 0.5s forwards";
-					// After slide-right completes, clear animation and lock visibility/position
-					setTimeout(() => {
-						finalScoreBubble.style.animation = ""; // Clear to prevent conflicts
-						finalScoreBubble.style.opacity = "1"; // Force visible
-						finalScoreBubble.style.left = "calc(50% + 21.3cqh)"; // Lock right position (center shifted 21.6dvh right)
-						finalScoreBubble.style.bottom = "8.3cqh"; // Lock vertical center alignment
-						finalScoreBubble.style.transform = "translateX(-50%)"; // Keep centered at new left
-						finalScoreBubble.classList.remove("hidden-state"); // Ensure no hidden class
-						// Fade in screenshot-explainer
-						screenshotExplainer.classList.remove("hidden-state");
-						screenshotExplainer.style.animation = "fade-in 0.5s forwards";
-					}, 500); // After slide-right 0.5s
-					screenshotButton.classList.remove("off-screen");
-					screenshotButton.style.animation = "slide-up-button 0.5s forwards"; // Button-specific slide-up
-				}, 1000 + 1000); // Wait for count-up + 1s pause
-				playSound("click");
-			});
-		}
+		// Single-click listener: Normal finish trigger, ignores if disabled
+if (finishButton) {
+  finishButton.addEventListener("click", () => {
+    if (finishButton.classList.contains("disabled")) {
+      console.log("Single-click ignored on disabled finishButton");
+      return; // Do nothing on single-click if disabled
+    }
+    console.log("Single-click triggering Finish (enabled)");
+    // Original click handler code here
+    let totalScore = 0;
+    totalScore +=
+      parseInt(document.getElementById("diamond-score-readout")?.textContent) ||
+      0;
+    totalScore +=
+      parseInt(document.getElementById("silver-score-readout")?.textContent) ||
+      0;
+    totalScore +=
+      parseInt(document.getElementById("lapis-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("peridot-score-readout")?.textContent) ||
+      0;
+    totalScore +=
+      parseInt(document.getElementById("topaz-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("opal-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("amber-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("q-s-c-score-readout")?.textContent) || 0;
+    if (quartzBonus) totalScore += 6;
+    if (sandstoneBonus) totalScore += 9;
+    if (coalBonus) totalScore += 13;
+    // Slide down Finish button
+    finishButton.style.animation = "slide-down 0.5s forwards";
+    // Slide up final-score-bubble and start spin/scale + count-up
+    finalScoreBubble.classList.remove("hidden-state");
+    finalScoreBubble.style.animation =
+      "slide-up 0.5s forwards, spin-scale .75s cubic-bezier(0.8, 0, 0.2, 1.0)";
+    finalScoreBubble.style.paddingRight = ".3cqh";
+    animateCountUp(finalScoreBubble, totalScore, 1000); // 1s count-up
+    // After 1s, slide bubble right, slide up Screenshot button, fade in explainer
+    setTimeout(() => {
+      playSound("bonus");
+      finalScoreBubble.style.animation = "slide-right 0.5s forwards";
+      // After slide-right completes, clear animation and lock visibility/position
+      setTimeout(() => {
+        finalScoreBubble.style.animation = ""; // Clear to prevent conflicts
+        finalScoreBubble.style.opacity = "1"; // Force visible
+        finalScoreBubble.style.left = "calc(50% + 21.3cqh)"; // Lock right position (center shifted 21.6dvh right)
+        finalScoreBubble.style.bottom = "8.3cqh"; // Lock vertical center alignment
+        finalScoreBubble.style.transform = "translateX(-50%)"; // Keep centered at new left
+        finalScoreBubble.classList.remove("hidden-state"); // Ensure no hidden class
+        // Fade in screenshot-explainer
+        screenshotExplainer.classList.remove("hidden-state");
+        screenshotExplainer.style.animation = "fade-in 0.5s forwards";
+      }, 500); // After slide-right 0.5s
+      screenshotButton.classList.remove("off-screen");
+      screenshotButton.style.animation = "slide-up-button 0.5s forwards"; // Button-specific slide-up
+    }, 1000 + 1000); // Wait for count-up + 1s pause
+    playSound("click");
+  });
+}
+
+// Double-click listener: Force trigger for testing, even if disabled
+if (finishButton) {
+  finishButton.addEventListener("dblclick", (e) => {
+    console.log("Double-click event fired on finishButton", e); // Log event to confirm firing
+    console.log("Force-triggering Finish via double-click (testing mode)");
+    // Duplicate the click handler code here or call the function directly if modular
+    // For simplicity, simulate the animation/count-up (paste the body of the click handler here)
+    let totalScore = 0;
+    totalScore +=
+      parseInt(document.getElementById("diamond-score-readout")?.textContent) ||
+      0;
+    totalScore +=
+      parseInt(document.getElementById("silver-score-readout")?.textContent) ||
+      0;
+    totalScore +=
+      parseInt(document.getElementById("lapis-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("peridot-score-readout")?.textContent) ||
+      0;
+    totalScore +=
+      parseInt(document.getElementById("topaz-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("opal-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("amber-score-readout")?.textContent) || 0;
+    totalScore +=
+      parseInt(document.getElementById("q-s-c-score-readout")?.textContent) || 0;
+    if (quartzBonus) totalScore += 6;
+    if (sandstoneBonus) totalScore += 9;
+    if (coalBonus) totalScore += 13;
+    // Slide down Finish button
+    finishButton.style.animation = "slide-down 0.5s forwards";
+    // Slide up final-score-bubble and start spin/scale + count-up
+    finalScoreBubble.classList.remove("hidden-state");
+    finalScoreBubble.style.animation =
+      "slide-up 0.5s forwards, spin-scale .75s cubic-bezier(0.8, 0, 0.2, 1.0)";
+    finalScoreBubble.style.paddingRight = ".3cqh";
+    animateCountUp(finalScoreBubble, totalScore, 1000); // 1s count-up
+    // After 1s, slide bubble right, slide up Screenshot button, fade in explainer
+    setTimeout(() => {
+      playSound("bonus");
+      finalScoreBubble.style.animation = "slide-right 0.5s forwards";
+      // After slide-right completes, clear animation and lock visibility/position
+      setTimeout(() => {
+        finalScoreBubble.style.animation = ""; // Clear to prevent conflicts
+        finalScoreBubble.style.opacity = "1"; // Force visible
+        finalScoreBubble.style.left = "calc(50% + 21.3cqh)"; // Lock right position (center shifted 21.6dvh right)
+        finalScoreBubble.style.bottom = "8.3cqh"; // Lock vertical center alignment
+        finalScoreBubble.style.transform = "translateX(-50%)"; // Keep centered at new left
+        finalScoreBubble.classList.remove("hidden-state"); // Ensure no hidden class
+        // Fade in screenshot-explainer
+        screenshotExplainer.classList.remove("hidden-state");
+        screenshotExplainer.style.animation = "fade-in 0.5s forwards";
+      }, 500); // After slide-right 0.5s
+      screenshotButton.classList.remove("off-screen");
+      screenshotButton.style.animation = "slide-up-button 0.5s forwards"; // Button-specific slide-up
+    }, 1000 + 1000); // Wait for count-up + 1s pause
+    playSound("click");
+  });
+}
 
 		// "Screenshot" button logic (triggers your existing screenshot overlay)
 		// Update screenshotButton listener: Conditional dateDiv text with <br> for seed (replace the entire listener block)
@@ -9130,6 +9215,9 @@ if (screenshotButton) {
 				event.returnValue = "";
 			}
 		});
+
+updateFinishButtonState();
+
 	});
 	updateView();
 	
@@ -9612,9 +9700,3 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
-
-
-
-
-
-
