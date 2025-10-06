@@ -8760,7 +8760,7 @@ if (playButton) {
 const randomButton = document.getElementById("random-button");
 if (randomButton) {
     randomButton.addEventListener("click", () => {
-        tutorialMode = false; // Explicitly disable tutorial mode
+        gameMode = "free-play"; // NEW: Set mode to free-play
         const digSheetsList = [
             "dig-sheet-a",
             "dig-sheet-b",
@@ -9700,3 +9700,4 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
+
