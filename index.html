@@ -917,7 +917,6 @@ body {
 
 
 #scoresheet {
-	background-color: #purple;
 	position: relative;
 	container-type:size;
 }
@@ -2194,6 +2193,8 @@ body {
 			<div class="roll-sheet-buttons">
 				<button class="sheet-button" data-roll-sheet="roll-sheet-a"><img src="images/rsA.png" alt="Roll Sheet A"></button>
 				<button class="sheet-button" data-roll-sheet="roll-sheet-b"><img src="images/rsB.png" alt="Roll Sheet B"></button>
+				<button class="sheet-button" data-roll-sheet="roll-sheet-c"><img src="images/rsC.png" alt="Roll Sheet C"></button>
+            			<button class="sheet-button" data-roll-sheet="roll-sheet-d"><img src="images/rsD.png" alt="Roll Sheet D"></button>
 			</div>
 			<div class="submenu-actions">
 				<button id="play-button" class="menu-button" disabled>Play</button>
@@ -3191,342 +3192,678 @@ const digSheetConfigs = {
 	}
 };
 const digPatterns = {
-	"roll-sheet-a": {
-		green: {
-			1: [
-				[
-					[
-						[0, 0],
-						[0, 1],
-						[1, 1],
-						[2, 1],
-						[2, 2]
-					]
-				], // Option 1
-				null // Option 2 (replace with pattern if available)
-			],
-			2: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[2, 0],
-						[3, 0],
-						[3, 1]
-					]
-				], // Option 1
-				null // Option 2
-			],
-			3: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[1, 1],
-						[1, 2],
-						[2, 1]
-					]
-				], // Option 1
-				null // Option 2
-			],
-			4: [
-				[
-					[
-						[0, 1],
-						[1, 0],
-						[1, 1],
-						[1, 2],
-						[2, 1],
-						[3, 1]
-					]
-				], // Option 1
-				null // Option 2
-			],
-			5: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[2, 0],
-						[2, 1],
-						[2, 2],
-						[3, 0]
-					]
-				], // Option 1
-				null // Option 2
-			],
-			6: [
-				[
-					[
-						[0, 0],
-						[0, 1],
-						[1, 0],
-						[2, 0],
-						[2, 1],
-						[3, 1]
-					]
-				], // Option 1
-				null // Option 2
-			]
-		},
-		white: {
-			1: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[2, 0],
-						[3, 0]
-					]
-				], // Option 1: 1x4
-				[
-					[
-						[0, 0],
-						[0, 1],
-						[1, 0],
-						[1, 1]
-					]
-				] // Option 2: 2x2
-			],
-			2: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[1, 1],
-						[2, 0],
-						[3, 0]
-					]
-				], // Option 1
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[1, 1],
-						[2, 1]
-					]
-				] // Option 2
-			],
-			3: [
-				[
-					[
-						[0, 0],
-						[0, 1],
-						[0, 2],
-						[1, 1],
-						[2, 1]
-					]
-				], // Option 1: T-shape
-				[
-					[
-						[0, 0],
-						[1, 0]
-					],
-					[
-						[0, 0],
-						[1, 0]
-					]
-				] // Option 2: Two 1x2 verticals
-			],
-			4: [
-				[[[0, 0]], [[0, 0]], [[0, 0]], [[0, 0]]], // Option 1: Four single cells
-				null // Option 2 (replace if available)
-			],
-			5: [
-				[
-					[
-						[0, 0],
-						[0, 1],
-						[1, 0]
-					],
-					[[0, 0]]
-				], // Option 1: 3-cell + single cell
-				null // Option 2
-			],
-			6: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[2, 0]
-					],
-					[
-						[0, 0],
-						[1, 0]
-					]
-				], // Option 1: 1x3 + 1x2
-				null // Option 2
-			]
-		}
-	},
-	"roll-sheet-b": {
-		green: {
-			1: [
-				[
-					[
-						[0, 0],
-						[0, 1],
-						[1, 0],
-						[1, 1],
-						[1, 2]
-					]
-				], // Option 1
-				null // Option 2
-			],
-			2: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[2, 0],
-						[3, 0],
-						[4, 0]
-					]
-				], // Option 1
-				null // Option 2
-			],
-			3: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[1, 1],
-						[2, 1],
-						[2, 2]
-					]
-				], // Option 1
-				null // Option 2
-			],
-			4: [
-				[
-					[
-						[0, 0],
-						[0, 1],
-						[1, 0],
-						[2, 0],
-						[3, 0],
-						[3, 1]
-					]
-				], // Option 1
-				null // Option 2
-			],
-			5: [
-				[
-					[
-						[0, 1],
-						[1, 1],
-						[1, 2],
-						[2, 0],
-						[2, 1],
-						[3, 1]
-					]
-				], // Option 1
-				null // Option 2
-			],
-			6: [
-				[
-					[
-						[0, 1],
-						[1, 0],
-						[1, 1],
-						[1, 2],
-						[2, 0],
-						[2, 2]
-					]
-				], // Option 1
-				null // Option 2
-			]
-		},
-		white: {
-			1: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[2, 0],
-						[2, 1]
-					]
-				], // Option 1: L shape
-				[
-					[
-						[0, 0],
-						[0, 1],
-						[1, 0],
-						[1, 1]
-					]
-				] // Option 2: 2x2
-			],
-			2: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[2, 0],
-						[2, 1],
-						[3, 1]
-					]
-				], // Option 1
-				[
-					[
-						[0, 0],
-						[0, 1],
-						[0, 2],
-						[1, 1]
-					]
-				] // Option 2
-			],
-			3: [
-				[
-					[
-						[0, 1],
-						[1, 0],
-						[1, 1],
-						[1, 2],
-						[2, 1]
-					]
-				], // Option 1: Plus Shape
-				[
-					[
-						[0, 0],
-						[1, 0]
-					],
-					[
-						[0, 0],
-						[1, 0]
-					]
-				] // Option 2: Two 1x2 verticals
-			],
-			4: [
-				[[[0, 0]], [[0, 0]], [[0, 0]], [[0, 0]]], // Option 1: Four single cells
-				null // Option 2
-			],
-			5: [
-				[
-					[
-						[0, 0],
-						[1, 0],
-						[2, 0]
-					],
-					[[0, 0]]
-				], // Option 1: 3-cell + single cell
-				null // Option 2
-			],
-			6: [
-				[
-					[
-						[0, 0],
-						[0, 1],
-						[1, 0]
-					],
-					[
-						[0, 0],
-						[1, 0]
-					]
-				], // Option 1: 3-cell + 1x2
-				null // Option 2
-			]
-		}
-	}
+    "roll-sheet-a": {
+        green: {
+            1: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 1],
+                        [2, 1],
+                        [2, 2]
+                    ]
+                ], // Option 1
+                null // Option 2 (replace with pattern if available)
+            ],
+            2: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [3, 0],
+                        [3, 1]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            3: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [1, 2],
+                        [2, 1]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            4: [
+                [
+                    [
+                        [0, 1],
+                        [1, 0],
+                        [1, 1],
+                        [1, 2],
+                        [2, 1],
+                        [3, 1]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            5: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1],
+                        [2, 2],
+                        [3, 0]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            6: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1],
+                        [3, 1]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ]
+        },
+        white: {
+            1: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [3, 0]
+                    ]
+                ], // Option 1: 1x4
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0],
+                        [1, 1]
+                    ]
+                ] // Option 2: 2x2
+            ],
+            2: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [2, 0],
+                        [3, 0]
+                    ]
+                ], // Option 1
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [2, 1]
+                    ]
+                ] // Option 2
+            ],
+            3: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [0, 2],
+                        [1, 1],
+                        [2, 1]
+                    ]
+                ], // Option 1: T-shape
+                [
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ],
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ]
+                ] // Option 2: Two 1x2 verticals
+            ],
+            4: [
+                [[ [0, 0] ], [ [0, 0] ], [ [0, 0] ], [ [0, 0] ]], // Option 1: Four single cells
+                null // Option 2
+            ],
+            5: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0]
+                    ],
+                    [[0, 0]]
+                ], // Option 1: 3-cell + single cell
+                null // Option 2
+            ],
+            6: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0]
+                    ],
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ]
+                ], // Option 1: 1x3 + 1x2
+                null // Option 2
+            ]
+        }
+    },
+    "roll-sheet-b": {
+        green: {
+            1: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0],
+                        [1, 1],
+                        [1, 2]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            2: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [3, 0],
+                        [4, 0]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            3: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [2, 1],
+                        [2, 2]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            4: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0],
+                        [2, 0],
+                        [3, 0],
+                        [3, 1]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            5: [
+                [
+                    [
+                        [0, 1],
+                        [1, 1],
+                        [1, 2],
+                        [2, 0],
+                        [2, 1],
+                        [3, 1]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            6: [
+                [
+                    [
+                        [0, 1],
+                        [1, 0],
+                        [1, 1],
+                        [1, 2],
+                        [2, 0],
+                        [2, 2]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ]
+        },
+        white: {
+            1: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1]
+                    ]
+                ], // Option 1: L shape
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0],
+                        [1, 1]
+                    ]
+                ] // Option 2: 2x2
+            ],
+            2: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1],
+                        [3, 1]
+                    ]
+                ], // Option 1
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [0, 2],
+                        [1, 1]
+                    ]
+                ] // Option 2
+            ],
+            3: [
+                [
+                    [
+                        [0, 1],
+                        [1, 0],
+                        [1, 1],
+                        [1, 2],
+                        [2, 1]
+                    ]
+                ], // Option 1: Plus Shape
+                [
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ],
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ]
+                ] // Option 2: Two 1x2 verticals
+            ],
+            4: [
+                [[ [0, 0] ], [ [0, 0] ], [ [0, 0] ], [ [0, 0] ]], // Option 1: Four single cells
+                null // Option 2
+            ],
+            5: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0]
+                    ],
+                    [[0, 0]]
+                ], // Option 1: 3-cell + single cell
+                null // Option 2
+            ],
+            6: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0]
+                    ],
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ]
+                ], // Option 1: 3-cell + 1x2
+                null // Option 2
+            ]
+        }
+    },
+    "roll-sheet-c": {
+        green: {
+            1: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1],
+                        [3, 0]
+                    ]
+                ], // Option 1
+                null // Option 2 (replace with pattern if available)
+            ],
+            2: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [3, 0],
+                        [3, 1]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            3: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 1],
+                        [2, 1],
+                        [2, 2]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            4: [
+                [
+                    [
+                        [0, 1],
+                        [1, 0],
+                        [1, 1],
+                        [2, 0],
+                        [2, 1],
+                        [3, 0]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            5: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1],
+                        [3, 0],
+                        [3, 1]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            6: [
+                [
+                    [
+                        [0, 0],
+                        [0, 2],
+                        [1, 0],
+                        [1, 1],
+                        [1, 2],
+                        [2, 2]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ]
+        },
+        white: {
+            1: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [2, 1]
+                    ]
+                ], // Option 1: 1x4
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [2, 0]
+                    ]
+                ] // Option 2: 2x2
+            ],
+            2: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [2, 0],
+                        [2, 1]
+                    ]
+                ], // Option 1
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [3, 0]
+                    ]
+                ] // Option 2
+            ],
+            3: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1],
+                        [2, 2]
+                    ]
+                ], // Option 1: T-shape
+                [
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ],
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ]
+                ] // Option 2: Two 1x2 verticals
+            ],
+            4: [
+                [[ [0, 0] ], [ [0, 0] ], [ [0, 0] ], [ [0, 0] ]], // Option 1: Four single cells
+                null // Option 2
+            ],
+            5: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0]
+                    ],
+                    [[0, 0]]
+                ], // Option 1: 3-cell + single cell
+                null // Option 2
+            ],
+            6: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0]
+                    ],
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ]
+                ], // Option 1: 1x3 + 1x2
+                null // Option 2
+            ]
+        }
+    },
+    "roll-sheet-d": {
+        green: {
+            1: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1],
+                        [3, 1]
+                    ]
+                ], // Option 1
+                null // Option 2 (replace with pattern if available)
+            ],
+            2: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [3, 0],
+                        [4, 0]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            3: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [0, 2],
+                        [1, 1],
+                        [2, 1]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            4: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0],
+                        [1, 1],
+                        [2, 1],
+                        [2, 2]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            5: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1],
+                        [3, 1],
+                        [4, 1]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ],
+            6: [
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1],
+                        [3, 0]
+                    ]
+                ], // Option 1
+                null // Option 2
+            ]
+        },
+        white: {
+            1: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0],
+                        [2, 1]
+                    ]
+                ], // Option 1: 1x4
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [2, 1]
+                    ]
+                ] // Option 2: 2x2
+            ],
+            2: [
+                [
+                    [
+                        [0, 1],
+                        [1, 0],
+                        [1, 1],
+                        [2, 1],
+                        [2, 2]
+                    ]
+                ], // Option 1
+                [
+                    [
+                        [0, 0],
+                        [0, 1],
+                        [1, 0],
+                        [1, 1]
+                    ]
+                ] // Option 2
+            ],
+            3: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [2, 1],
+                        [2, 2]
+                    ]
+                ], // Option 1: T-shape
+                [
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ],
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ]
+                ] // Option 2: Two 1x2 verticals
+            ],
+            4: [
+                [[ [0, 0] ], [ [0, 0] ], [ [0, 0] ], [ [0, 0] ]], // Option 1: Four single cells
+                null // Option 2
+            ],
+            5: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [2, 0]
+                    ],
+                    [[0, 0]]
+                ], // Option 1: 3-cell + single cell
+                null // Option 2
+            ],
+            6: [
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1]
+                    ],
+                    [
+                        [0, 0],
+                        [1, 0]
+                    ]
+                ], // Option 1: 1x3 + 1x2
+                null // Option 2
+            ]
+        }
+    }
 };
 let currentRollSheet = "roll-sheet-a";
 let gameMode = "free-play"; // Default to free-play
@@ -3559,10 +3896,13 @@ let tutorialMessages = [
 let tutorialAllowedCells = []; // Per-step allowed indices (e.g., for step 3)
 let tutorialPreRolls = [{ green: 5, white: 1 }, { green: 6, white: 2 }, { green: 3, white: 6 }, { green: 2, white: 5 }, { green: 1, white: 3 }, { green: 4, white: 5 }, { green: 3, white: 4 }, { green: 1, white: 2 }, { green: 5, white: 4 }];
 const dailyDiceRolls = []; // Pre-computed rolls for daily challenge
-const rollSheets = ["roll-sheet-a", "roll-sheet-b"];
+const rollSheets = ["roll-sheet-a", "roll-sheet-b", "roll-sheet-c", "roll-sheet-d"];
+
 const rollSheetImages = {
-	"roll-sheet-a": "images/rs-a.png",
-	"roll-sheet-b": "images/rs-b.png"
+    "roll-sheet-a": "images/rs-a.png",
+    "roll-sheet-b": "images/rs-b.png",
+    "roll-sheet-c": "images/rs-c.png",
+    "roll-sheet-d": "images/rs-d.png"
 };
 const digSheetBoulderConfigs = {
 	"dig-sheet-a": [
@@ -5383,42 +5723,78 @@ const whiteImage = document.getElementById("white-image");
 let isReady = false;
 let rollCount = 0;
 const imageMap = {
-	"roll-sheet-a": {
-		green: {
-			1: "images/g1-rsa.png",
-			2: "images/g2-rsa.png",
-			3: "images/g3-rsa.png",
-			4: "images/g4-rsa.png",
-			5: "images/g5-rsa.png",
-			6: "images/g6-rsa.png"
-		},
-		white: {
-			1: "images/w1-rsa.png",
-			2: "images/w2-rsa.png",
-			3: "images/w3-rsa.png",
-			4: "images/w4-rsa.png",
-			5: "images/w5-rsa.png",
-			6: "images/w6-rsa.png"
-		}
-	},
-	"roll-sheet-b": {
-		green: {
-			1: "images/g1-rsb.png",
-			2: "images/g2-rsb.png",
-			3: "images/g3-rsb.png",
-			4: "images/g4-rsb.png",
-			5: "images/g5-rsb.png",
-			6: "images/g6-rsb.png"
-		},
-		white: {
-			1: "images/w1-rsb.png",
-			2: "images/w2-rsb.png",
-			3: "images/w3-rsb.png",
-			4: "images/w4-rsb.png",
-			5: "images/w5-rsb.png",
-			6: "images/w6-rsb.png"
-		}
-	}
+    "roll-sheet-a": {
+        green: {
+            1: "images/g1-rsa.png",
+            2: "images/g2-rsa.png",
+            3: "images/g3-rsa.png",
+            4: "images/g4-rsa.png",
+            5: "images/g5-rsa.png",
+            6: "images/g6-rsa.png"
+        },
+        white: {
+            1: "images/w1-rsa.png",
+            2: "images/w2-rsa.png",
+            3: "images/w3-rsa.png",
+            4: "images/w4-rsa.png",
+            5: "images/w5-rsa.png",
+            6: "images/w6-rsa.png"
+        }
+    },
+    "roll-sheet-b": {
+        green: {
+            1: "images/g1-rsb.png",
+            2: "images/g2-rsb.png",
+            3: "images/g3-rsb.png",
+            4: "images/g4-rsb.png",
+            5: "images/g5-rsb.png",
+            6: "images/g6-rsb.png"
+        },
+        white: {
+            1: "images/w1-rsb.png",
+            2: "images/w2-rsb.png",
+            3: "images/w3-rsb.png",
+            4: "images/w4-rsb.png",
+            5: "images/w5-rsb.png",
+            6: "images/w6-rsb.png"
+        }
+    },
+    "roll-sheet-c": {
+        green: {
+            1: "images/g1-rsc.png",
+            2: "images/g2-rsc.png",
+            3: "images/g3-rsc.png",
+            4: "images/g4-rsc.png",
+            5: "images/g5-rsc.png",
+            6: "images/g6-rsc.png"
+        },
+        white: {
+            1: "images/w1-rsc.png",
+            2: "images/w2-rsc.png",
+            3: "images/w3-rsc.png",
+            4: "images/w4-rsc.png",
+            5: "images/w5-rsc.png",
+            6: "images/w6-rsc.png"
+        }
+    },
+    "roll-sheet-d": {
+        green: {
+            1: "images/g1-rsd.png",
+            2: "images/g2-rsd.png",
+            3: "images/g3-rsd.png",
+            4: "images/g4-rsd.png",
+            5: "images/g5-rsd.png",
+            6: "images/g6-rsd.png"
+        },
+        white: {
+            1: "images/w1-rsd.png",
+            2: "images/w2-rsd.png",
+            3: "images/w3-rsd.png",
+            4: "images/w4-rsd.png",
+            5: "images/w5-rsd.png",
+            6: "images/w6-rsd.png"
+        }
+    }
 };
 // Add this to JS: New group play variables (after dailyDiceRolls)
 const groupDiceRolls = []; // Pre-computed rolls for group play
@@ -7586,46 +7962,45 @@ function seededRandom(seed) {
 
 // Add this function to JS (similar to startDailyChallenge, but for group play)
 function startGroupPlay(seed) {
-  currentSeed = seed; // Store for screenshot
-  console.log("Group Play Seed:", seed);
-  const random = seededRandom(seed);
-  const groupDigIndex = Math.floor(random() * digSheets.length);
-  currentDigSheet = digSheets[groupDigIndex];
-  console.log("Selected Dig Sheet:", currentDigSheet);
-  const digSheetElement = document.getElementById("dig-sheet");
-  const overlayImg = document.querySelector("#dig-sheet-overlay img");
-  digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
-  overlayImg.src = digSheetOverlayImages[currentDigSheet];
-  digSheetElement.style.display = "none";
-  digSheetElement.offsetHeight;
-  digSheetElement.style.display = "block";
-  const groupRollIndex = Math.floor(random() * rollSheets.length);
-  currentRollSheet = rollSheets[groupRollIndex];
-  console.log("Selected Roll Sheet:", currentRollSheet);
-  const rollSheetImg = document
-    .getElementById("roll-sheet")
-    .querySelector("img:not(#green-image img):not(#white-image img)");
-  rollSheetImg.src = rollSheetImages[currentRollSheet];
-  groupDiceRolls.length = 0;
-  for (let i = 0; i < 9; i++) {
-    const greenRoll = Math.floor(random() * 6) + 1;
-    const whiteRoll = Math.floor(random() * 6) + 1;
-    groupDiceRolls.push({ green: greenRoll, white: whiteRoll });
-  }
-  console.log("Group Dice Rolls:", groupDiceRolls);
-  rollCount = 0;
-  const boulderElements = document.querySelectorAll(".boulder-cross-off");
-  boulderElements.forEach((element, index) => {
-    const config = digSheetBoulderConfigs[currentDigSheet][index];
-    if (config) {
-      element.style.top = config.top;
-      element.style.left = config.left;
+    console.log("Group Play Seed:", seed);
+    const random = seededRandom(seed);
+    const groupDigIndex = Math.floor(random() * digSheets.length);
+    currentDigSheet = digSheets[groupDigIndex];
+    console.log("Selected Dig Sheet:", currentDigSheet);
+    const digSheetElement = document.getElementById("dig-sheet");
+    const overlayImg = document.querySelector("#dig-sheet-overlay img");
+    digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+    overlayImg.src = digSheetOverlayImages[currentDigSheet];
+    digSheetElement.style.display = "none";
+    digSheetElement.offsetHeight;
+    digSheetElement.style.display = "block";
+    const groupRollIndex = Math.floor(random() * rollSheets.length);
+    currentRollSheet = rollSheets[groupRollIndex];
+    console.log("Selected Roll Sheet:", currentRollSheet);
+    const rollSheetImg = document
+        .getElementById("roll-sheet")
+        .querySelector("img:not(#green-image img):not(#white-image img)");
+    rollSheetImg.src = rollSheetImages[currentRollSheet];
+    groupDiceRolls.length = 0;
+    for (let i = 0; i < 9; i++) {
+        const greenRoll = Math.floor(random() * 6) + 1;
+        const whiteRoll = Math.floor(random() * 6) + 1;
+        groupDiceRolls.push({ green: greenRoll, white: whiteRoll });
     }
-  });
-  resetGrid();
-  console.log("First random (dig): ", random());
-  console.log("Second random (roll): ", random());
-  console.log("First green roll: ", Math.floor(random() * 6) + 1);
+    console.log("Group Dice Rolls:", groupDiceRolls);
+    rollCount = 0;
+    const boulderElements = document.querySelectorAll(".boulder-cross-off");
+    boulderElements.forEach((element, index) => {
+        const config = digSheetBoulderConfigs[currentDigSheet][index];
+        if (config) {
+            element.style.top = config.top;
+            element.style.left = config.left;
+        }
+    });
+    resetGrid();
+    console.log("First random (dig): ", random());
+    console.log("Second random (roll): ", random());
+    console.log("First green roll: ", Math.floor(random() * 6) + 1);
 }
 
 function switchDigSheet() {
@@ -7682,79 +8057,79 @@ function switchDigSheet() {
 }
 
 function switchRollSheet() {
-	if (hasGameState()) {
-		const confirmReset = window.confirm(
-			"Are you sure you want to abandon the current game and switch roll sheets?"
-		);
-		if (!confirmReset) return;
-	}
-	const rollSheetElement = document.getElementById("roll-sheet");
-	const rollSheetImg = rollSheetElement.querySelector(
-		"img:not(#green-image img):not(#white-image img)"
-	);
-	const currentIndex = rollSheets.indexOf(currentRollSheet);
-	const nextIndex = (currentIndex + 1) % rollSheets.length;
-	currentRollSheet = rollSheets[nextIndex];
-	rollSheetImg.src = rollSheetImages[currentRollSheet];
-	// Set default dice images (6 for both green and white)
-	greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
-	whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
-	die1.setAttribute("data-value", "6");
-	die2.setAttribute("data-value", "6");
-	// Force redraw
-	rollSheetImg.style.display = "none";
-	rollSheetImg.offsetHeight;
-	rollSheetImg.style.display = "block";
-	resetGrid();
-	playSound("click");
-	console.log(`Roll sheet switched to ${currentRollSheet}`);
+    if (hasGameState()) {
+        const confirmReset = window.confirm(
+            "Are you sure you want to abandon the current game and switch roll sheets?"
+        );
+        if (!confirmReset) return;
+    }
+    const rollSheetElement = document.getElementById("roll-sheet");
+    const rollSheetImg = rollSheetElement.querySelector(
+        "img:not(#green-image img):not(#white-image img)"
+    );
+    const currentIndex = rollSheets.indexOf(currentRollSheet);
+    const nextIndex = (currentIndex + 1) % rollSheets.length;
+    currentRollSheet = rollSheets[nextIndex];
+    rollSheetImg.src = rollSheetImages[currentRollSheet];
+    // Set default dice images (6 for both green and white)
+    greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
+    whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
+    die1.setAttribute("data-value", "6");
+    die2.setAttribute("data-value", "6");
+    // Force redraw
+    rollSheetImg.style.display = "none";
+    rollSheetImg.offsetHeight;
+    rollSheetImg.style.display = "block";
+    resetGrid();
+    playSound("click");
+    console.log(`Roll sheet switched to ${currentRollSheet}`);
 }
 
 function startDailyChallenge() {
-	const now = new Date();
-	const year = now.getFullYear();
-	const month = (now.getMonth() + 1).toString().padStart(2, "0");
-	const day = now.getDate().toString().padStart(2, "0");
-	const dailySeed = `${year}-${month}-${day}`; // Local date for seed
-	console.log("Daily Challenge Seed:", dailySeed);
-	const random = seededRandom(dailySeed);
-	const dailyDigIndex = Math.floor(random() * digSheets.length);
-	currentDigSheet = digSheets[dailyDigIndex];
-	console.log("Selected Dig Sheet:", currentDigSheet);
-	const digSheetElement = document.getElementById("dig-sheet");
-	const overlayImg = document.querySelector("#dig-sheet-overlay img");
-	digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
-	overlayImg.src = digSheetOverlayImages[currentDigSheet];
-	digSheetElement.style.display = "none";
-	digSheetElement.offsetHeight;
-	digSheetElement.style.display = "block";
-	const dailyRollIndex = Math.floor(random() * rollSheets.length);
-	currentRollSheet = rollSheets[dailyRollIndex];
-	console.log("Selected Roll Sheet:", currentRollSheet);
-	const rollSheetImg = document
-		.getElementById("roll-sheet")
-		.querySelector("img:not(#green-image img):not(#white-image img)");
-	rollSheetImg.src = rollSheetImages[currentRollSheet];
-	dailyDiceRolls.length = 0;
-	for (let i = 0; i < 9; i++) {
-		const greenRoll = Math.floor(random() * 6) + 1;
-		const whiteRoll = Math.floor(random() * 6) + 1;
-		dailyDiceRolls.push({ green: greenRoll, white: whiteRoll });
-	}
-	console.log("Daily Dice Rolls:", dailyDiceRolls);
-	rollCount = 0;
-	const boulderElements = document.querySelectorAll(".boulder-cross-off");
-	boulderElements.forEach((element, index) => {
-		const config = digSheetBoulderConfigs[currentDigSheet][index];
-		if (config) {
-			element.style.top = config.top;
-			element.style.left = config.left;
-		}
-	});
-	resetGrid();
-	console.log("First random (dig): ", random());
-	console.log("Second random (roll): ", random());
-	console.log("First green roll: ", Math.floor(random() * 6) + 1);
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
+    const day = now.getDate().toString().padStart(2, "0");
+    const dailySeed = `${year}-${month}-${day}`; // Local date for seed
+    console.log("Daily Challenge Seed:", dailySeed);
+    const random = seededRandom(dailySeed);
+    const dailyDigIndex = Math.floor(random() * digSheets.length);
+    currentDigSheet = digSheets[dailyDigIndex];
+    console.log("Selected Dig Sheet:", currentDigSheet);
+    const digSheetElement = document.getElementById("dig-sheet");
+    const overlayImg = document.querySelector("#dig-sheet-overlay img");
+    digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+    overlayImg.src = digSheetOverlayImages[currentDigSheet];
+    digSheetElement.style.display = "none";
+    digSheetElement.offsetHeight;
+    digSheetElement.style.display = "block";
+    const dailyRollIndex = Math.floor(random() * rollSheets.length);
+    currentRollSheet = rollSheets[dailyRollIndex];
+    console.log("Selected Roll Sheet:", currentRollSheet);
+    const rollSheetImg = document
+        .getElementById("roll-sheet")
+        .querySelector("img:not(#green-image img):not(#white-image img)");
+    rollSheetImg.src = rollSheetImages[currentRollSheet];
+    dailyDiceRolls.length = 0;
+    for (let i = 0; i < 9; i++) {
+        const greenRoll = Math.floor(random() * 6) + 1;
+        const whiteRoll = Math.floor(random() * 6) + 1;
+        dailyDiceRolls.push({ green: greenRoll, white: whiteRoll });
+    }
+    console.log("Daily Dice Rolls:", dailyDiceRolls);
+    rollCount = 0;
+    const boulderElements = document.querySelectorAll(".boulder-cross-off");
+    boulderElements.forEach((element, index) => {
+        const config = digSheetBoulderConfigs[currentDigSheet][index];
+        if (config) {
+            element.style.top = config.top;
+            element.style.left = config.left;
+        }
+    });
+    resetGrid();
+    console.log("First random (dig): ", random());
+    console.log("Second random (roll): ", random());
+    console.log("First green roll: ", Math.floor(random() * 6) + 1);
 }
 function updateDailyChallengeTimer() {
 	const now = new Date();
@@ -8756,88 +9131,7 @@ if (playButton) {
         }
     });
 }
-		// Updated Random button listener (complete block, for random free-play start)
-const randomButton = document.getElementById("random-button");
-if (randomButton) {
-    randomButton.addEventListener("click", () => {
-        gameMode = "free-play"; // NEW: Set mode to free-play
-        const digSheetsList = [
-            "dig-sheet-a",
-            "dig-sheet-b",
-            "dig-sheet-c",
-            "dig-sheet-d",
-            "dig-sheet-e",
-            "dig-sheet-f",
-            "dig-sheet-g",
-            "dig-sheet-h"
-        ];
-        const rollSheetsList = ["roll-sheet-a", "roll-sheet-b"];
-        selectedDigSheet =
-            digSheetsList[Math.floor(Math.random() * digSheetsList.length)];
-        currentDigSheet = selectedDigSheet;
-        selectedRollSheet =
-            rollSheetsList[Math.floor(Math.random() * rollSheetsList.length)];
-        currentRollSheet = selectedRollSheet;
-        const digSheetElement = document.getElementById("dig-sheet");
-        const overlayImg = document.querySelector("#dig-sheet-overlay img");
-        const rollSheetImg = document
-            .getElementById("roll-sheet")
-            .querySelector("img:not(#green-image img):not(#white-image img)");
-        const openingMenu = document.getElementById("opening-menu");
-        const resumeButton = document.getElementById("resume-button");
-        const homeButton = document.getElementById("home-button");
-        if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
-            console.error("Error: Missing game elements", {
-                digSheetElement,
-                overlayImg,
-                rollSheetImg,
-                openingMenu
-            });
-            return;
-        }
-        console.log("Random clicked, setting sheets:", {
-            currentDigSheet,
-            currentRollSheet
-        });
-        digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
-        overlayImg.src = digSheetOverlayImages[currentDigSheet];
-        rollSheetImg.src = rollSheetImages[currentRollSheet];
-        // Set default dice images (6 for both green and white)
-        greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
-        whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
-        die1.setAttribute("data-value", "6");
-        die2.setAttribute("data-value", "6");
-        // Update boulder positions
-        const boulderElements = document.querySelectorAll(".boulder-cross-off");
-        boulderElements.forEach((element, index) => {
-            const config = digSheetBoulderConfigs[currentDigSheet][index];
-            if (config) {
-                element.style.top = config.top;
-                element.style.left = config.left;
-            }
-        });
-        // Hide opening menu to reveal game-container (already visible underneath)
-        openingMenu.style.display = "none";
-        freePlaySubmenu.style.display = "none";
-        if (resumeButton) resumeButton.style.display = "block";
-        if (homeButton) {
-            homeButton.classList.remove("loading");
-            homeButton.classList.add("loaded");
-        }
-        // Force redraw of dig sheet and roll sheet
-        requestAnimationFrame(() => {
-            digSheetElement.offsetHeight;
-            rollSheetImg.offsetHeight;
-            console.log("Dig sheet and roll sheet redrawn", {
-                digSheetBackground: digSheetElement.style.backgroundImage,
-                overlayImage: overlayImg.src,
-                rollSheetImage: rollSheetImg.src
-            });
-        });
-        resetGrid();
-        playSound("click");
-    });
-}
+		
 
 		// New consolidated declarations and logic for the finish/screenshot feature
 		const finishButton = document.getElementById("finish-button");
@@ -9536,13 +9830,13 @@ digSheetButtons.forEach((button) => {
 
 // Roll sheet selection
 rollSheetButtons.forEach((button) => {
-	button.addEventListener("click", () => {
-		rollSheetButtons.forEach((btn) => btn.classList.remove("selected"));
-		button.classList.add("selected");
-		selectedRollSheet = button.dataset.rollSheet;
-		updatePlayButton();
-		playSound("click");
-	});
+    button.addEventListener("click", () => {
+        rollSheetButtons.forEach((btn) => btn.classList.remove("selected"));
+        button.classList.add("selected");
+        selectedRollSheet = button.dataset.rollSheet;
+        updatePlayButton();
+        playSound("click");
+    });
 });
 
 // Enable Play button when both sheets are selected
@@ -9617,87 +9911,84 @@ playButton.addEventListener("click", () => {
 	}
 });
 
-// Random button to select random sheets and start game
 randomButton.addEventListener("click", () => {
-	const digSheetsList = [
-		"dig-sheet-a",
-		"dig-sheet-b",
-		"dig-sheet-c",
-		"dig-sheet-d",
-		"dig-sheet-e",
-		"dig-sheet-f",
-		"dig-sheet-g",
-		"dig-sheet-h"
-	];
-	const rollSheetsList = ["roll-sheet-a", "roll-sheet-b"];
-	selectedDigSheet =
-		digSheetsList[Math.floor(Math.random() * digSheetsList.length)];
-	currentDigSheet = selectedDigSheet;
-	selectedRollSheet =
-		rollSheetsList[Math.floor(Math.random() * rollSheetsList.length)];
-	currentRollSheet = selectedRollSheet;
-	const digSheetElement = document.getElementById("dig-sheet");
-	const overlayImg = document.querySelector("#dig-sheet-overlay img");
-	const rollSheetImg = document
-		.getElementById("roll-sheet")
-		.querySelector("img:not(#green-image img):not(#white-image img)");
-	const openingMenu = document.getElementById("opening-menu");
-	const resumeButton = document.getElementById("resume-button");
-	const homeButton = document.getElementById("home-button");
-	if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
-		console.error("Error: Missing game elements", {
-			digSheetElement,
-			overlayImg,
-			rollSheetImg,
-			openingMenu
-		});
-		return;
-	}
-	console.log("Random clicked, setting sheets:", {
-		currentDigSheet,
-		currentRollSheet
-	});
-	digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
-	overlayImg.src = digSheetOverlayImages[currentDigSheet];
-	rollSheetImg.src = rollSheetImages[currentRollSheet];
-	// Set default dice images (6 for both green and white)
-	greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
-	whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
-	die1.setAttribute("data-value", "6");
-	die2.setAttribute("data-value", "6");
-	// Update boulder positions
-	const boulderElements = document.querySelectorAll(".boulder-cross-off");
-	boulderElements.forEach((element, index) => {
-		const config = digSheetBoulderConfigs[currentDigSheet][index];
-		if (config) {
-			element.style.top = config.top;
-			element.style.left = config.left;
-		}
-	});
-	// Hide opening menu to reveal game-container (already visible underneath)
-	openingMenu.style.display = "none";
-	freePlaySubmenu.style.display = "none";
-	if (resumeButton) resumeButton.style.display = "block";
-	if (homeButton) {
-		homeButton.classList.remove("loading");
-		homeButton.classList.add("loaded");
-	}
-	// Force redraw of dig sheet and roll sheet
-	requestAnimationFrame(() => {
-		digSheetElement.offsetHeight;
-		rollSheetImg.offsetHeight;
-		console.log("Dig sheet and roll sheet redrawn", {
-			digSheetBackground: digSheetElement.style.backgroundImage,
-			overlayImage: overlayImg.src,
-			rollSheetImage: rollSheetImg.src
-		});
-	});
-	resetGrid();
-	playSound("click");
+    const digSheetsList = [
+        "dig-sheet-a",
+        "dig-sheet-b",
+        "dig-sheet-c",
+        "dig-sheet-d",
+        "dig-sheet-e",
+        "dig-sheet-f",
+        "dig-sheet-g",
+        "dig-sheet-h"
+    ];
+    selectedDigSheet =
+        digSheetsList[Math.floor(Math.random() * digSheetsList.length)];
+    currentDigSheet = selectedDigSheet;
+    selectedRollSheet =
+        rollSheets[Math.floor(Math.random() * rollSheets.length)];
+    currentRollSheet = selectedRollSheet;
+    const digSheetElement = document.getElementById("dig-sheet");
+    const overlayImg = document.querySelector("#dig-sheet-overlay img");
+    const rollSheetImg = document
+        .getElementById("roll-sheet")
+        .querySelector("img:not(#green-image img):not(#white-image img)");
+    const openingMenu = document.getElementById("opening-menu");
+    const resumeButton = document.getElementById("resume-button");
+    const homeButton = document.getElementById("home-button");
+    if (!digSheetElement || !overlayImg || !rollSheetImg || !openingMenu) {
+        console.error("Error: Missing game elements", {
+            digSheetElement,
+            overlayImg,
+            rollSheetImg,
+            openingMenu
+        });
+        return;
+    }
+    console.log("Random clicked, setting sheets:", {
+        currentDigSheet,
+        currentRollSheet
+    });
+    digSheetElement.style.backgroundImage = `url(${digSheetBackgroundImages[currentDigSheet]})`;
+    overlayImg.src = digSheetOverlayImages[currentDigSheet];
+    rollSheetImg.src = rollSheetImages[currentRollSheet];
+    // Set default dice images (6 for both green and white)
+    greenImage.innerHTML = `<img src="${imageMap[currentRollSheet].green[6]}" alt="Die Image">`;
+    whiteImage.innerHTML = `<img src="${imageMap[currentRollSheet].white[6]}" alt="Die Image">`;
+    die1.setAttribute("data-value", "6");
+    die2.setAttribute("data-value", "6");
+    // Update boulder positions
+    const boulderElements = document.querySelectorAll(".boulder-cross-off");
+    boulderElements.forEach((element, index) => {
+        const config = digSheetBoulderConfigs[currentDigSheet][index];
+        if (config) {
+            element.style.top = config.top;
+            element.style.left = config.left;
+        }
+    });
+    // Hide opening menu to reveal game-container (already visible underneath)
+    openingMenu.style.display = "none";
+    freePlaySubmenu.style.display = "none";
+    if (resumeButton) resumeButton.style.display = "block";
+    if (homeButton) {
+        homeButton.classList.remove("loading");
+        homeButton.classList.add("loaded");
+    }
+    // Force redraw of dig sheet and roll sheet
+    requestAnimationFrame(() => {
+        digSheetElement.offsetHeight;
+        rollSheetImg.offsetHeight;
+        console.log("Dig sheet and roll sheet redrawn", {
+            digSheetBackground: digSheetElement.style.backgroundImage,
+            overlayImage: overlayImg.src,
+            rollSheetImage: rollSheetImg.src
+        });
+    });
+    resetGrid();
+    playSound("click");
 });
 
 
     </script>
 </body>
 </html>
-
