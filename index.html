@@ -2886,7 +2886,8 @@ body {
     
     <script>
 
-        let currentView = 1;
+let currentSeed = '';
+let currentView = 1;
 let rollCounter = 0;
 let selectedCells = new Set();
 let committedCells = new Map();
@@ -3867,7 +3868,7 @@ const digPatterns = {
 };
 let currentRollSheet = "roll-sheet-a";
 let gameMode = "free-play"; // Default to free-play
-let currentSeed = '';
+
 
 let tutorialMode = false;
 let tutorialStep = 0;
@@ -7962,6 +7963,8 @@ function seededRandom(seed) {
 
 // Add this function to JS (similar to startDailyChallenge, but for group play)
 function startGroupPlay(seed) {
+    currentSeed = seed; // Store for screenshot
+    console.log("Group Play Seed set to:", currentSeed); // Debug log to confirm
     console.log("Group Play Seed:", seed);
     const random = seededRandom(seed);
     const groupDigIndex = Math.floor(random() * digSheets.length);
@@ -9451,6 +9454,7 @@ if (screenshotButton) {
       dateText = "Free Play";
     } else if (gameMode === "group-play") {
       dateText = `Seed:<br>${currentSeed}`;
+      console.log("Screenshot dateText set to:", dateText); // Debug log for seed display
     } else {
       dateText = "Gem Getter Pro"; // Fallback
     }
