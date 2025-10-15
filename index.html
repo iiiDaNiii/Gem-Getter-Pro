@@ -2132,6 +2132,84 @@ body {
 	width:20dvh;
 }
 
+#ad-overlay {
+    background-color: rgba(0, 0, 0, 0.7); /* Black semi-transparent bg */
+    z-index: 6000; /* Higher than menu (100/101) and tutorial (4000) */
+}
+
+.ad-card {
+    position: absolute; /* Position within overlay */
+    bottom: -100vh; /* Start off-screen bottom */
+    left: 50%;
+    transform: translate(-50%, 50%);
+    background-color: white;
+    width: 50dvh;
+    max-width: 80%; /* Prevent cutoff with ~5vw margins on narrow */
+    min-height: 20dvh;
+    padding: 2dvh;
+    border-radius: 1dvh;
+    box-shadow: 0 0.5dvh 1dvh rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 7000; /* Higher for card content */
+    opacity: 0; /* Start invisible */
+    visibility: hidden; /* Hidden initial */
+    transition: bottom 0.5s ease-in-out, opacity 0.5s ease-in-out; /* Animate slide and fade */
+}
+
+.ad-card.visible {
+    bottom: 50%; /* Center vertically */
+    opacity: 1; /* Fully visible */
+    visibility: visible; /* Show with animation */
+}
+
+#ad-heading {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 3dvh; /* Slightly larger for emphasis */
+    font-weight: bold; /* Bolder heading */
+    color: black;
+    margin: 0 0 1dvh 0; /* Adjusted spacing */
+}
+
+#ad-paragraph {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5dvh;
+    color: black;
+    margin: 0 0 2dvh 0; /* Adjusted spacing */
+}
+
+#ad-divider {
+    border: none;
+    border-top: 0.2dvh solid black; /* Thin black line */
+    width: 100%; /* Match card/image width */
+    margin: 0 auto 2dvh auto; /* Center and space */
+}
+
+#ad-close {
+    position: absolute;
+    top: 0; /* Align top */
+    right: 0; /* Align right */
+    transform: translate(50%, -50%); /* Center square on top-right corner */
+    width: 6dvh; /* Square: Match height */
+    height: 6dvh;
+    padding: 0; /* Remove padding for icon centering */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#ad-cta {
+    width: 20dvh;
+    height: 6dvh;
+    font-size: 3dvh;
+    margin: 0 1dvh; /* Space buttons */
+}
+
+#ad-image {
+    max-width: 90%;
+    height: auto;
+    border-radius: 1dvh; /* Rounded corners */
+}
+
     </style>
 </head>
 
@@ -2151,6 +2229,21 @@ body {
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Covered+By+Your+Grace&family=Gamja+Flower&family=Patrick+Hand&family=Single+Day&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<div id="ad-overlay" class="tutorial-overlay"> <!-- Keep overlay reuse if no issues; change if needed -->
+    <div id="ad-card" class="ad-card"> <!-- Dedicated ad-card class -->
+        <img id="ad-image" src="images/ad-image-ggg.png" alt="Ad Image" style="max-width: 100%; height: auto; margin: 0 auto 2dvh auto; display: block;">
+        <h2 id="ad-heading">Can't get enough gems?</h2>
+        <p id="ad-paragraph">Blast off with Gem Getter Galactic (Print-and-Play) and try the crunchiest, thinkiest Gem Getter yet!</p>
+        <hr id="ad-divider">
+        <div style="display: flex; justify-content: center; width: 100%;">
+            <button id="ad-cta" class="menu-button">Check it out</button>
+        </div>
+        <button id="ad-close" class="menu-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="80%" viewBox="0 -960 960 960" width="80%" fill="#FFFFFF"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+        </button>
+    </div>
+</div>
 
 <div id="end-game-overlay" class="end-game-overlay hidden">
 	<div id="screenshot-container" class="screenshot-container">
@@ -6845,9 +6938,7 @@ function resetGrid() {
         screenshotExplainer.style.opacity = "0";
         screenshotExplainer.offsetHeight; // Force reflow
     }
-    if (endGameOverlay) {
-        endGameOverlay.classList.add("hidden");
-    }
+    
     updateNgCrossoffState();
     updateQuartzClickers();
     updateSandstoneClickers();
@@ -8355,6 +8446,84 @@ function advanceTutorialStep() {
     tutorialStep++;
 }
 
+const ads = [
+    {
+        heading: "Can't get enough gems?",
+        paragraph: "Blast off with Gem Getter Galactic (print-and-play) and try the crunchiest, thinkiest Gem Getter yet!",
+        image: "https://i.imgur.com/kHSdxzY.png", // First ad image
+        ctaText: "Check it out",
+        ctaUrl: "https://www.clearlysharp.com/games/gem-getter-galactic" // First ad URL
+    },
+    {
+        heading: "Ready to surface?", // Placeholder; replace as needed
+        paragraph: "Explore a vibrant ecosystem of plants, critters, and debris in Forest Floor (print-and-play).",
+        image: "https://i.imgur.com/E3qlBCo.png", // Second ad image (add your path)
+        ctaText: "Check it out",
+        ctaUrl: "https://www.clearlysharp.com/games/forest-floor" // Second ad URL (example)
+    }
+    // Add more { ... } objects here for future ads
+];
+
+
+
+function showAd() {
+    const overlay = document.getElementById("ad-overlay");
+    const card = document.getElementById("ad-card");
+    if (overlay && card) {
+        // Randomly select an ad (expandable via array length)
+        const randomAd = ads[Math.floor(Math.random() * ads.length)];
+
+        // Update elements with selected ad data
+        const heading = document.getElementById("ad-heading");
+        if (heading) heading.textContent = randomAd.heading;
+        
+        const paragraph = document.getElementById("ad-paragraph");
+        if (paragraph) paragraph.textContent = randomAd.paragraph;
+        
+        const image = document.getElementById("ad-image");
+        if (image) image.src = randomAd.image;
+        
+        const cta = document.getElementById("ad-cta");
+        if (cta) {
+            cta.textContent = randomAd.ctaText;
+            // Update CTA click handler dynamically (remove old, add new)
+            cta.replaceWith(cta.cloneNode(true)); // Clear old listeners
+            const newCta = document.getElementById("ad-cta");
+            newCta.addEventListener("click", () => {
+                window.open(randomAd.ctaUrl, "_blank");
+                hideAd();
+                playSound("click");
+            });
+        }
+
+        card.classList.remove("visible"); // Reset
+        card.style.visibility = "hidden";
+        overlay.classList.remove("visible");
+        overlay.style.visibility = "hidden";
+        card.offsetHeight; // Reflow
+        overlay.style.visibility = "visible";
+        overlay.classList.add("visible");
+        card.style.visibility = "visible";
+        card.classList.add("visible");
+        console.log("Showing ad:", randomAd.heading);
+    }
+}
+
+function hideAd() {
+    const overlay = document.getElementById("ad-overlay");
+    const card = document.getElementById("ad-card");
+    if (overlay && card) {
+        card.classList.remove("visible"); // Slide down
+        setTimeout(() => {
+            overlay.classList.remove("visible");
+            card.style.visibility = "hidden";
+            overlay.style.visibility = "hidden";
+            console.log("Ad hidden");
+        }, 500); // Match transition
+    }
+}
+
+
 function updateCellCursors() {
 	const unclickableCells = digSheetConfigs[currentDigSheet].unclickableCells;
 	document.querySelectorAll(".cell").forEach((cell) => {
@@ -8632,6 +8801,10 @@ function updateFinishButtonState() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+	// NEW: 20% chance ad on clean load (early, before preload/game)
+    if (Math.random() < 0.2) {
+        showAd();
+    }
 	preloadImages().then(() => {
 		// Function to handle click animation
 		function applyClickAnimation(button) {
@@ -9496,6 +9669,7 @@ if (screenshotButton) {
 			endGameOverlay.addEventListener("click", () => {
 				endGameOverlay.classList.add("hidden");
 				screenshotContainer.innerHTML = ""; // Clean clones
+				showAd(); // Always show ad on close
 			});
 		}
 
@@ -9516,9 +9690,27 @@ if (screenshotButton) {
 
 updateFinishButtonState();
 
-	});
-	updateView();
+// NEW: Ad handlers
+        const adCta = document.getElementById("ad-cta");
+        if (adCta) {
+            adCta.addEventListener("click", () => {
+                window.open("https://clearlysharp.com", "_blank"); // CTA link
+                hideAd();
+                playSound("click");
+            });
+        }
+        const adClose = document.getElementById("ad-close");
+        if (adClose) {
+            adClose.addEventListener("click", () => {
+                hideAd();
+                playSound("click");
+            });
+        }
 	
+	});
+	
+	updateView();
+
 	window.addEventListener("resize", updateView);
 });
 
@@ -9996,4 +10188,3 @@ randomButton.addEventListener("click", () => {
     </script>
 </body>
 </html>
-
