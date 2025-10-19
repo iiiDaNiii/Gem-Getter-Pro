@@ -5670,7 +5670,7 @@
 		"dig-sheet-c": "images/ds-c-overlay.png",
 		"dig-sheet-d": "images/ds-d-overlay.png",
 		"dig-sheet-e": "images/ds-e-overlay.png",
-		"dig-sheet-f": "images/ds-f-overlay.png",
+		"dig-sheet-f": "images/ds-f-overlay-halloween.png",
 		"dig-sheet-g": "images/ds-g-overlay.png",
 		"dig-sheet-h": "images/ds-h-overlay.png"
 	};
@@ -5680,7 +5680,7 @@
 		"dig-sheet-c": "images/ds-c.png",
 		"dig-sheet-d": "images/ds-d.png",
 		"dig-sheet-e": "images/ds-e.png",
-		"dig-sheet-f": "images/ds-f.png",
+		"dig-sheet-f": "images/ds-f-halloween.png",
 		"dig-sheet-g": "images/ds-g.png",
 		"dig-sheet-h": "images/ds-h.png"
 	};
@@ -5857,6 +5857,15 @@
 		console.log("normalizePolyomino result:", JSON.stringify(canonical));
 		return canonical;
 	}
+
+function updateScoresheetImage() {
+  const scoresheetImg = document.querySelector('#scoresheet img.section-image');
+  if (scoresheetImg) {
+    scoresheetImg.src = currentDigSheet === 'dig-sheet-f' 
+      ? 'images/scoresheet-halloween.png' 
+      : 'images/scoresheet.png';
+  }
+}
 
 	function isValidPattern() {
 		if (bonusDigMode) {
@@ -6382,6 +6391,7 @@
 		const random = seededRandom(seed);
 		const groupDigIndex = Math.floor(random() * digSheets.length);
 		currentDigSheet = digSheets[groupDigIndex];
+		updateScoresheetImage();
 		console.log("Selected Dig Sheet:", currentDigSheet);
 		const digSheetElement = document.getElementById("dig-sheet");
 		const overlayImg = document.querySelector("#dig-sheet-overlay img");
@@ -7403,6 +7413,7 @@
 		if (endGameOverlay) {
 			endGameOverlay.classList.add("hidden");
 		}
+		updateScoresheetImage();
 		updateNgCrossoffState();
 		updateQuartzClickers();
 		updateSandstoneClickers();
@@ -8571,6 +8582,7 @@
 		const currentIndex = digSheets.indexOf(currentDigSheet);
 		const nextIndex = (currentIndex + 1) % digSheets.length;
 		currentDigSheet = digSheets[nextIndex];
+		updateScoresheetImage();
 		if (!digSheetConfigs[currentDigSheet]) {
 			console.error(
 				`Invalid dig sheet ID: ${currentDigSheet}. Falling back to dig-sheet-a`
@@ -8651,6 +8663,7 @@
 		const random = seededRandom(dailySeed);
 		const dailyDigIndex = Math.floor(random() * digSheets.length);
 		currentDigSheet = digSheets[dailyDigIndex];
+		updateScoresheetImage();
 		console.log("Selected Dig Sheet:", currentDigSheet);
 		const digSheetElement = document.getElementById("dig-sheet");
 		const overlayImg = document.querySelector("#dig-sheet-overlay img");
@@ -9452,6 +9465,7 @@
 					const openingMenu = document.getElementById("opening-menu");
 					if (openingMenu) openingMenu.style.display = "none"; // Hide menu
 					currentDigSheet = "dig-sheet-a"; // Fixed for tutorial
+					updateScoresheetImage();
 					currentRollSheet = "roll-sheet-a";
 					// NEW: Explicitly update dig/roll sheet visuals before reset
 					const digSheetElement = document.getElementById("dig-sheet");
@@ -9624,6 +9638,7 @@
 						tutorialMode = false; // Explicitly disable tutorial mode
 						gameMode = "free-play";
 						currentDigSheet = selectedDigSheet;
+						updateScoresheetImage();
 						currentRollSheet = selectedRollSheet;
 						const digSheetElement = document.getElementById("dig-sheet");
 						const overlayImg = document.querySelector("#dig-sheet-overlay img");
@@ -10480,6 +10495,7 @@
 		];
 		selectedDigSheet =
 			digSheetsList[Math.floor(Math.random() * digSheetsList.length)];
+			updateScoresheetImage();
 		currentDigSheet = selectedDigSheet;
 		selectedRollSheet =
 			rollSheets[Math.floor(Math.random() * rollSheets.length)];
