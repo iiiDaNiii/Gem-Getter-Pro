@@ -5766,8 +5766,6 @@
 		)
 	};
 
-	const STORAGE_KEY = 'gemGetterGameState'; // Key for localStorage
-
 	function normalizePolyomino(indices) {
 		if (!indices || indices.length === 0) {
 			console.log("normalizePolyomino: Empty or invalid indices");
@@ -7449,7 +7447,6 @@
 			tutorialStep = 0;
 			advanceTutorialStep(); // Start tutorial on new game
 		}
-		localStorage.removeItem(STORAGE_KEY); // Clear on reset/new game
 	}
 	function dfs(index, group, visited, cellSet = selectedCells) {
 		if (visited.has(index) || !cellSet.has(index)) return;
@@ -7769,124 +7766,6 @@
 			}
 		};
 	}
-	
-	function saveGameToStorage() {
-  const state = {
-    committedCells: Array.from(committedCells.entries()),
-    diamondCount,
-    silverCount,
-    quartzCount,
-    sandstoneCount,
-    coalCount,
-    lapisCount,
-    peridotCount,
-    topazCount,
-    opalCount,
-    amberCount,
-    oilCount,
-    ngCount,
-    rowBonusCount,
-    columnBonusCount,
-    boulderBonusCount,
-    peridotScores,
-    quartzBonus,
-    sandstoneBonus,
-    coalBonus,
-    currentDigSheet,
-    currentRollSheet,
-    rollCount,
-    gameMode,
-    currentSeed, // If in group/daily mode
-    // Add cross-off states (simplified; expand if needed)
-    crossOffs: {
-      rows: Array.from(document.querySelectorAll(".row-cross-off")).map(c => c.classList.contains("crossed-off")),
-      columns: Array.from(document.querySelectorAll(".column-cross-off")).map(c => c.classList.contains("crossed-off")),
-      boulders: Array.from(document.querySelectorAll(".boulder-cross-off")).map(c => c.classList.contains("crossed-off")),
-      oilNg: Array.from(document.querySelectorAll(".oil-ng-cross-off-clicker")).map(c => c.classList.contains("crossed-off")),
-      rounds: Array.from(document.querySelectorAll(".cross-off-round")).map(c => c.classList.contains("crossed-off")),
-      ngCrossoffs: Array.from(document.querySelectorAll(".ng-cross-off")).map(c => ({
-        crossedOff: c.classList.contains("crossed-off"),
-        used: c.classList.contains("used")
-      }))
-    }
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  console.log("Game state saved to localStorage");
-}
-	
-function loadGameFromStorage() {
-  const savedState = localStorage.getItem(STORAGE_KEY);
-  if (!savedState) return false;
-  
-  try {
-    const state = JSON.parse(savedState);
-    committedCells = new Map(state.committedCells);
-    diamondCount = state.diamondCount;
-    silverCount = state.silverCount;
-    quartzCount = state.quartzCount;
-    sandstoneCount = state.sandstoneCount;
-    coalCount = state.coalCount;
-    lapisCount = state.lapisCount;
-    peridotCount = state.peridotCount;
-    topazCount = state.topazCount;
-    opalCount = state.opalCount;
-    amberCount = state.amberCount;
-    oilCount = state.oilCount;
-    ngCount = state.ngCount;
-    rowBonusCount = state.rowBonusCount;
-    columnBonusCount = state.columnBonusCount;
-    boulderBonusCount = state.boulderBonusCount;
-    peridotScores = state.peridotScores;
-    quartzBonus = state.quartzBonus;
-    sandstoneBonus = state.sandstoneBonus;
-    coalBonus = state.coalBonus;
-    currentDigSheet = state.currentDigSheet;
-    currentRollSheet = state.currentRollSheet;
-    rollCount = state.rollCount;
-    gameMode = state.gameMode;
-    currentSeed = state.currentSeed || '';
-    
-    // Restore cross-off states
-    document.querySelectorAll(".row-cross-off").forEach((c, i) => c.classList.toggle("crossed-off", state.crossOffs.rows[i]));
-    document.querySelectorAll(".column-cross-off").forEach((c, i) => c.classList.toggle("crossed-off", state.crossOffs.columns[i]));
-    document.querySelectorAll(".boulder-cross-off").forEach((c, i) => c.classList.toggle("crossed-off", state.crossOffs.boulders[i]));
-    document.querySelectorAll(".oil-ng-cross-off-clicker").forEach((c, i) => c.classList.toggle("crossed-off", state.crossOffs.oilNg[i]));
-    document.querySelectorAll(".cross-off-round").forEach((c, i) => c.classList.toggle("crossed-off", state.crossOffs.rounds[i]));
-    document.querySelectorAll(".ng-cross-off").forEach((c, i) => {
-      const ngState = state.crossOffs.ngCrossoffs[i];
-      c.classList.toggle("crossed-off", ngState.crossedOff);
-      c.classList.toggle("used", ngState.used);
-    });
-    
-    // Rebuild visuals
-    updateScoresheetImage();
-    updateQuartzClickers();
-    updateSandstoneClickers();
-    updateCoalClickers();
-    updateDiamondClickers();
-    updateSilverClickers();
-    updateLapisClickers();
-    updatePeridotClickers();
-    updateTopazClickers();
-    updateOpalClickers();
-    updateAmberClickers();
-    updateOilClickers();
-    updateNgClickers();
-    updateOilNgCrossOffClickers();
-    updateCellCursors();
-    updateFinishButtonState();
-    updateNgCrossoffState();
-    updateFinalScore();
-    
-    console.log("Game state loaded from localStorage");
-    return true;
-  } catch (e) {
-    console.error("Failed to load game state:", e);
-    localStorage.removeItem(STORAGE_KEY);
-    return false;
-  }
-}
-
 	function commitPolyomino() {
 		console.log("Dig button clicked");
 		const allNewSize =
@@ -8488,7 +8367,6 @@ function loadGameFromStorage() {
 						tutorialStep = 19; // Update to after message18 (19 1-based)
 					}
 				}
-			saveGameToStorage();
 			},
 			animationQueue.length > 0 ? delay : 0
 		);
@@ -10179,15 +10057,6 @@ function loadGameFromStorage() {
 					screenshotContainer.innerHTML = "";
 				}
 			});
-
-if (loadGameFromStorage()) {
-        const resumeButton = document.getElementById("resume-button");
-        if (resumeButton) resumeButton.style.display = "block";
-        // Hide menu if state loaded
-        document.getElementById("opening-menu").style.display = "none";
-    } else {
-        // Default setup if no state (add any fresh-start logic here if needed, e.g., resetGrid() or menu shows)
-    }
 
 			updateDailyChallengeTimer();
 			window.addEventListener("beforeunload", (event) => {
