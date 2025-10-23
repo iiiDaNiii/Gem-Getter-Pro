@@ -3441,7 +3441,10 @@
 </div>
 
 <script>
-
+const DB_NAME = 'GemGetterProDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'gameState';
+const STATE_ID = 'current'; // Single key for the game state
 	let currentSeed = '';
 	let currentView = 1;
 	let rollCounter = 0;
@@ -5766,6 +5769,256 @@
 		)
 	};
 
+	function openDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            }
+        };
+        request.onsuccess = (event) => resolve(event.target.result);
+        request.onerror = (event) => reject(event.target.error);
+    });
+}
+
+async function saveGameState() {
+    try {
+        const db = await openDB();
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const state = {
+            id: STATE_ID,
+            currentSeed: currentSeed,
+            currentView: currentView,
+            rollCounter: rollCounter,
+            selectedCells: Array.from(selectedCells),
+            committedCells: Array.from(committedCells.keys()), // Only keys; SVGs recreated on load
+            stateHistory: stateHistory.map(historyItem => ({
+                committedCells: Array.from(historyItem.committedCells.keys()),
+                svgs: historyItem.svgs.map(svg => svg.outerHTML),
+                committedCellIndices: Array.from(historyItem.committedCellIndices),
+                oilCount: historyItem.oilCount,
+                ngCount: historyItem.ngCount,
+                quartzCount: historyItem.quartzCount,
+                sandstoneCount: historyItem.sandstoneCount,
+                coalCount: historyItem.coalCount,
+                silverCount: historyItem.silverCount,
+                diamondCount: historyItem.diamondCount,
+                lapisCount: historyItem.lapisCount,
+                peridotCount: historyItem.peridotCount,
+                topazCount: historyItem.topazCount,
+                opalCount: historyItem.opalCount,
+                amberCount: historyItem.amberCount,
+                circleClickers: historyItem.circleClickers,
+                crossOffs: historyItem.crossOffs
+            })),
+            roundIndex: roundIndex,
+            diamondCount: diamondCount,
+            silverCount: silverCount,
+            quartzCount: quartzCount,
+            sandstoneCount: sandstoneCount,
+            coalCount: coalCount,
+            lapisCount: lapisCount,
+            peridotCount: peridotCount,
+            topazCount: topazCount,
+            opalCount: opalCount,
+            amberCount: amberCount,
+            oilCount: oilCount,
+            ngCount: ngCount,
+            rowBonusCount: rowBonusCount,
+            columnBonusCount: columnBonusCount,
+            boulderBonusCount: boulderBonusCount,
+            peridotScores: peridotScores,
+            quartzBonus: quartzBonus,
+            sandstoneBonus: sandstoneBonus,
+            coalBonus: coalBonus,
+            isFirstRoll: isFirstRoll,
+            currentDigSheet: currentDigSheet,
+            lockedGroups: lockedGroups.map(group => Array.from(group)),
+            gamePhase: gamePhase,
+            bonusDigMode: bonusDigMode,
+            oilBonusQueue: oilBonusQueue,
+            currentRollSheet: currentRollSheet,
+            gameMode: gameMode,
+            rollCount: rollCount,
+            tutorialMode: tutorialMode,
+            tutorialStep: tutorialStep
+        };
+        await store.put(state);
+        await new Promise((resolve, reject) => {
+            tx.oncomplete = resolve;
+            tx.onerror = reject;
+        });
+        console.log('Game state saved to IndexedDB');
+    } catch (error) {
+        console.error('Failed to save game state:', error);
+    }
+}
+
+async function loadGameState() {
+    try {
+        const db = await openDB();
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const request = store.get(STATE_ID);
+        const state = await new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = reject;
+        });
+        if (!state) {
+            console.log('No saved state found in IndexedDB');
+            return;
+        }
+        // Restore variables (same as LocalStorage version)
+        currentSeed = state.currentSeed;
+        currentView = state.currentView;
+        rollCounter = state.rollCounter;
+        selectedCells = new Set(state.selectedCells);
+        committedCells = new Map(state.committedCells.map(key => [key, null])); // Placeholders; SVGs restored below
+        stateHistory = state.stateHistory.map(historyItem => ({
+            committedCells: new Map(historyItem.committedCells.map(key => [key, null])),
+            svgs: historyItem.svgs.map(svgHTML => {
+                const parser = new DOMParser();
+                const svgDoc = parser.parseFromString(svgHTML, 'image/svg+xml');
+                return svgDoc.documentElement;
+            }),
+            committedCellIndices: new Set(historyItem.committedCellIndices),
+            oilCount: historyItem.oilCount,
+            ngCount: historyItem.ngCount,
+            quartzCount: historyItem.quartzCount,
+            sandstoneCount: historyItem.sandstoneCount,
+            coalCount: historyItem.coalCount,
+            silverCount: historyItem.silverCount,
+            diamondCount: historyItem.diamondCount,
+            lapisCount: historyItem.lapisCount,
+            peridotCount: historyItem.peridotCount,
+            topazCount: historyItem.topazCount,
+            opalCount: historyItem.opalCount,
+            amberCount: historyItem.amberCount,
+            circleClickers: historyItem.circleClickers,
+            crossOffs: historyItem.crossOffs
+        }));
+        roundIndex = state.roundIndex;
+        diamondCount = state.diamondCount;
+        silverCount = state.silverCount;
+        quartzCount = state.quartzCount;
+        sandstoneCount = state.sandstoneCount;
+        coalCount = state.coalCount;
+        lapisCount = state.lapisCount;
+        peridotCount = state.peridotCount;
+        topazCount = state.topazCount;
+        opalCount = state.opalCount;
+        amberCount = state.amberCount;
+        oilCount = state.oilCount;
+        ngCount = state.ngCount;
+        rowBonusCount = state.rowBonusCount;
+        columnBonusCount = state.columnBonusCount;
+        boulderBonusCount = state.boulderBonusCount;
+        peridotScores = state.peridotScores;
+        quartzBonus = state.quartzBonus;
+        sandstoneBonus = state.sandstoneBonus;
+        coalBonus = state.coalBonus;
+        isFirstRoll = state.isFirstRoll;
+        currentDigSheet = state.currentDigSheet;
+        lockedGroups = state.lockedGroups.map(arr => new Set(arr));
+        gamePhase = state.gamePhase;
+        bonusDigMode = state.bonusDigMode;
+        oilBonusQueue = state.oilBonusQueue;
+        currentRollSheet = state.currentRollSheet;
+        gameMode = state.gameMode;
+        rollCount = state.rollCount;
+        tutorialMode = state.tutorialMode;
+        tutorialStep = state.tutorialStep;
+
+        // Restore DOM (same as before)
+        const grid = document.getElementById("grid");
+        if (grid) {
+            grid.querySelectorAll(".polyomino-svg").forEach(svg => svg.remove());
+            document.querySelectorAll(".cell.committed").forEach(cell => cell.classList.remove("committed"));
+            const latestState = stateHistory[stateHistory.length - 1] || {
+                svgs: [],
+                committedCellIndices: new Set()
+            };
+            latestState.svgs.forEach(svg => grid.appendChild(svg));
+            latestState.committedCellIndices.forEach(index => {
+                const cell = document.querySelector(`.cell[data-index="${index}"]`);
+                if (cell) cell.classList.add("committed");
+            });
+        }
+
+        // Restore cross-offs, circled, etc. (same as before)
+        document.querySelectorAll(".row-cross-off").forEach((c, i) => {
+            c.classList.toggle("crossed-off", state.crossOffs.rows[i]);
+        });
+        document.querySelectorAll(".column-cross-off").forEach((c, i) => {
+            c.classList.toggle("crossed-off", state.crossOffs.columns[i]);
+        });
+        document.querySelectorAll(".boulder-cross-off").forEach((c, i) => {
+            c.classList.toggle("crossed-off", state.crossOffs.boulders[i]);
+        });
+        document.querySelectorAll(".oil-ng-cross-off-clicker").forEach((c, i) => {
+            c.classList.toggle("crossed-off", state.crossOffs.oilNg[i]);
+        });
+        document.querySelectorAll(".cross-off-round").forEach((c, i) => {
+            c.classList.toggle("crossed-off", state.crossOffs.rounds[i]);
+        });
+        document.querySelectorAll(".ng-cross-off").forEach((c, i) => {
+            c.classList.toggle("crossed-off", state.crossOffs.ngCrossoffs[i].crossedOff);
+            c.classList.toggle("used", state.crossOffs.ngCrossoffs[i].used);
+        });
+        document.querySelectorAll(".circle-clicker").forEach((clicker, i) => {
+            const saved = state.circleClickers[i];
+            if (saved) {
+                clicker.classList.toggle("circled", saved.circled);
+            }
+        });
+
+        // Update visuals (same as before)
+        updateQuartzClickers();
+        updateSandstoneClickers();
+        updateCoalClickers();
+        updateDiamondClickers();
+        updateSilverClickers();
+        updateLapisClickers();
+        updatePeridotClickers();
+        updateTopazClickers();
+        updateOpalClickers();
+        updateAmberClickers();
+        updateOilClickers();
+        updateNgClickers();
+        updateOilNgCrossOffClickers();
+        updatePolyominoOutline();
+        updateCellCursors();
+        updateRollButtonState();
+        updateDigButtonState();
+        updateNgCrossoffState();
+        updateView();
+        if (bonusDigMode) enterBonusDigMode();
+        if (tutorialMode) advanceTutorialStep();
+        console.log('Game state loaded from IndexedDB');
+    } catch (error) {
+        console.error('Failed to load game state:', error);
+    }
+}
+
+async function clearGameState() {
+    try {
+        const db = await openDB();
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        await store.delete(STATE_ID);
+        await new Promise((resolve, reject) => {
+            tx.oncomplete = resolve;
+            tx.onerror = reject;
+        });
+        console.log('Game state cleared from IndexedDB');
+    } catch (error) {
+        console.error('Failed to clear game state:', error);
+    }
+}
+
 	function normalizePolyomino(indices) {
 		if (!indices || indices.length === 0) {
 			console.log("normalizePolyomino: Empty or invalid indices");
@@ -6500,6 +6753,7 @@
 				updateDigButtonState();
 				updateCellCursors();
 				updateFinishButtonState();
+				saveGameState();
 			}
 		}
 		let startTime;
@@ -7423,6 +7677,7 @@
 		updateRollButtonState();
 		updateDigButtonState();
 		updateCellCursors();
+		clearGameState();
 		console.log(
 			"Score sheet reset: All circle clickers cleared, stroke-dashoffset reset"
 		);
@@ -7721,7 +7976,7 @@
 		const committedCellIndices = new Set(committedCells.keys());
 		return {
 			committedCells: committedCellsClone,
-			svgs: committedSvgs,
+			svgs: committedSvgs.map(svg => svg.outerHTML),
 			committedCellIndices: committedCellIndices,
 			oilCount: oilCount,
 			ngCount: ngCount,
@@ -8370,6 +8625,7 @@
 			},
 			animationQueue.length > 0 ? delay : 0
 		);
+	saveGameState();
 	}
 	function undoLastCommit() {
 		if (stateHistory.length === 0) {
@@ -8605,6 +8861,7 @@
 			console.error("Grid element not found");
 		}
 		resetGrid();
+		saveGameState();
 		playSound("click");
 		console.log(
 			`Dig sheet switched to ${currentDigSheet}, unclickable cells:`,
@@ -8637,6 +8894,7 @@
 		rollSheetImg.offsetHeight;
 		rollSheetImg.style.display = "block";
 		resetGrid();
+		saveGameState();
 		playSound("click");
 		console.log(`Roll sheet switched to ${currentRollSheet}`);
 	}
@@ -8945,6 +9203,7 @@
 			playSound("click");
 			updateDigButtonState();
 			updateNgCrossoffState();
+			saveGameState();
 			return;
 		}
 		let handled = false;
@@ -9117,6 +9376,7 @@
 		playSound("click");
 		console.log("Exited bonus dig mode");
 		updateFinishButtonState();
+		saveGameState();
 	}
 
 	// Update updateDigButtonState: Aggressive animation reset with inline none/reflow (replace entire function)
@@ -10070,7 +10330,7 @@
 
 		});
 		updateView();
-
+		loadGameState();
 		window.addEventListener("resize", updateView);
 	});
 
